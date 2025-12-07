@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>Exercice – Apparier</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --blue:#2980ff;
+    --green:#1a8c6d;
+    --light:#eef5ff;
+    --card:white;
+    --shadow:0 6px 20px rgba(0,0,0,.12);
+  }
+
+  body{
+    margin:0;
+    font-family:'Open Sans', sans-serif;
+    background:linear-gradient(155deg,#dff3ff,#c9f7e7);
+    padding:20px;
+    color:#003a52;
+  }
+
+  header{
+    text-align:center;
+    background:rgba(255,255,255,0.55);
+    padding:35px 20px;
+    border-radius:22px;
+    backdrop-filter:blur(10px);
+    box-shadow:var(--shadow);
+    margin-bottom:30px;
+  }
+
+  h1{
+    margin:0;
+    font-size:2rem;
+    font-weight:700;
+    letter-spacing:1px;
+  }
+
+  #scoreBox{
+    margin-top:12px;
+    font-weight:600;
+    font-size:1.2rem;
+  }
+
+  .progress-wrapper{
+    width:100%;
+    max-width:600px;
+    margin:20px auto 0 auto;
+    height:14px;
+    background:#cfe2ff;
+    border-radius:12px;
+    box-shadow:inset 0 2px 6px rgba(0,0,0,.1);
+  }
+
+  #progressBar{
+    height:100%;
+    width:0%;
+    background:var(--green);
+    border-radius:12px;
+    transition:0.3s;
+  }
+
+  #seriesProgressContainer{
+    margin-top:-10px;
+    height:12px;
+    background:#e6e6e6;
+    border-radius:12px;
+    box-shadow:inset 0 2px 6px rgba(0,0,0,.1);
+  }
+
+  #seriesProgressBar{
+    height:100%;
+    width:0%;
+    background:var(--blue);
+    border-radius:12px;
+    transition:0.4s;
+  }
+
+  .container{
+    max-width:900px;
+    margin:auto;
+    display:flex;
+    gap:40px;
+    justify-content:center;
+    flex-wrap:wrap;
+  }
+
+  .col{
+    background:var(--card);
+    padding:25px;
+    border-radius:18px;
+    box-shadow:var(--shadow);
+    width:320px;
+  }
+
+  .item{
+    background:#eef3f9;
+    padding:14px;
+    border-radius:14px;
+    margin-bottom:12px;
+    cursor:pointer;
+    transition:.25s;
+    display:flex;
+    align-items:center;
+    font-size:1.1rem;
+    font-weight:600;
+  }
+
+  .item:hover{
+    background:#d8eaff;
+    transform:translateX(3px);
+  }
+
+  .selected{
+    border:2px solid var(--green);
+    background:#d6fff0 !important;
+  }
+
+  .correct{
+    background:#c4ffd8 !important;
+    border:2px solid #2ecc71;
+    transform:scale(1.02);
+  }
+
+  .wrong{
+    background:#ffd2d2 !important;
+    border:2px solid #ff4d4d;
+    animation:blink .3s ease-in-out 2;
+  }
+
+  @keyframes blink{
+    0%{opacity:1;} 50%{opacity:0.3;} 100%{opacity:1;}
+  }
+
+  button{
+    margin:35px auto;
+    display:block;
+    padding:14px 26px;
+    border:none;
+    border-radius:14px;
+    background:var(--green);
+    color:white;
+    font-size:1.15rem;
+    cursor:pointer;
+    font-weight:700;
+    transition:0.25s;
+    box-shadow:var(--shadow);
+  }
+
+  button:hover{
+    background:#0f5d46;
+    transform:translateY(-2px);
+  }
+
+  #summaryScreen table th{
+    background:#2980ff;
+    color:white;
+    padding:10px;
+    border-radius:8px;
+  }
+
+  #summaryScreen table td{
+    padding:10px;
+    border-bottom:1px solid #ddd;
+  }
+</style>
+</head>
+<body>
+<header>
+  <h1>🔗 Apparier les paires</h1>
+  <div style="max-width:750px;margin:0 auto 15px auto;padding:18px 22px;background:white;border-radius:16px;box-shadow:0 4px 14px rgba(0,0,0,0.12);text-align:center;border-left:6px solid #1a8c6d;">
+    <p style="margin:0;font-size:1.15rem;font-weight:600;line-height:1.55;color:#003a52;">
+      👉 <b>Consignes :</b><br>
+      Associez chaque mot de gauche avec le mot correspondant à droite.<br>
+      ✔ Une bonne réponse devient <b>verte</b> et se verrouille.<br>
+      ✖ Une erreur clignote en <b>rouge</b>.<br>
+      🎯 Complétez les <b>10 paires</b> pour réussir l’exercice.
+    </p>
+  </div>
+  <div id="scoreBox">Série : 1 / 10 | Score : 0 / 10 | Erreurs : 0 | Total : 0✔ / 0✖</div>
+  <div style="width:100%;max-width:600px;margin:15px auto 0 auto;height:14px;background:#cfe2ff;border-radius:10px;">
+    <div id="progressBar" style="height:100%;width:0%;background:#1a8c6d;border-radius:10px;transition:0.3s;"></div>
+  </div>
+</header>
+
+<div id="seriesProgressContainer" style="width:100%;max-width:600px;margin:10px auto;height:12px;background:#e6e6e6;border-radius:10px;display:block;">
+  <div id="seriesProgressBar" style="height:100%;width:0%;background:#2980ff;border-radius:10px;transition:0.4s;"></div>
+</div>
+
+<div id="summaryScreen" style="display:none;text-align:center;margin-top:40px;background:white;padding:30px;border-radius:18px;box-shadow:0 4px 20px rgba(0,0,0,0.15);max-width:600px;margin-left:auto;margin-right:auto;">
+  <h2>🎉 Exercice terminé !</h2>
+  <p id="finalMessage" style="font-size:1.2rem;font-weight:600;color:#003a52;"></p>
+  <table id="recapTable" style="width:100%;border-collapse:collapse;margin-top:20px;font-size:1.1rem;">
+    <tr><th>Série</th><th>Score</th><th>Erreurs</th></tr>
+  </table>
+  <button onclick="restartAll()" style="margin-top:25px;padding:12px 22px;border:none;border-radius:12px;background:#1a8c6d;color:white;font-size:18px;font-weight:bold;cursor:pointer;">🔄 Recommencer au début</button>
+</div>
+
+<div class="container">
+  <div class="col" id="leftCol"></div>
+  <div class="col" id="rightCol"></div>
+</div>
+
+<button onclick="resetGame()">🔄 Recommencer la série</button>
+
+<script>
+// --------------------------------------------------
+// 🔥 100 PAIRES THÉMATIQUES (cohérentes A1/A2)
+// --------------------------------------------------
+const allPairs = [
+  // 🍎 Maison
+  ["lit", "dormir"], ["table", "manger"], ["chaise", "s'asseoir"], ["lampe", "lumière"], ["fenêtre", "ouvrir"],
+  ["porte", "entrée"], ["cuisine", "préparer"], ["frigo", "froid"], ["balai", "nettoyer"], ["douche", "se laver"],
+
+  // 🍽️ Nourriture
+  ["pomme", "fruit"], ["banane", "jaune"], ["pain", "boulangerie"], ["fromage", "lait"], ["eau", "boire"],
+  ["café", "chaud"], ["thé", "chaud"], ["riz", "cuisiner"], ["poulet", "viande"], ["salade", "légumes"],
+
+  // 🚌 Transports
+  ["bus", "transport"], ["train", "rails"], ["avion", "voler"], ["vélo", "rouler"], ["voiture", "route"],
+  ["camion", "charger"], ["métro", "ville"], ["bateau", "mer"], ["taxi", "payer"], ["scooter", "deux roues"],
+
+  // 🧑‍🔧 Travail
+  ["ordinateur", "travail"], ["clavier", "taper"], ["souris", "cliquer"], ["écran", "afficher"], ["stylo", "écrire"],
+  ["dossier", "document"], ["réunion", "parler"], ["chef", "responsable"], ["ouvrier", "chantier"], ["vendeur", "magasin"],
+
+  // 📝 Administration
+  ["ORP", "emploi"], ["rendez-vous", "date"], ["formulaire", "remplir"], ["signature", "signer"], ["attestation", "document"],
+  ["carte d'identité", "papier"], ["lettre", "envoyer"], ["bureau", "administration"], ["courrier", "poste"], ["guichet", "service"],
+
+  // 🏥 Santé
+  ["médecin", "soigner"], ["pharmacie", "médicaments"], ["ordonnance", "traitement"], ["fièvre", "thermomètre"], ["toux", "malade"],
+  ["sirop", "boire"], ["pansement", "blessure"], ["hôpital", "soins"], ["dentiste", "dents"], ["douleur", "mal"],
+
+  // 🧸 Objets du quotidien
+  ["clé", "ouvrir"], ["téléphone", "appeler"], ["sac", "porter"], ["montre", "heure"], ["bouteille", "eau"],
+  ["papier", "feuille"], ["crayon", "dessiner"], ["gomme", "effacer"], ["ciseaux", "couper"], ["colle", "coller"],
+
+  // 🏃 Verbes → actions
+  ["manger", "nourriture"], ["boire", "eau"], ["marcher", "pieds"], ["courir", "vite"], ["lire", "livre"],
+  ["écrire", "stylo"], ["ouvrir", "porte"], ["fermer", "porte"], ["travailler", "emploi"], ["écouter", "radio"],
+
+  // 🏙️ Ville / magasins
+  ["magasin", "acheter"], ["poste", "courrier"], ["banque", "argent"], ["école", "apprendre"], ["restaurant", "manger"],
+  ["pharmacie", "médicaments"], ["bibliothèque", "livres"], ["parc", "marcher"], ["cinéma", "film"], ["hôtel", "dormir"],
+
+  // 💻 Bureautique
+  ["souris", "cliquer"], ["clavier", "taper"], ["ordinateur", "écran"], ["USB", "mémoire"], ["imprimante", "imprimer"],
+  ["fichier", "document"], ["courriel", "envoyer"], ["logiciel", "programme"], ["fenêtre", "ouvrir"], ["réseau", "internet"]
+];
+
+// Sélection automatique d'une série de 10 paires
+let pairs = shuffle([...allPairs]).slice(0,10);
+
+//---------------------------------------------------
+// Mélange
+//---------------------------------------------------
+function shuffle(arr){
+  for(let i=arr.length-1;i>0;i--){
+    const j=Math.floor(Math.random()*(i+1));
+    [arr[i],arr[j]]=[arr[j],arr[i]];
+  }
+  return arr;
+}
+
+let leftItems = [];
+let rightItems = [];
+let selectedLeft = null;
+let score = 0;
+let series = 1;
+let totalSeries = 10;
+let globalScore = 0;
+let globalErrors = 0;
+let errors = 0;
+let recap = [];
+
+//---------------------------------------------------
+// Auto-sauvegarde (score uniquement)
+//---------------------------------------------------
+function saveProgress(){
+  localStorage.setItem("apparier_score", score);
+}
+
+function loadProgress(){
+  const s = localStorage.getItem("apparier_score");
+  if(s) score = parseInt(s);
+}
+
+loadProgress();
+
+//---------------------------------------------------
+// Mise à jour score + barre de progression paires
+//---------------------------------------------------
+function updateScoreAndProgress(){
+  const box = document.getElementById("scoreBox");
+  const bar = document.getElementById("progressBar");
+  if(!box || !bar) return;
+
+  box.textContent = `Série : ${series} / ${totalSeries} | Score : ${score} / ${pairs.length} | Erreurs : ${errors} | Total : ${globalScore}✔ / ${globalErrors}✖`;
+
+  const percent = (score / pairs.length) * 100;
+  bar.style.width = `${percent}%`;
+
+  // Couleur dynamique
+  if(percent < 40) bar.style.background = '#ff9800';      // orange
+  else if(percent < 80) bar.style.background = '#ffc107'; // jaune
+  else bar.style.background = '#1a8c6d';                  // vert
+
+  // Animation mini-pulse
+  bar.style.transform = 'scale(1.05)';
+  setTimeout(()=> bar.style.transform = 'scale(1)', 150);
+
+  // Si la série est terminée
+  if(percent === 100){
+    // on enregistre la série dans le récapitulatif
+    recap.push({ serie: series, score: score, errors: errors });
+
+    // Si c'était la dernière série → écran final
+    if(series === totalSeries){
+      document.querySelector('.container').style.display = 'none';
+      document.getElementById('summaryScreen').style.display = 'block';
+
+      document.getElementById('finalMessage').textContent = `Score total : ${globalScore} / ${totalSeries * 10} | Erreurs totales : ${globalErrors}`;
+
+      const table = document.getElementById('recapTable');
+      // on nettoie d'éventuelles anciennes lignes
+      [...table.querySelectorAll('tr')].forEach((tr,idx)=>{ if(idx>0) tr.remove(); });
+
+      recap.forEach(r => {
+        let row = document.createElement('tr');
+        row.innerHTML = `<td>${r.serie}</td><td>${r.score}</td><td>${r.errors}</td>`;
+        table.appendChild(row);
+      });
+
+      // mettre la barre de progression des séries à 100%
+      const sBar = document.getElementById('seriesProgressBar');
+      if(sBar) sBar.style.width = '100%';
+
+      return; // on bloque ici, pas de nouvelle série
+    }
+
+    // Sinon → passer à la série suivante
+    setTimeout(()=>{
+      series++;
+      score = 0;
+      errors = 0;
+      selectedLeft = null;
+      pairs = shuffle([...allPairs]).slice(0,10);
+      updateSeriesProgress();
+      render();
+    }, 600);
+  }
+}
+
+//---------------------------------------------------
+// Barre de progression des séries
+//---------------------------------------------------
+function updateSeriesProgress(){
+  const bar = document.getElementById('seriesProgressBar');
+  if(!bar) return;
+  const done = series - 1; // séries terminées
+  const percent = (done / totalSeries) * 100;
+  bar.style.width = percent + '%';
+}
+
+//---------------------------------------------------
+// Interface
+//---------------------------------------------------
+function render(){
+  leftItems = shuffle([...pairs.map(p=>p[0])]);
+  rightItems = shuffle([...pairs.map(p=>p[1])]);
+
+  const L=document.getElementById("leftCol");
+  const R=document.getElementById("rightCol");
+  L.innerHTML="";
+  R.innerHTML="";
+
+  leftItems.forEach(txt=>{
+    const d=document.createElement("div");
+    d.className="item";
+    d.innerHTML = `${txt}`;
+    d.onclick=()=>selectLeft(d,txt);
+    L.appendChild(d);
+  });
+
+  rightItems.forEach(txt=>{
+    const d=document.createElement("div");
+    d.className="item";
+    d.innerHTML = `${txt}`;
+    d.onclick=()=>checkPair(d,txt);
+    R.appendChild(d);
+  });
+
+  updateScoreAndProgress();
+}
+
+//---------------------------------------------------
+// Empêcher multisélection
+//---------------------------------------------------
+function selectLeft(div,word){
+  document.querySelectorAll(".item").forEach(i=>i.classList.remove("selected"));
+  div.classList.add("selected");
+  selectedLeft=word;
+}
+
+//---------------------------------------------------
+// Vérification
+//---------------------------------------------------
+function checkPair(divRight,rightWord){
+  if(!selectedLeft) return;
+
+  const correctPair=pairs.find(p=>p[0]===selectedLeft);
+
+  if(correctPair && correctPair[1]===rightWord){
+    markCorrect(selectedLeft,rightWord);
+  } else {
+    errors++;
+    globalErrors++;
+    updateScoreAndProgress();
+    divRight.classList.add("wrong");
+    setTimeout(()=>divRight.classList.remove("wrong"),500);
+  }
+}
+
+//---------------------------------------------------
+// Validation
+//---------------------------------------------------
+function markCorrect(leftWord,rightWord){
+  score++;
+  globalScore++;
+  saveProgress();
+  updateScoreAndProgress();
+
+  document.querySelectorAll(".item").forEach(i=>{
+    if(i.textContent === leftWord || i.textContent === rightWord){
+      i.classList.add("correct");
+      i.style.pointerEvents = "none";
+    }
+    i.classList.remove("selected");
+  });
+
+  selectedLeft=null;
+}
+
+//---------------------------------------------------
+// Recommencer la série en cours
+//---------------------------------------------------
+function resetGame(){
+  score = 0;
+  errors = 0;
+  selectedLeft = null;
+  pairs = shuffle([...allPairs]).slice(0,10); // nouvelle série de 10
+  render();
+}
+
+//---------------------------------------------------
+// Recommencer tout depuis le début (après écran final)
+//---------------------------------------------------
+function restartAll(){
+  series = 1;
+  score = 0;
+  errors = 0;
+  globalScore = 0;
+  globalErrors = 0;
+  recap = [];
+  pairs = shuffle([...allPairs]).slice(0,10);
+
+  document.getElementById('summaryScreen').style.display = 'none';
+  document.querySelector('.container').style.display = 'flex';
+
+  updateSeriesProgress();
+  render();
+}
+
+//---------------------------------------------------
+// Lancement initial
+//---------------------------------------------------
+updateSeriesProgress();
+render();
+</script>
+</body>
+</html>
