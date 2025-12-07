@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>Questions ouvertes – Savoir‑faire professionnels</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<!-- jsPDF -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+<style>
+:root{
+  --blue:#3f71ff;--dark:#003366;--bg:#eef3f9;--card:#ffffff;--green:#2ecc71;--red:#e74c3c;
+}
+body{margin:0;font-family:Arial,sans-serif;background:linear-gradient(180deg,#eef3f9,#dfe7f5)}
+.container{max-width:900px;margin:20px auto;background:#fff;padding:25px;border-radius:18px;box-shadow:0 6px 25px rgba(0,0,0,.15)}
+h1{text-align:center;color:#004c97;margin-top:0}
+.subtitle{text-align:center;color:#555;margin-bottom:20px}
+.q{margin:18px 0;padding:16px;background:#f6f9ff;border-radius:14px}
+.q label{font-weight:bold;color:#003366}
+.q small{display:block;color:#666;margin:6px 0 10px}
+.q textarea{width:100%;min-height:90px;border-radius:10px;border:1px solid #cfd8ff;padding:10px;font-size:15px;resize:vertical}
+.tools{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin-top:22px}
+button{border:none;border-radius:10px;padding:12px 16px;font-size:15px;cursor:pointer}
+.btn-blue{background:var(--blue);color:#fff}
+.btn-green{background:var(--green);color:#fff}
+.btn-red{background:var(--red);color:#fff}
+.footer{text-align:center;color:#666;font-size:13px;margin-top:16px}
+.notice{background:#eef3ff;border-left:6px solid var(--blue);padding:10px 14px;border-radius:10px;color:#003366;margin-bottom:16px}
+</style>
+</head>
+<body>
+<div class="container">
+  <h1>Questions ouvertes – Savoir‑faire professionnels</h1>
+  <div class="subtitle">Objectif : parler de vos compétences professionnelles.</div>
+
+  <div class="notice">
+  <strong>Que sont les compétences professionnelles ?</strong><br>
+  Les compétences professionnelles (savoir-faire) sont <strong>ce que vous savez faire concrètement au travail</strong>.<br>
+  Il s’agit des tâches, des outils, des machines et des procédures que vous pouvez utiliser.<br><br>
+  👉 Exemples : nettoyer un local, utiliser une machine, préparer une commande, suivre une consigne écrite.<br>
+  ⚠️ Ici, on ne parle pas du comportement (ponctualité, politesse, motivation).
+  </div>
+
+  <div class="notice">💡 Aide traduction : sélectionnez un mot ou une phrase → clic droit → traduire, ou utilisez le bouton « Traduire ».</div>
+
+  <div class="q"><label>1️⃣ Quelle tâche professionnelle savez-vous faire concrètement ?</label>
+    <small>Exemple : nettoyer, ranger, utiliser une machine, préparer une commande.</small>
+    <textarea data-id="q1"></textarea></div>
+
+  <div class="q"><label>2️⃣ Quelles machines ou outils savez-vous utiliser au travail ?</label>
+    <small>Exemple : aspirateur, caisse, ordinateur, transpalette…</small>
+    <textarea data-id="q2"></textarea></div>
+
+  <div class="q"><label>3️⃣ Explique comment vous faites une tâche du début à la fin.</label>
+    <small>Étapes simples, dans l’ordre.</small>
+    <textarea data-id="q3"></textarea></div>
+
+  <div class="q"><label>4️⃣ Savez-vous travailler seul ou avec des consignes écrites ? Comment ?</label>
+    <small>Lire une consigne, suivre une procédure, utiliser une checklist.</small>
+    <textarea data-id="q4"></textarea></div>
+
+  <div class="q"><label>5️⃣ Quelle tâche veux-tu encore mieux apprendre au travail ?</label>
+    <small>Exemple : aller plus vite, moins d’erreurs, nouvelle machine.</small>
+    <textarea data-id="q5"></textarea></div>
+
+  <div class="tools">
+    <button class="btn-blue" onclick="openTranslate()">🌍 Traduire</button>
+    <button class="btn-green" onclick="downloadPDF()">📄 Télécharger PDF</button>
+    <button class="btn-red" onclick="resetAll()">♻️ Reset</button>
+  </div>
+
+  <div class="footer">💾 Sauvegarde automatique activée</div>
+</div>
+
+<script>
+// Autosave
+const areas=document.querySelectorAll('textarea');
+areas.forEach(a=>{
+  const k='autosave_'+a.dataset.id;
+  if(localStorage.getItem(k)) a.value=localStorage.getItem(k);
+  a.addEventListener('input',()=>localStorage.setItem(k,a.value));
+});
+
+// Translate helper
+function openTranslate(){window.open('https://translate.google.com','_blank');}
+
+// PDF
+async function downloadPDF(){
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF();
+  let y=15;
+  doc.setFontSize(14);
+  doc.text('Questions ouvertes – Savoir‑faire professionnels',10,y); y+=10;
+  doc.setFontSize(11);
+  areas.forEach((a,i)=>{
+    const title=a.previousElementSibling.textContent;
+    const lines=doc.splitTextToSize(a.value||'-',180);
+    if(y+lines.length*6>280){doc.addPage(); y=15;}
+    doc.text(`${i+1}. ${title}`,10,y); y+=6;
+    doc.text(lines,10,y); y+=lines.length*6+6;
+  });
+  doc.save('savoir_faire_professionnels.pdf');
+}
+
+// Reset
+function resetAll(){
+  if(!confirm('Effacer toutes les réponses ?')) return;
+  areas.forEach(a=>{a.value='';localStorage.removeItem('autosave_'+a.dataset.id);});
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <title>Plateforme – Exercices Proactif</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --blue:#2980ff;
+      --green:#1a8c6d;
+      --dark:#0b2a4a;
+      --bg:#f4f7fa;
+      --text:#1a1a1a;
+      --card:#ffffff;
+      --shadow:0 4px 18px rgba(0,0,0,.12);
+    }
+
+    /* MODE SOMBRE */
+    body.dark {
+      --bg:#0f172a;
+      --card:#1e293b;
+      --text:#e2e8f0;
+      --shadow:0 4px 18px rgba(0,0,0,.4);
+    }
+
+    body {
+      margin:0;
+      font-family:'Open Sans', sans-serif;
+      background:var(--bg);
+      color:var(--text);
+      transition:0.25s ease;
+      padding:20px;
+    }
+
+    /* HEADER */
+    header {
+      text-align:center;
+      padding:30px;
+      background:var(--card);
+      border-radius:20px;
+      box-shadow:var(--shadow);
+      max-width:1000px;
+      margin:0 auto 30px auto;
+      animation:fadeIn 0.5s ease;
+    }
+
+    @keyframes fadeIn {
+      from {opacity:0; transform:translateY(10px);}
+      to {opacity:1; transform:translateY(0);}
+    }
+
+    header h1 {
+      margin:0;
+      font-size:2rem;
+    }
+
+    header p {
+      margin-top:8px;
+      opacity:0.8;
+    }
+
+    /* GRID */
+    .grid {
+      max-width:1100px;
+      margin:0 auto;
+      display:grid;
+      grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
+      gap:25px;
+    }
+
+    /* CATEGORY CARD */
+    .card {
+      background:var(--card);
+      border-radius:20px;
+      box-shadow:var(--shadow);
+      padding:20px;
+      transition:0.2s ease;
+    }
+
+    .card:hover {
+      transform:translateY(-5px);
+      box-shadow:0 6px 22px rgba(0,0,0,.18);
+    }
+
+    .card h2 {
+      margin:0 0 14px;
+      font-size:1.4rem;
+      color:var(--dark);
+      display:flex;
+      align-items:center;
+      gap:10px;
+    }
+
+    .tag {
+      display:inline-block;
+      padding:6px 12px;
+      border-radius:999px;
+      background:#e3f3ff;
+      color:#004c6d;
+      font-size:0.8rem;
+      margin-bottom:12px;
+      font-weight:600;
+    }
+
+    /* EXERCISE BUTTON */
+    .exercise-btn {
+      display:flex;
+      align-items:center;
+      gap:10px;
+      background:linear-gradient(120deg, #e7f8f1, #d7f2ff);
+      padding:12px 15px;
+      border-radius:12px;
+      margin:8px 0;
+      text-decoration:none;
+      color:#003a52;
+      font-weight:600;
+      transition:0.15s;
+      border:1px solid #cfdff0;
+      position:relative;
+      padding-right:95px; /* espace pour le bouton Terminé */
+    }
+
+    .exercise-btn:hover {
+      background:linear-gradient(120deg, #dff7ed, #cfeaff);
+      transform:translateX(5px);
+      box-shadow:0 4px 10px rgba(0,0,0,0.10);
+    }
+
+    .exercise-btn span.icon {
+      font-size:1.3rem;
+    }
+
+    /* BOUTON ✔ / À FAIRE */
+    .status-btn {
+      position:absolute;
+      right:10px;
+      top:50%;
+      transform:translateY(-50%);
+      padding:5px 10px;
+      border-radius:10px;
+      font-size:14px;
+      border:none;
+      cursor:pointer;
+      font-weight:700;
+      min-width:85px;
+      text-align:center;
+      transition:0.25s ease;
+    }
+
+  </style>
+</head>
+
+<body>
+
+<header>
+  <h1>📚 Plateforme Proactif</h1>
+  <p>Exercices de bureautique, français, emploi, compréhension, jeux…</p>
+</header>
+
+<div class="grid">
+
+  <!-- BUREAUTIQUE -->
+  <div class="card">
+    <span class="tag">Bureautique</span>
+    <h2>🖥️ Exercices Bureautique</h2>
+
+    <a class="exercise-btn" href="exercices/bureautique/editeur-a4.html"><span class="icon">📝</span> Éditeur A4 – Texte</a>
+    <a class="exercise-btn" href="exercices/bureautique/emails-professionnels.html"><span class="icon">📧</span> E-mails professionnels</a>
+    <a class="exercise-btn" href="exercices/bureautique/lettre-motivation.html"><span class="icon">📄</span> Lettre de motivation</a>
+    <a class="exercise-btn" href="exercices/bureautique/miniwindows-mise-en-forme.html"><span class="icon">🗂️</span> MiniWindows – Mise en forme</a>
+    <a class="exercise-btn" href="exercices/bureautique/organiser-documents-dossiers.html"><span class="icon">📁</span> Organiser les documents</a>
+  </div>
+
+  <!-- QUIZ -->
+  <div class="card">
+    <span class="tag">Quiz</span>
+    <h2>❓ Quiz</h2>
+
+    <a class="exercise-btn" href="exercices/quiz/100quiz_html.html"><span class="icon">💯</span> 100 questions</a>
+    <a class="exercise-btn" href="exercices/quiz/comprehension-1.html"><span class="icon">📘</span> Compréhension 1</a>
+    <a class="exercise-btn" href="exercices/quiz/comprehension-2.html"><span class="icon">📗</span> Compréhension 2</a>
+    <a class="exercise-btn" href="exercices/quiz/communication-3.html"><span class="icon">💬</span> Communication</a>
+    <a class="exercise-btn" href="exercices/quiz/examen-ecrit.html"><span class="icon">📝</span> Examen écrit</a>
+  </div>
+
+  <!-- RETAPER -->
+  <div class="card">
+    <span class="tag">Réécriture</span>
+    <h2>⌨️ Re-taper</h2>
+
+    <a class="exercise-btn" href="exercices/retaper/clavier-reecriture.html"><span class="icon">⌨️</span> 100 phrases à réécrire</a>
+  </div>
+
+  <!-- REPONSES OUVERTES -->
+  <div class="card">
+    <span class="tag">Expression écrite</span>
+    <h2>📝 Réponses ouvertes</h2>
+
+    <a class="exercise-btn" href="exercices/reponses_ouvertes/competences-pro.html"><span class="icon">🛠️</span> Compétences professionnelles</a>
+    <a class="exercise-btn" href="exercices/reponses_ouvertes/ecrire-en-francais-situations-professionnelle.html"><span class="icon">🏢</span> Situations professionnelles</a>
+    <a class="exercise-btn" href="exercices/reponses_ouvertes/les-bonnes-attitudes-au-travail.html"><span class="icon">✅</span> Bonnes attitudes</a>
+    <a class="exercise-btn" href="exercices/reponses_ouvertes/simulation-de-situations-professionnelles.html"><span class="icon">🎭</span> Simulation</a>
+  </div>
+
+  <!-- RECHERCHE EMPLOI -->
+  <div class="card">
+    <span class="tag">Recherche d’emploi</span>
+    <h2>🔎 Recherche d’emploi</h2>
+
+    <a class="exercise-btn" href="exercices/recherche_emploi/formulaire-profil.html"><span class="icon">📋</span> Mon profil</a>
+    <a class="exercise-btn" href="exercices/recherche_emploi/parler-de-mon-dernier-travail.html"><span class="icon">🏭</span> Dernier travail</a>
+    <a class="exercise-btn" href="exercices/recherche_emploi/qualites-personnelles.html"><span class="icon">🌟</span> Qualités</a>
+    <a class="exercise-btn" href="exercices/recherche_emploi/questions-entretien.html"><span class="icon">❓</span> Questions entretien</a>
+  </div>
+
+  <!-- AUDIO -->
+  <div class="card">
+    <span class="tag">Audio</span>
+    <h2>🎧 Compréhension orale</h2>
+
+    <a class="exercise-btn" href="exercices/audio/audio-fabrice.html"><span class="icon">🎧</span> Entretien – Fabrice</a>
+  </div>
+
+  <!-- APPARIER -->
+  <div class="card">
+    <span class="tag">Apparier</span>
+    <h2>🔗 Apparier</h2>
+
+    <a class="exercise-btn" href="exercices/apparier/apparier-metiers-outils.html"><span class="icon">🔧</span> Métiers – outils</a>
+  </div>
+
+  <!-- JEUX -->
+  <div class="card">
+    <span class="tag">Jeux</span>
+    <h2>🎮 Jeux</h2>
+
+    <a class="exercise-btn" href="exercices/jeux/heure.html"><span class="icon">🕒</span> L’heure</a>
+    <a class="exercise-btn" href="exercices/jeux/jeu-clics.html"><span class="icon">🖱️</span> Clics</a>
+    <a class="exercise-btn" href="exercices/jeux/jeu-directions.html"><span class="icon">🧭</span> Directions</a>
+    <a class="exercise-btn" href="exercices/jeux/mot-image-metiers.html"><span class="icon">👷</span> Mot ↔ image métiers</a>
+  </div>
+
+</div>
+
+
+<!-- SCRIPTS -->
+<script>
+
+/* MODE SOMBRE (Touche M) */
+if (localStorage.getItem("darkMode") === "true") {
+  document.body.classList.add("dark");
+}
+
+document.addEventListener("keydown", e => {
+  if (e.key === "m") {
+    document.body.classList.toggle("dark");
+    localStorage.setItem("darkMode", document.body.classList.contains("dark"));
+  }
+});
+
+
+/* PROGRESSION ✔ / À FAIRE */
+const progression = JSON.parse(localStorage.getItem("progression") || "{}");
+
+document.querySelectorAll(".exercise-btn").forEach(btn => {
+
+  const url = btn.getAttribute("href");
+
+  // Créer bouton de statut
+  const statusBtn = document.createElement("button");
+  statusBtn.className = "status-btn";
+  btn.appendChild(statusBtn);
+
+  // Applique l'état visuel
+  function sync() {
+    if (progression[url]) {
+      statusBtn.textContent = "✔ Terminé";
+      statusBtn.style.background = "#18c96e";
+      statusBtn.style.color = "white";
+
+      btn.style.background = "#d6ffe8";
+      btn.style.borderColor = "#9ee7c3";
+      btn.style.boxShadow = "0 4px 12px rgba(0,150,80,0.25)";
+    } else {
+      statusBtn.textContent = "À faire";
+      statusBtn.style.background = "#f0f0f0";
+      statusBtn.style.color = "#444";
+
+      btn.style.background = "linear-gradient(120deg, #e7f8f1, #d7f2ff)";
+      btn.style.borderColor = "#cfdff0";
+      btn.style.boxShadow = "none";
+    }
+  }
+
+  sync(); // initialisation
+
+  // Toggle statut
+  statusBtn.addEventListener("click", e => {
+    e.preventDefault();
+    progression[url] = !progression[url];
+    localStorage.setItem("progression", JSON.stringify(progression));
+    sync();
+  });
+
+});
+</script>
+
+</body>
+</html>

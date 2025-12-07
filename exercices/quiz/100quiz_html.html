@@ -1,0 +1,503 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8" />
+<title>Quiz – Proactif</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;600;700&display=swap" rel="stylesheet" />
+
+<style>
+  body {
+    margin: 0;
+    font-family: "Open Sans", Arial, sans-serif;
+    background: linear-gradient(135deg, #dff3ff, #c9f7e7);
+    padding: 20px;
+  }
+
+  .app {
+    max-width: 600px;
+    margin: auto;
+    background: #fff;
+    padding: 25px;
+    border-radius: 16px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  }
+
+  h1 {
+    text-align: center;
+    margin-top: 0;
+    color: #003a52;
+  }
+
+  .question {
+    font-size: 1.3rem;
+    margin-bottom: 20px;
+    font-weight: 600;
+    opacity: 1;
+    transform: translateX(0);
+    transition: opacity 0.45s ease, transform 0.45s ease;
+  }
+
+  .choice {
+    padding: 12px 15px;
+    margin-bottom: 12px;
+    background: #eef3f9;
+    border-radius: 12px;
+    cursor: pointer;
+    border: 2px solid transparent;
+    transition: 0.25s ease, transform 0.2s ease;
+  }
+
+  .choice:hover {
+    background: #e0ebff;
+    transform: scale(1.02);
+  }
+
+  .correct {
+    border-color: #2ecc71 !important;
+    background: #d8ffe7 !important;
+  }
+
+  .wrong {
+    border-color: #e74c3c !important;
+    background: #ffe1e1 !important;
+  }
+
+  #message {
+    margin-top: 15px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    text-align: center;
+  }
+
+  #scoreBox {
+    margin-top: 20px;
+    text-align: center;
+    font-size: 1.1rem;
+  }
+
+  #progressContainer {
+    width: 100%;
+    background: #e5e5e5;
+    border-radius: 10px;
+    height: 12px;
+    margin-bottom: 15px;
+    overflow: hidden;
+  }
+
+  #progressBar {
+    height: 12px;
+    width: 0%;
+    background: #1a8c6d;
+    transition: width 0.4s ease, background 0.4s ease;
+  }
+
+  button {
+    margin-top: 20px;
+    padding: 10px 15px;
+    background: #1a8c6d;
+    color: #fff;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: 0.25s ease;
+  }
+
+  button:hover {
+    filter: brightness(1.05);
+  }
+</style>
+</head>
+<body>
+<div class="app">
+  <h1>📝 Quiz</h1>
+
+  <!-- Consignes en haut -->
+  <div style="margin-bottom:20px;padding:15px;background:#eef3f9;border-radius:12px;font-size:0.95rem;line-height:1.5;">
+    <b>Consignes :</b><br />
+    ✔ Choisissez la bonne réponse.<br />
+    ✔ Une seule réponse par question.<br />
+    ✔ Si la réponse est fausse, la bonne réponse s'affiche en vert.<br />
+    ✔ Même si la réponse est fausse, le quiz avance à la question suivante.<br />
+    ✔ Votre score augmente uniquement en cas de bonne réponse.<br />
+    ✔ Progression sauvegardée automatiquement.
+  </div>
+
+  <!-- Progression -->
+  <div id="progressContainer">
+    <div id="progressBar"></div>
+  </div>
+
+  <p><b>Question :</b> <span id="num"></span> / <span id="total"></span></p>
+
+  <div id="question" class="question"></div>
+  <div id="choices"></div>
+  <div id="message"></div>
+
+  <div id="scoreBox">Score : <span id="score">0</span></div>
+
+  <!-- Compteur par niveau -->
+  <div id="levelCount" style="text-align:center;margin-top:10px;font-size:0.95rem;color:#003a52;font-weight:600;">
+    ⭐ 0 / 0 | ⭐⭐ 0 / 0 | ⭐⭐⭐ 0 / 0 | ⭐⭐⭐⭐ 0 / 0
+  </div>
+
+  <button id="reset">🔄 Réinitialiser</button>
+
+  <input id="prenomInput" type="text" placeholder="Votre prénom" style="width:100%;padding:10px;margin-top:15px;border-radius:8px;border:1px solid #ccc;font-size:1rem;">
+
+  <button id="certif">📄 Télécharger certificat PDF</button>
+</div>
+
+<script>
+// ----------------------- QUESTIONS -----------------------
+let quiz = [
+  /* ⭐ (A1 très facile) */
+  { q:"Quel fruit est jaune ?", correct:"banane", wrong:["pomme","raisin"], level:"⭐" },
+  { q:"Combien font 2 + 2 ?", correct:"4", wrong:["3","5"], level:"⭐" },
+  { q:"Quel animal miaule ?", correct:"chat", wrong:["chien","vache"], level:"⭐" },
+  { q:"Que boit-on quand on a soif ?", correct:"eau", wrong:["farine","riz"], level:"⭐" },
+  { q:"Quelle couleur a le ciel ?", correct:"bleu", wrong:["vert","rouge"], level:"⭐" },
+  { q:"Avec quoi écrit-on ?", correct:"stylo", wrong:["assiette","fourchette"], level:"⭐" },
+  { q:"Quel moyen de transport roule ?", correct:"bus", wrong:["avion","bateau"], level:"⭐" },
+
+  /* ⭐⭐ (A1 normal) */
+  { q:"Pourquoi range-t-on les documents ?", correct:"Pour les retrouver", wrong:["Pour décorer","Pour les perdre"], level:"⭐⭐" },
+  { q:"Pourquoi venir à l’heure au rendez-vous ?", correct:"Pour respecter la personne", wrong:["Pour finir plus tôt","Pour éviter de parler"], level:"⭐⭐" },
+  { q:"Quel document accompagne souvent un CV ?", correct:"Lettre de motivation", wrong:["Ordonnance","Facture"], level:"⭐⭐" },
+  { q:"Pourquoi vérifier une adresse avant un rendez-vous ?", correct:"Pour ne pas se tromper", wrong:["Pour gagner de l’argent","Pour éviter d’écrire"], level:"⭐⭐" },
+  { q:"Pourquoi relire un message avant d’envoyer ?", correct:"Pour corriger les erreurs", wrong:["Pour le rendre plus long","Pour ajouter des emojis"], level:"⭐⭐" },
+  { q:"Quel comportement montre du respect ?", correct:"Écouter", wrong:["Interrompre","Crier"], level:"⭐⭐" },
+  { q:"Pourquoi organiser son ordinateur ?", correct:"Pour retrouver les fichiers", wrong:["Pour remplir le disque","Pour supprimer tout"], level:"⭐⭐" },
+  { q:"Que doit-on faire avant un entretien ?", correct:"Préparer des réponses", wrong:["Regarder la TV","Changer de vêtement 10 fois"], level:"⭐⭐" },
+  { q:"Pourquoi avoir une adresse email ?", correct:"Pour recevoir des informations", wrong:["Pour jouer","Pour décorer l’ordinateur"], level:"⭐⭐" },
+  { q:"À quoi sert un mot de passe ?", correct:"Protéger son compte", wrong:["Partager à tout le monde","Ouvrir la porte"], level:"⭐⭐" },
+
+  /* ⭐⭐⭐ (A2 – niveau moyen) */
+  { q:"Pourquoi lire attentivement une offre d’emploi ?", correct:"Pour vérifier les tâches", wrong:["Pour compter les lettres","Pour changer d’adresse"], level:"⭐⭐⭐" },
+  { q:"Quel est l’objectif d’un CV ?", correct:"Présenter ses compétences", wrong:["Écrire sa vie","Envoyer une photo"], level:"⭐⭐⭐" },
+  { q:"Pourquoi arriver en avance à un entretien ?", correct:"Pour montrer son sérieux", wrong:["Pour repartir vite","Pour éviter les questions"], level:"⭐⭐⭐" },
+  { q:"Pourquoi préparer une tenue propre ?", correct:"Donner une bonne impression", wrong:["Pour dormir","Pour faire du sport"], level:"⭐⭐⭐" },
+  { q:"Pourquoi vérifier son téléphone ?", correct:"Pour être joignable", wrong:["Pour jouer","Pour vider la batterie"], level:"⭐⭐⭐" },
+  { q:"Quel est un comportement professionnel ?", correct:"Parler calmement", wrong:["Crier","Ignorer les gens"], level:"⭐⭐⭐" },
+  { q:"Pourquoi poser des questions en formation ?", correct:"Pour comprendre mieux", wrong:["Pour déranger","Pour perdre du temps"], level:"⭐⭐⭐" },
+  { q:"Pourquoi prendre des notes ?", correct:"Pour retenir les informations", wrong:["Pour dessiner","Pour écrire des secrets"], level:"⭐⭐⭐" },
+  { q:"Pourquoi organiser son agenda ?", correct:"Pour ne pas oublier", wrong:["Pour jouer","Pour écrire au hasard"], level:"⭐⭐⭐" },
+  { q:"Pourquoi répondre rapidement à un employeur ?", correct:"Pour montrer sa motivation", wrong:["Pour montrer son stress","Pour éviter l’offre"], level:"⭐⭐⭐" },
+
+  /* ⭐⭐⭐ (A2-B1 intermédiaire) */
+  { q:"Que signifie ‘être ponctuel’ ?", correct:"Arriver à l’heure", wrong:["Arriver quand on veut","Arriver très tard"], level:"⭐⭐⭐" },
+  { q:"Pourquoi relire son CV régulièrement ?", correct:"Pour le mettre à jour", wrong:["Pour ajouter des dessins","Pour supprimer tout"], level:"⭐⭐⭐" },
+  { q:"Quel est l’avantage d’un emploi à temps partiel ?", correct:"Avoir plus de flexibilité", wrong:["Gagner plus d’argent automatiquement","Ne jamais travailler"], level:"⭐⭐⭐" },
+  { q:"Pourquoi vérifier les horaires de bus/train ?", correct:"Pour éviter d’être en retard", wrong:["Pour parler au chauffeur","Pour changer de ville"], level:"⭐⭐⭐" },
+  { q:"Quel est un comportement responsable ?", correct:"Prévenir en cas d’absence", wrong:["Ne rien dire","Éteindre son téléphone"], level:"⭐⭐⭐" },
+  { q:"Pourquoi lire les consignes d’un exercice ?", correct:"Pour faire correctement", wrong:["Pour aller plus vite","Pour copier quelqu’un"], level:"⭐⭐⭐" },
+  { q:"Quel est l’intérêt de demander de l’aide ?", correct:"Pour progresser", wrong:["Pour paraître faible","Pour ne rien faire"], level:"⭐⭐⭐" },
+  { q:"Pourquoi préparer des questions pour l’entretien ?", correct:"Pour montrer son intérêt", wrong:["Pour remplir le temps","Pour contredire le recruteur"], level:"⭐⭐⭐" },
+  { q:"Pourquoi vérifier les conditions d’un contrat ?", correct:"Pour comprendre ses droits", wrong:["Pour ignorer les règles","Pour payer plus"], level:"⭐⭐⭐" },
+  { q:"Pourquoi tenir un dossier professionnel ?", correct:"Pour suivre ses démarches", wrong:["Pour jeter plus tard","Pour décorer"], level:"⭐⭐⭐" },
+
+  /* ⭐⭐⭐⭐ (B1 difficiles) */
+  { q:"Quelle attitude aide à résoudre un conflit au travail ?", correct:"Discuter calmement", wrong:["Crier","Ignorer le problème"], level:"⭐⭐⭐⭐" },
+  { q:"Pourquoi analyser une annonce avant de postuler ?", correct:"Pour adapter son CV", wrong:["Pour envoyer le même partout","Pour éviter d’écrire"], level:"⭐⭐⭐⭐" },
+  { q:"Quel est l’intérêt de demander un retour après un entretien ?", correct:"S’améliorer pour la suite", wrong:["Se comparer aux autres","Critiquer le recruteur"], level:"⭐⭐⭐⭐" },
+  { q:"Pourquoi est-il utile de préparer des exemples concrets en entretien ?", correct:"Pour montrer son expérience", wrong:["Pour parler longtemps","Pour éviter les questions"], level:"⭐⭐⭐⭐" },
+  { q:"Comment montrer sa motivation à un employeur ?", correct:"Poser des questions pertinentes", wrong:["Regarder son téléphone","Parler d’un autre travail"], level:"⭐⭐⭐⭐" },
+  { q:"Pourquoi gérer correctement ses emails ?", correct:"Pour répondre efficacement", wrong:["Pour avoir plus de spam","Pour ignorer les messages"], level:"⭐⭐⭐⭐" },
+  { q:"Pourquoi respecter les règles de sécurité ?", correct:"Pour éviter les accidents", wrong:["Pour aller plus vite","Pour impressionner les collègues"], level:"⭐⭐⭐⭐" },
+  { q:"Pourquoi respecter les délais ?", correct:"Pour garder la confiance", wrong:["Pour repousser le travail","Pour éviter les collègues"], level:"⭐⭐⭐⭐" },
+  { q:"Pourquoi organiser une journée de travail ?", correct:"Pour être plus efficace", wrong:["Pour perdre du temps","Pour stresser plus"], level:"⭐⭐⭐⭐" },
+  { q:"Quelle qualité facilite le travail en équipe ?", correct:"La communication", wrong:["Le silence total","La critique constante"], level:"⭐⭐⭐⭐" },
+
+  /* ⭐⭐⭐⭐ + nouvelles questions ajoutées */
+  { q:"Pourquoi adapter son CV à chaque offre ?", correct:"Pour correspondre au poste demandé", wrong:["Pour allonger le document","Pour changer la police"], level:"⭐⭐⭐⭐" },
+  { q:"Quelle attitude améliore la communication professionnelle ?", correct:"Poser des questions pour clarifier", wrong:["Supposer sans vérifier","Couper la parole"], level:"⭐⭐⭐⭐" },
+  { q:"Pourquoi préparer un plan avant un entretien ?", correct:"Pour structurer ses idées", wrong:["Pour réciter un texte","Pour éviter les questions"], level:"⭐⭐⭐⭐" },
+
+  /* ⭐ (A1 très facile) – nouvelles questions */
+  { q:"Quel objet sert à couper du papier ?", correct:"ciseaux", wrong:["cuillère","assiette"], level:"⭐" },
+  { q:"Quel aliment est sucré ?", correct:"gâteau", wrong:["riz","pâtes"], level:"⭐" },
+  { q:"Avec quoi boit-on de l’eau ?", correct:"verre", wrong:["chaise","lampe"], level:"⭐" },
+  { q:"Quel animal nage ?", correct:"poisson", wrong:["chat","poule"], level:"⭐" },
+  { q:"Que met-on sur la tête quand il pleut ?", correct:"capuche", wrong:["gants","chaussettes"], level:"⭐" },
+  { q:"Quel appareil sert à appeler ?", correct:"téléphone", wrong:["micro-onde","chaise"], level:"⭐" },
+  { q:"Quel fruit est vert ?", correct:"kiwi", wrong:["fraise","orange"], level:"⭐" },
+  { q:"Où met-on les chaussures ?", correct:"aux pieds", wrong:["aux mains","sur la tête"], level:"⭐" },
+  { q:"Quel objet sert pour écrire au tableau ?", correct:"craie", wrong:["clé","bouteille"], level:"⭐" },
+  { q:"Quel véhicule vole ?", correct:"avion", wrong:["bus","vélo"], level:"⭐" },
+
+  /* ⭐⭐ (A1 normal) – nouvelles questions */
+  { q:"Pourquoi fermer la porte derrière soi ?", correct:"Pour garder la chaleur", wrong:["Pour faire du bruit","Pour embêter quelqu’un"], level:"⭐⭐" },
+  { q:"Pourquoi noter un numéro important ?", correct:"Pour ne pas l’oublier", wrong:["Pour remplir un cahier","Pour s’amuser"], level:"⭐⭐" },
+  { q:"Pourquoi vérifier son sac avant de sortir ?", correct:"Pour ne rien oublier", wrong:["Pour perdre du temps","Pour remplir le sac"], level:"⭐⭐" },
+  { q:"Pourquoi trier ses papiers ?", correct:"Pour mieux s’organiser", wrong:["Pour les cacher","Pour les abîmer"], level:"⭐⭐" },
+  { q:"Pourquoi dire bonjour au travail ?", correct:"Pour être poli", wrong:["Pour demander un service","Pour finir plus tôt"], level:"⭐⭐" },
+  { q:"Pourquoi mettre une alarme le matin ?", correct:"Pour se réveiller à l’heure", wrong:["Pour réveiller les voisins","Pour faire joli"], level:"⭐⭐" },
+  { q:"Pourquoi ranger un bureau ?", correct:"Pour travailler mieux", wrong:["Pour faire joli uniquement","Pour perdre des objets"], level:"⭐⭐" },
+  { q:"Pourquoi lire une notice ?", correct:"Pour comprendre comment faire", wrong:["Pour ignorer","Pour colorier"], level:"⭐⭐" },
+  { q:"Pourquoi vérifier la météo ?", correct:"Pour préparer sa journée", wrong:["Pour changer la météo","Pour s’amuser"], level:"⭐⭐" },
+  { q:"Pourquoi marcher prudemment ?", correct:"Pour éviter de tomber", wrong:["Pour aller plus lentement","Pour jouer"], level:"⭐⭐" },
+
+  /* ⭐⭐⭐ (A2 – nouvelles questions) */
+  { q:"Pourquoi préparer ses questions avant un entretien ?", correct:"Pour être plus clair", wrong:["Pour parler longtemps","Pour éviter de répondre"], level:"⭐⭐⭐" },
+  { q:"Pourquoi envoyer un mail professionnel correctement structuré ?", correct:"Pour être compris facilement", wrong:["Pour décorer","Pour écrire beaucoup"], level:"⭐⭐⭐" },
+  { q:"Pourquoi organiser ses priorités ?", correct:"Pour travailler plus efficacement", wrong:["Pour éviter de travailler","Pour compliquer la tâche"], level:"⭐⭐⭐" },
+  { q:"Pourquoi répondre poliment ?", correct:"Pour garder une bonne relation", wrong:["Pour paraître supérieur","Pour ignorer l’autre"], level:"⭐⭐⭐" },
+  { q:"Pourquoi préparer des documents avant un rendez-vous ?", correct:"Pour ne rien oublier", wrong:["Pour se fatiguer","Pour faire joli"], level:"⭐⭐⭐" },
+  { q:"Pourquoi vérifier une consigne deux fois ?", correct:"Pour éviter les erreurs", wrong:["Pour perdre du temps","Pour embêter"], level:"⭐⭐⭐" },
+  { q:"Pourquoi apprendre de nouvelles compétences ?", correct:"Pour évoluer professionnellement", wrong:["Pour se compliquer la vie","Pour faire comme les autres"], level:"⭐⭐⭐" },
+  { q:"Pourquoi respecter les autres en réunion ?", correct:"Pour faciliter la communication", wrong:["Pour finir plus tôt","Pour ignorer leurs idées"], level:"⭐⭐⭐" },
+  { q:"Pourquoi expliquer clairement un problème ?", correct:"Pour trouver une solution", wrong:["Pour accuser quelqu’un","Pour créer un conflit"], level:"⭐⭐⭐" },
+  { q:"Pourquoi prendre le temps de relire un document ?", correct:"Pour vérifier qu’il est correct", wrong:["Pour le rendre plus long","Pour modifier tout"], level:"⭐⭐⭐" },
+  { q:"Pourquoi tenir une liste de tâches ?", correct:"Pour ne rien oublier", wrong:["Pour faire joli","Pour perdre du temps"], level:"⭐⭐⭐" },
+  { q:"Pourquoi répondre rapidement à un recruteur ?", correct:"Pour montrer son intérêt", wrong:["Pour paraître stressé","Pour poser trop de questions"], level:"⭐⭐⭐" },
+  { q:"Pourquoi préparer un dossier complet ?", correct:"Pour avoir toutes les informations", wrong:["Pour remplir un sac","Pour tout mélanger"], level:"⭐⭐⭐" },
+  { q:"Pourquoi discuter calmement avec un collègue ?", correct:"Pour résoudre un problème", wrong:["Pour éviter de parler","Pour créer un conflit"], level:"⭐⭐⭐" },
+  { q:"Pourquoi vérifier un horaire de réunion ?", correct:"Pour arriver à l’heure", wrong:["Pour arriver en retard","Pour changer la réunion"], level:"⭐⭐⭐" },
+
+  /* ⭐⭐⭐⭐ (B1 – nouvelles questions difficiles) */
+  { q:"Pourquoi demander un feedback après une tâche ?", correct:"Pour s’améliorer", wrong:["Pour être critiqué","Pour ignorer les conseils"], level:"⭐⭐⭐⭐" },
+  { q:"Pourquoi analyser une erreur calmement ?", correct:"Pour comprendre et progresser", wrong:["Pour accuser quelqu’un","Pour abandonner"], level:"⭐⭐⭐⭐" },
+  { q:"Pourquoi reformuler une consigne ?", correct:"Pour vérifier qu’on a compris", wrong:["Pour contredire","Pour rallonger la discussion"], level:"⭐⭐⭐⭐" },
+  { q:"Pourquoi préparer des exemples précis en entretien ?", correct:"Pour montrer son expérience", wrong:["Pour se vanter","Pour remplir le temps"], level:"⭐⭐⭐⭐" },
+  { q:"Pourquoi gérer son stress au travail ?", correct:"Pour rester efficace", wrong:["Pour impressionner","Pour éviter les tâches"], level:"⭐⭐⭐⭐" },
+  { q:"Pourquoi écouter activement en réunion ?", correct:"Pour comprendre et participer", wrong:["Pour juger","Pour ignorer les autres"], level:"⭐⭐⭐⭐" },
+  { q:"Pourquoi adapter sa communication selon l’interlocuteur ?", correct:"Pour être compris", wrong:["Pour compliquer","Pour éviter de parler"], level:"⭐⭐⭐⭐" },
+  { q:"Pourquoi vérifier la qualité d’un document avant envoi ?", correct:"Pour éviter des problèmes", wrong:["Pour perdre du temps","Pour ajouter des erreurs"], level:"⭐⭐⭐⭐" },
+  { q:"Pourquoi relire un contrat attentivement ?", correct:"Pour comprendre les conditions", wrong:["Pour le signer vite","Pour tout modifier"], level:"⭐⭐⭐⭐" },
+  { q:"Pourquoi garder une attitude professionnelle ?", correct:"Pour inspirer confiance", wrong:["Pour paraître strict","Pour éviter les autres"], level:"⭐⭐⭐⭐" },
+  { q:"Pourquoi poser des questions lors d’une formation ?", correct:"Pour progresser", wrong:["Pour ralentir le cours","Pour tester le formateur"], level:"⭐⭐⭐⭐" },
+  { q:"Pourquoi faire preuve d’initiative au travail ?", correct:"Pour montrer sa motivation", wrong:["Pour compliquer la tâche","Pour éviter le travail d’équipe"], level:"⭐⭐⭐⭐" },
+  { q:"Pourquoi clarifier un malentendu rapidement ?", correct:"Pour éviter un conflit", wrong:["Pour créer du suspense","Pour ignorer le problème"], level:"⭐⭐⭐⭐" },
+  { q:"Pourquoi préparer un objectif clair pour sa journée ?", correct:"Pour rester focus", wrong:["Pour stresser plus","Pour remplir le temps"], level:"⭐⭐⭐⭐" },
+  { q:"Pourquoi proposer des solutions lors d’un problème ?", correct:"Pour aider à avancer", wrong:["Pour critiquer","Pour se plaindre"], level:"⭐⭐⭐⭐" }
+];
+
+// Mélange à l’intérieur de chaque niveau mais ordre ⭐ → ⭐⭐ → ⭐⭐⭐ → ⭐⭐⭐⭐
+function shuffleInDifficultyOrder() {
+  const star1 = quiz.filter(q => q.level === "⭐").sort(() => Math.random() - 0.5);
+  const star2 = quiz.filter(q => q.level === "⭐⭐").sort(() => Math.random() - 0.5);
+  const star3 = quiz.filter(q => q.level === "⭐⭐⭐").sort(() => Math.random() - 0.5);
+  const star4 = quiz.filter(q => q.level === "⭐⭐⭐⭐").sort(() => Math.random() - 0.5);
+  quiz = [...star1, ...star2, ...star3, ...star4];
+}
+
+shuffleInDifficultyOrder();
+
+// Suivi des questions réussies
+let done = JSON.parse(localStorage.getItem("quiz_done")) || {};
+
+let index = parseInt(localStorage.getItem("quiz_index")) || 0;
+let score = parseInt(localStorage.getItem("quiz_score")) || 0;
+document.getElementById("score").textContent = score;
+
+// --------------------- COMPTEURS PAR NIVEAU ---------------------
+function updateLevelCounters() {
+  const total1 = quiz.filter(q => q.level === "⭐").length;
+  const total2 = quiz.filter(q => q.level === "⭐⭐").length;
+  const total3 = quiz.filter(q => q.level === "⭐⭐⭐").length;
+  const total4 = quiz.filter(q => q.level === "⭐⭐⭐⭐").length;
+
+  const done1 = Object.keys(done).filter(i => quiz[i] && quiz[i].level === "⭐").length;
+  const done2 = Object.keys(done).filter(i => quiz[i] && quiz[i].level === "⭐⭐").length;
+  const done3 = Object.keys(done).filter(i => quiz[i] && quiz[i].level === "⭐⭐⭐").length;
+  const done4 = Object.keys(done).filter(i => quiz[i] && quiz[i].level === "⭐⭐⭐⭐").length;
+
+  document.getElementById("levelCount").innerHTML =
+    `⭐ ${done1} / ${total1} | ⭐⭐ ${done2} / ${total2} | ⭐⭐⭐ ${done3} / ${total3} | ⭐⭐⭐⭐ ${done4} / ${total4}`;
+}
+
+// --------------------- AFFICHAGE QUESTION ---------------------
+function loadQuestion() {
+  const questionBox = document.getElementById("question");
+
+  if (index >= quiz.length) {
+    questionBox.textContent = "🎉 Quiz terminé !";
+    document.getElementById("choices").innerHTML = "";
+    document.getElementById("num").textContent = quiz.length;
+    document.getElementById("total").textContent = quiz.length;
+
+    const barEnd = document.getElementById("progressBar");
+    barEnd.style.width = "100%";
+    barEnd.style.background = "#2ecc71";
+    return;
+  }
+
+  const q = quiz[index];
+
+  questionBox.style.opacity = 0;
+  questionBox.style.transform = "translateX(25px)";
+  setTimeout(() => {
+    questionBox.style.opacity = 1;
+    questionBox.style.transform = "translateX(0px)";
+  }, 40);
+
+  document.getElementById("num").textContent = index + 1;
+  document.getElementById("total").textContent = quiz.length;
+  questionBox.innerHTML = `${q.q}<br><span style='font-size:0.9rem;color:#555;'>Difficulté : <b>${q.level}</b></span>`;
+
+  const progress = (index / quiz.length) * 100;
+  const bar = document.getElementById("progressBar");
+  bar.style.width = progress + "%";
+  const ratio = quiz.length > 0 ? score / quiz.length : 0;
+  bar.style.background = ratio > 0.66 ? "#2ecc71" : ratio > 0.33 ? "#f1c40f" : "#e74c3c";
+
+  const answers = [q.correct, ...q.wrong].sort(() => Math.random() - 0.5);
+  const box = document.getElementById("choices");
+  box.innerHTML = "";
+
+  answers.forEach((ans) => {
+    const div = document.createElement("div");
+    div.className = "choice";
+    div.textContent = ans;
+    div.onclick = () => checkAnswer(div, ans);
+    box.appendChild(div);
+  });
+}
+
+// --------------------- RÉPONSE ---------------------
+function checkAnswer(div, ans) {
+  const q = quiz[index];
+  const all = document.querySelectorAll(".choice");
+  all.forEach((c) => (c.onclick = null));
+
+  const questionBox = document.getElementById("question");
+
+  if (ans === q.correct) {
+    div.classList.add("correct");
+    div.style.transform = "scale(1.1)";
+    document.getElementById("message").textContent = "✅ Bravo !";
+    score++;
+    localStorage.setItem("quiz_score", score);
+    document.getElementById("score").textContent = score;
+
+    done[index] = true;
+    localStorage.setItem("quiz_done", JSON.stringify(done));
+
+    questionBox.style.opacity = 1;
+    setTimeout(() => {
+      questionBox.style.opacity = 0;
+      questionBox.style.transform = "translateX(-25px)";
+    }, 150);
+
+    setTimeout(() => {
+      index++;
+      localStorage.setItem("quiz_index", index);
+      document.getElementById("message").textContent = "";
+      updateLevelCounters();
+      loadQuestion();
+    }, 650);
+  } else {
+    div.classList.add("wrong");
+    document.getElementById("message").textContent = "❌ Incorrect";
+
+    all.forEach((c) => {
+      if (c.textContent === q.correct) c.classList.add("correct");
+    });
+
+    questionBox.style.opacity = 1;
+    setTimeout(() => {
+      questionBox.style.opacity = 0;
+      questionBox.style.transform = "translateX(-25px)";
+    }, 150);
+
+    setTimeout(() => {
+      index++;
+      localStorage.setItem("quiz_index", index);
+      document.getElementById("message").textContent = "";
+      loadQuestion();
+    }, 1000);
+  }
+}
+
+// --------------------- RESET ---------------------
+document.getElementById("reset").onclick = () => {
+  // Remettre toutes les valeurs à zéro
+  index = 0;
+  score = 0;
+  done = {};
+
+  // Vider le localStorage
+  localStorage.removeItem("quiz_index");
+  localStorage.removeItem("quiz_score");
+  localStorage.removeItem("quiz_done");
+
+  // Remettre l'affichage
+  document.getElementById("score").textContent = score;
+  document.getElementById("message").textContent = "";
+
+  // Remélanger par niveau et repartir à la première question
+  shuffleInDifficultyOrder();
+  updateLevelCounters();
+  loadQuestion();
+};
+
+updateLevelCounters();
+loadQuestion();
+</script>
+
+<!-- PDF libs -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+<script>
+// --------------------- CERTIFICAT PDF ---------------------
+document.getElementById("certif").onclick = async () => {
+  if (typeof html2canvas === "undefined" || !window.jspdf) {
+    alert("La fonction PDF n'est pas disponible (librairies manquantes).");
+    return;
+  }
+
+  const prenom = document.getElementById("prenomInput").value.trim();
+  if (!prenom) {
+    alert("Veuillez écrire votre prénom dans le champ prévu.");
+    return;
+  }
+
+  const fileName = prenom.replace(/[^a-zA-Z0-9_-]/g, "_") + "_Certificat.pdf";
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF({ unit: "px", format: "a4" });
+
+  const cert = document.createElement("div");
+  cert.style.width = "600px";
+  cert.style.padding = "40px";
+  cert.style.textAlign = "center";
+  cert.style.fontFamily = "Open Sans";
+
+  const termine = index >= quiz.length;
+  const texteScore = termine
+    ? `<p style='font-size:22px;margin-top:20px;'><b>Score final : ${score} / ${quiz.length}</b></p>`
+    : `<p style='font-size:22px;margin-top:20px; color:#b8860b;'><b>Score actuel : ${score} / ${quiz.length}</b><br>(Quiz non terminé)</p>`;
+
+  const progression = index >= quiz.length ? `${quiz.length} / ${quiz.length}` : `${index} / ${quiz.length}`;
+
+  let medal = "";
+  if (score >= 100) medal = "👑 Expert";
+  else if (score >= 50) medal = "🥇 Or";
+  else if (score >= 25) medal = "🥈 Argent";
+  else if (score >= 10) medal = "🥉 Bronze";
+
+  cert.innerHTML =
+    `<h2 style='color:#003a52;'>📄 Certificat</h2>` +
+    `<p>Ce certificat atteste que <b>${prenom}</b> a participé au quiz.</p>` +
+    texteScore +
+    `<p style='font-size:18px;margin-top:5px;color:#003a52;'>Question : <b>${progression}</b></p>` +
+    `<p style='margin-top:40px;font-size:14px;color:#555;'>Proactif – Plateforme d’Autonomie</p>` +
+    `<p style='margin-top:10px;font-size:14px;color:#555;'>Date : <b>${new Date().toLocaleDateString('fr-CH')}</b></p>` +
+    `<p style='font-size:18px;margin-top:15px;color:#000;'>Médaille obtenue : <b>${medal || "—"}</b></p>`;
+
+  document.body.appendChild(cert);
+  const canvas = await html2canvas(cert);
+  const img = canvas.toDataURL("image/png", 1.0);
+  document.body.removeChild(cert);
+
+  const pageWidth = doc.internal.pageSize.getWidth();
+  const ratio = canvas.height / canvas.width;
+  const imgHeight = pageWidth * ratio;
+
+  doc.addImage(img, "PNG", 0, 20, pageWidth, imgHeight);
+  doc.save(fileName);
+};
+</script>
+
+</body>
+</html>

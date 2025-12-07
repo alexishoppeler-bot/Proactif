@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Organiser des documents professionnels</title>
+
+<style>
+body{
+  font-family:Arial,sans-serif;
+  background:#eef3f9;
+  padding:20px;
+}
+.container{
+  max-width:1200px;
+  margin:auto;
+  background:white;
+  padding:30px;
+  border-radius:20px;
+  box-shadow:0 6px 25px rgba(0,0,0,.12);
+}
+h1{text-align:center;color:#004c97}
+.subtitle{text-align:center;color:#555;margin-bottom:10px}
+.counter{text-align:center;font-weight:bold;color:#004c97;margin-bottom:20px}
+
+.zone{display:flex;gap:24px}
+.docs,.folders{flex:1;max-height:600px;overflow-y:auto}
+.docs{border-right:2px solid #e0e6f7;padding-right:12px}
+.docs h2,.folders h2{
+  position:sticky;top:0;background:white;color:#004c97;z-index:5
+}
+
+.doc{
+  background:#f8faff;
+  padding:10px;
+  margin-bottom:8px;
+  border-radius:8px;
+  border:1px solid #cfd8ff;
+  cursor:grab;
+}
+.doc:active{cursor:grabbing}
+
+.folder{
+  background:#eaf1ff;
+  padding:14px;
+  border-radius:14px;
+  margin-bottom:12px;
+  border:2px dashed #004c97;
+}
+.folder-title{font-weight:bold}
+.folder.correct{border-color:#2e8b57;background:#e8f6ee}
+.folder.error{border-color:#b00020;background:#fdeaea}
+
+/* reset caché */
+#reset{
+  position:fixed;
+  bottom:4px;right:4px;
+  width:28px;height:28px;
+  border:none;
+  background:transparent;
+  opacity:0;
+}
+#reset::after{content:"♻️"}
+</style>
+</head>
+
+<body>
+<div class="container">
+
+<h1>📂 Organiser des documents professionnels</h1>
+<div class="subtitle">Classe chaque document dans le bon dossier</div>
+<div id="counter" class="counter">0 / 80 classés</div>
+
+<div class="zone">
+
+  <div class="docs">
+    <h2>📄 Documents</h2>
+    <div id="docsContainer"></div>
+  </div>
+
+  <div class="folders">
+    <h2>📁 Dossiers</h2>
+    <div class="folder" data-type="orp"><div class="folder-title">📁 ORP / Chômage</div></div>
+    <div class="folder" data-type="salaires"><div class="folder-title">📁 Fiches de salaire</div></div>
+    <div class="folder" data-type="attestations"><div class="folder-title">📁 Attestations / Certificats</div></div>
+    <div class="folder" data-type="contrats"><div class="folder-title">📁 Contrats de travail</div></div>
+    <div class="folder" data-type="assurances"><div class="folder-title">📁 Assurances</div></div>
+    <div class="folder" data-type="factures"><div class="folder-title">📁 Factures / Impôts</div></div>
+    <div class="folder" data-type="cv"><div class="folder-title">📁 CV</div></div>
+    <div class="folder" data-type="lm"><div class="folder-title">📁 Lettres de motivation</div></div>
+  </div>
+
+</div>
+</div>
+
+<button id="reset" onclick="resetAll()"></button>
+
+<script>
+const KEY = "docs_autosave_v3";
+
+/* ===== DONNÉES ===== */
+const DATA = [
+  // ORP
+  ...Array.from({length:10},(_,i)=>["orp","ORP_"+(i+1)]),
+  // SALAIRES
+  ...Array.from({length:10},(_,i)=>["salaires","Salaire_"+(i+1)]),
+  // ATTESTATIONS
+  ...Array.from({length:10},(_,i)=>["attestations","Attestation_"+(i+1)]),
+  // CONTRATS
+  ...Array.from({length:10},(_,i)=>["contrats","Contrat_"+(i+1)]),
+  // ASSURANCES
+  ...Array.from({length:10},(_,i)=>["assurances","Assurance_"+(i+1)]),
+  // FACTURES
+  ...Array.from({length:10},(_,i)=>["factures","Facture_"+(i+1)]),
+  // CV
+  ...Array.from({length:10},(_,i)=>["cv","CV_"+(i+1)]),
+  // LM
+  ...Array.from({length:10},(_,i)=>["lm","LM_"+(i+1)])
+];
+
+/* ===== ÉTAT ===== */
+let state = JSON.parse(localStorage.getItem(KEY));
+if(!state){
+  state = {
+    order: [...DATA].sort(()=>Math.random()-0.5),
+    placed: {}
+  };
+  save();
+}
+
+const docsContainer = document.getElementById("docsContainer");
+const counter = document.getElementById("counter");
+let dragged = null;
+
+render();
+
+/* ===== RENDER ===== */
+function render(){
+  docsContainer.innerHTML="";
+  document.querySelectorAll(".folder .doc").forEach(d=>d.remove());
+
+  state.order.forEach(([type,name])=>{
+    const el = document.createElement("div");
+    el.className="doc";
+    el.textContent="📄 "+name+".pdf";
+    el.draggable=true;
+    el.dataset.type=type;
+    el.dataset.name=name;
+    el.addEventListener("dragstart",()=>dragged=el);
+
+    const targetType = state.placed[name];
+    if(targetType){
+      document.querySelector(`.folder[data-type="${targetType}"]`).appendChild(el);
+    }else{
+      docsContainer.appendChild(el);
+    }
+  });
+  updateCounter();
+}
+
+/* ===== DROP ===== */
+document.querySelectorAll(".folder").forEach(f=>{
+  f.addEventListener("dragover",e=>e.preventDefault());
+  f.addEventListener("drop",()=>{
+    if(!dragged) return;
+    if(dragged.dataset.type === f.dataset.type){
+      state.placed[dragged.dataset.name] = f.dataset.type;
+      save();
+      render();
+      f.classList.add("correct");
+    }else{
+      f.classList.add("error");
+      setTimeout(()=>f.classList.remove("error"),600);
+    }
+    dragged=null;
+  });
+});
+
+/* ===== COUNTER ===== */
+function updateCounter(){
+  const done = Object.keys(state.placed).length;
+  counter.textContent = `${done} / ${state.order.length} classés`;
+}
+
+/* ===== SAVE ===== */
+function save(){
+  localStorage.setItem(KEY, JSON.stringify(state));
+}
+
+/* ===== RESET CACHÉ ===== */
+function resetAll(){
+  if(confirm("Réinitialiser l’exercice ?")){
+    localStorage.removeItem(KEY);
+    location.reload();
+  }
+}
+</script>
+
+</body>
+</html>
