@@ -2,10 +2,10 @@
 <html lang="fr">
 <head>
   <meta charset="UTF-8">
-  <title>Lettre de candidature – base universelle</title>
+  <title>Lettre de candidature – Pro</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <!-- Librairies pour l'export PDF avec mise en forme -->
+  <!-- PDF -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 
@@ -32,6 +32,7 @@
       font-size:20px;
     }
     section{padding:20px}
+
     input,select{
       width:100%;
       padding:10px;
@@ -40,11 +41,15 @@
       margin-bottom:10px;
       font-size:15px;
     }
+    input[readonly]{
+      background:#f2f4f7;
+    }
+
     h3{margin-top:25px;color:#003366}
 
     .toolbar{
       display:flex;
-      gap:10px;
+      justify-content:flex-end;
       padding:12px 20px;
       background:#eef3f9;
       border-top:1px solid #ddd;
@@ -54,16 +59,34 @@
       border-radius:6px;
       font-size:14px;
       cursor:pointer;
+      background:#3f71ff;
+      color:white;
+      border:none;
     }
 
     .letter{
       background:#f9fafb;
-      padding:25px;
-      white-space:pre-line;
-      line-height:1.7;
+      padding:40px 50px;
+      line-height:1.55;
       border-top:1px solid #ddd;
-      font-size:15px;
+      font-size:16px;
       min-height:260px;
+    }
+
+    .sp-12{margin-bottom:12px;}
+    .sp-20{margin-bottom:20px;}
+    .sp-25{margin-bottom:25px;}
+    .sp-45{margin-bottom:45px;}
+
+    .destinataire, .signature{
+      margin-left:auto;
+      margin-right:4cm;
+      width:fit-content;
+      text-align:left;
+      white-space:normal;
+      line-height:1.2;
+      padding:0;
+      margin-bottom:0;
     }
 
     button{
@@ -77,11 +100,13 @@
       border-radius:10px;
       cursor:pointer;
     }
-    button:disabled{
-      background:#b0b8c4;
-      cursor:not-allowed;
-    }
     .reset{background:#777}
+
+    .btn-small{
+      padding:8px 15px;
+      font-size:13px;
+      border-radius:8px;
+    }
 
     .qual-buttons{
       display:grid;
@@ -104,15 +129,22 @@
     }
   </style>
 </head>
+
 <body>
 <div class="app">
   <header>📄 Lettre de candidature professionnelle</header>
 
   <section>
+
     <h3>👤 Expéditeur</h3>
+
+    <div style="display:flex; gap:10px; margin-bottom:15px;">
+      <button class="btn-small" onclick="unlockExpediteur()" style="background:#888;">✏️ Modifier</button>
+      <button class="btn-small" onclick="lockAndSaveExpediteur()" style="background:#2ecc71;">💾 Sauvegarder</button>
+    </div>
+
     <input id="prenom" placeholder="Prénom" oninput="updateLetter()">
     <input id="nom" placeholder="Nom" oninput="updateLetter()">
-    <!-- Version unisex : pas de genre -->
     <input id="adresse" placeholder="Adresse" oninput="updateLetter()">
     <input id="npa" placeholder="NPA" oninput="updateLetter()">
     <input id="ville" placeholder="Ville" oninput="updateLetter()">
@@ -120,9 +152,9 @@
     <input id="mail" placeholder="E-mail" oninput="updateLetter()">
 
     <h3>🏢 Destinataire</h3>
-    <input id="entreprise" placeholder="Nom de l’entreprise" oninput="saveDestinataire();updateLetter()">
-    <input id="adresseEnt" placeholder="Adresse de l’entreprise" oninput="saveDestinataire();updateLetter()">
-    <input id="npaEnt" placeholder="NPA et ville de l’entreprise" oninput="saveDestinataire();updateLetter()">
+    <input id="entreprise" placeholder="Entreprise" oninput="saveDestinataire();updateLetter()">
+    <input id="adresseEnt" placeholder="Adresse entreprise" oninput="saveDestinataire();updateLetter()">
+    <input id="npaEnt" placeholder="NPA + Ville entreprise" oninput="saveDestinataire();updateLetter()">
 
     <h3>📌 Type de candidature</h3>
     <select id="typeCand" onchange="updateLetter()">
@@ -130,241 +162,269 @@
       <option value="spontanee">Candidature spontanée</option>
       <option value="ciblee">Candidature ciblée</option>
     </select>
-    <input id="site" placeholder="Site d’annonce (ex. JobRoom, Indeed…)" oninput="updateLetter()">
-    <input id="poste" placeholder="Poste recherché (à écrire)" oninput="updateLetter()">
 
-    <h3>⭐ Qualités personnelles (max. 3)</h3>
+    <input id="site" placeholder="Site d’annonce (Indeed…)" oninput="updateLetter()">
+    <input id="poste" placeholder="Poste" oninput="updateLetter()">
+
+    <h3>⭐ Qualités (max 3)</h3>
     <div class="qual-buttons">
-      <button type="button" class="qbtn" data-key="ponctuel" onclick="toggleQualite('ponctuel')">Ponctuel</button>
-      <button type="button" class="qbtn" data-key="motive" onclick="toggleQualite('motive')">Motivé·e</button>
-      <button type="button" class="qbtn" data-key="serieux" onclick="toggleQualite('serieux')">Sérieux·se</button>
-      <button type="button" class="qbtn" data-key="autonome" onclick="toggleQualite('autonome')">Autonome</button>
-      <button type="button" class="qbtn" data-key="organise" onclick="toggleQualite('organise')">Organisé·e</button>
-      <button type="button" class="qbtn" data-key="fiable" onclick="toggleQualite('fiable')">Fiable</button>
-      <button type="button" class="qbtn" data-key="respectueux" onclick="toggleQualite('respectueux')">Respectueux·se</button>
-      <button type="button" class="qbtn" data-key="polyvalent" onclick="toggleQualite('polyvalent')">Polyvalent·e</button>
-      <button type="button" class="qbtn" data-key="soigneux" onclick="toggleQualite('soigneux')">Soigneux·se</button>
-      <button type="button" class="qbtn" data-key="rapide" onclick="toggleQualite('rapide')">Rapide</button>
+      <button class="qbtn" data-key="ponctuel" onclick="toggleQualite('ponctuel')">Ponctuel</button>
+      <button class="qbtn" data-key="motive" onclick="toggleQualite('motive')">Motivé·e</button>
+      <button class="qbtn" data-key="serieux" onclick="toggleQualite('serieux')">Sérieux·se</button>
+      <button class="qbtn" data-key="autonome" onclick="toggleQualite('autonome')">Autonome</button>
+      <button class="qbtn" data-key="organise" onclick="toggleQualite('organise')">Organisé·e</button>
+      <button class="qbtn" data-key="fiable" onclick="toggleQualite('fiable')">Fiable</button>
+      <button class="qbtn" data-key="respectueux" onclick="toggleQualite('respectueux')">Respectueux·se</button>
+      <button class="qbtn" data-key="polyvalent" onclick="toggleQualite('polyvalent')">Polyvalent·e</button>
+      <button class="qbtn" data-key="soigneux" onclick="toggleQualite('soigneux')">Soigneux·se</button>
+      <button class="qbtn" data-key="rapide" onclick="toggleQualite('rapide')">Rapide</button>
     </div>
   </section>
 
+  <!-- TOOLBAR SIMPLIFIÉE -->
   <div class="toolbar">
-    <button type="button" onclick="boldSelection()">🅱️ Gras (sélection)</button>
-    <button type="button" onclick="indentSelection()">↦ Retrait (sélection)</button>
-    <button type="button" onclick="exportPDF()">📄 Export PDF</button>
+    <button onclick="exportPDF()">📄 Export PDF</button>
   </div>
 
   <div id="letter" class="letter" contenteditable="true"></div>
-  <button class="reset" type="button" onclick="resetLetterOnly()">🧹 Vider la lettre</button>
-  <button class="reset" type="button" onclick="resetAll()">🔄 Réinitialiser tout</button>
+
+  <button class="reset" onclick="resetLetterOnly()">🧹 Vider la lettre</button>
+  <button class="reset" onclick="resetAll()">🔄 Réinitialiser tout</button>
 </div>
 
 <script>
-// --- ÉTAT ---
-let qualitesChoisies = [];
+/* =============================
+   AUTO-SAUVEGARDE EXPÉDITEUR
+   ============================= */
 
-// --- OUTIL ---
-function lowerFirst(str){
-  if(!str) return '';
-  return str.charAt(0).toLowerCase() + str.slice(1);
+const expFields = ["prenom","nom","adresse","npa","ville","tel","mail"];
+
+function loadExpediteur(){
+  expFields.forEach(id=>{
+    const saved = localStorage.getItem("expediteur_"+id);
+    if(saved !== null){
+      const el = document.getElementById(id);
+      el.value = saved;
+      el.setAttribute("readonly", true);
+    }
+  });
 }
 
-// --- QUALITÉS ---
+function unlockExpediteur(){
+  expFields.forEach(id=>{
+    document.getElementById(id).removeAttribute("readonly");
+  });
+  alert("Modification activée.");
+}
+
+function lockAndSaveExpediteur(){
+  expFields.forEach(id=>{
+    const el = document.getElementById(id);
+    localStorage.setItem("expediteur_"+id, el.value);
+    el.setAttribute("readonly", true);
+  });
+  alert("Informations sauvegardées !");
+  updateLetter();
+}
+
+/* =============================
+   QUALITÉS
+   ============================= */
+let qualitesChoisies = [];
+
 function toggleQualite(key){
   const i = qualitesChoisies.indexOf(key);
-  if(i > -1){
-    qualitesChoisies.splice(i,1); // retirer
-  } else {
-    if(qualitesChoisies.length >= 3) return; // max 3
-    qualitesChoisies.push(key);
-  }
+  if(i > -1) qualitesChoisies.splice(i,1);
+  else if(qualitesChoisies.length < 3) qualitesChoisies.push(key);
 
-  document.querySelectorAll('.qbtn').forEach(b => {
-    b.classList.toggle('active', qualitesChoisies.includes(b.dataset.key));
+  document.querySelectorAll('.qbtn').forEach(btn=>{
+    btn.classList.toggle('active', qualitesChoisies.includes(btn.dataset.key));
   });
 
   updateLetter();
 }
 
-// --- LOGIQUE PRINCIPALE ---
+/* =============================
+   LETTRE AUTOMATIQUE
+   ============================= */
 function updateLetter(){
-  const val = id => document.getElementById(id)?.value.trim() || '';
+  const val = id => document.getElementById(id).value.trim();
 
-  const p   = val('prenom');
-  const n   = val('nom');
-  const adr = val('adresse');
-  const npa = val('npa');
-  const v   = val('ville');
-  const tel = val('tel');
-  const mail= val('mail');
+  const p = val("prenom");
+  const n = val("nom");
+  const adr = val("adresse");
+  const npa = val("npa");
+  const v = val("ville");
+  const tel = val("tel");
+  const mail = val("mail");
 
-  const ent  = val('entreprise');
-  const adrE = val('adresseEnt');
-  const npaE = val('npaEnt');
+  const ent = val("entreprise");
+  const adrE = val("adresseEnt");
+  const npaE = val("npaEnt");
 
-  const type = val('typeCand');
-  const site = val('site');
-  const poste= val('poste');
+  const type = val("typeCand");
+  const site = val("site");
+  const poste = val("poste");
 
-  const L = document.getElementById('letter');
-  if(!L) return;
+  const L = document.getElementById("letter");
 
   if(!(p && n)){
-    L.textContent = "👉 Entrez au minimum le prénom et le nom.";
+    L.innerHTML = "<div class='sp-20'>👉 Entrez au minimum le prénom et le nom.</div>";
     return;
   }
 
-  // Bloquer / débloquer le champ site (SANS CRASH)
-  const siteInput = document.getElementById('site');
-  if(siteInput){
-    if(type === 'spontanee'){
-      siteInput.value = '';
-      siteInput.disabled = true;
-    } else {
-      siteInput.disabled = false;
-    }
-  }
+  const siteInput = document.getElementById("site");
+  siteInput.disabled = (type === "spontanee");
+  if(type === "spontanee") siteInput.value = "";
 
-  // Introduction
-  let intro = '';
-  if(type === 'ciblee' && site){
-    intro = `Suite à l’annonce publiée sur ${site}, je vous soumets ma candidature pour le poste de ${poste || '[poste]'}. Ce poste correspond à mon profil et à mon intérêt pour les activités de votre entreprise.`;
+  let intro = "";
+  if(type === "ciblee" && site){
+    intro = `Suite à l’annonce publiée sur ${site}, je vous soumets ma candidature pour le poste de ${poste || '[poste]'}.`;
   } else {
-    intro = `Je me permets de vous adresser ma candidature spontanée, avec l’objectif de mettre mes compétences et mon engagement professionnel au service de votre entreprise.`;
+    intro = `Je vous adresse ma candidature spontanée pour le poste de ${poste || '[poste]'}.`;
   }
 
-  // Qualités
-  const posteTexte = poste || 'ce poste';
-  const exemplesQualites = {
-    ponctuel:   `Je respecte les horaires et je suis fiable dans ma présence au travail.`,
-    motive:     `Je montre de l’intérêt pour le travail confié et je m’implique dans les tâches demandées.`,
-    serieux:    `Je travaille de manière appliquée et je respecte les consignes données.`,
-    autonome:   `Je peux accomplir certaines tâches de façon autonome lorsque cela est nécessaire.`,
-    organise:   `Je m’organise pour effectuer mon travail de manière structurée et efficace.`,
-    fiable:     `On peut compter sur moi pour effectuer les tâches confiées et tenir mes engagements.`,
-    respectueux:`Je respecte les collègues, la hiérarchie et les règles de l’entreprise.`,
-    polyvalent: `Je peux m’adapter à différentes tâches selon les besoins liés à ${posteTexte}.`,
-    soigneux:   `Je fais attention à la qualité de mon travail et au respect des procédures.`,
-    rapide:     `Je travaille de manière efficace tout en restant attentif à la qualité du travail réalisé.`
+  const mapQ = {
+    ponctuel:"Je respecte les horaires et je suis fiable dans ma présence au travail.",
+    motive:"Je montre de l’intérêt pour le travail confié et je m’implique.",
+    serieux:"Je travaille de manière appliquée et je respecte les consignes.",
+    autonome:"Je peux travailler de manière autonome lorsque nécessaire.",
+    organise:"Je m’organise pour travailler efficacement.",
+    fiable:"On peut compter sur moi pour les tâches confiées.",
+    respectueux:"Je respecte les collègues, la hiérarchie et les règles.",
+    polyvalent:"Je m’adapte facilement aux besoins du poste.",
+    soigneux:"Je fais attention à la qualité.",
+    rapide:"Je travaille efficacement tout en gardant la qualité."
   };
 
-  let qual = '';
+  let qualTxt = "";
   if(qualitesChoisies.length){
-    const phrases = qualitesChoisies.map(k => exemplesQualites[k]).filter(Boolean);
-    const connecteurs = ['De plus, ', 'Enfin, '];
-
-    qual = phrases.reduce((acc, phrase, index) => {
-      if(index === 0) return phrase;
-      const conn = connecteurs[Math.min(index - 1, connecteurs.length - 1)];
-      return acc + ' ' + conn + lowerFirst(phrase);
-    }, '');
-
-    qual += ' Ces qualités me permettent de m’intégrer rapidement et de répondre efficacement aux attentes du poste.';
+    qualTxt = qualitesChoisies.map(k=>mapQ[k]).join(" ");
+    qualTxt += " Ces qualités me permettent de répondre efficacement aux attentes du poste.";
   }
 
-  const objet = (type === 'spontanee')
-    ? `Candidature spontanée - ${poste || '[poste]'}`
-    : `Candidature - ${poste || '[poste]'}`;
+  const objet = type==="spontanee"
+    ? `Candidature spontanée – ${poste || '[poste]'}`
+    : `Candidature – ${poste || '[poste]'}`;
 
-  L.innerText = `${p} ${n.toUpperCase()}
-${adr || '[Adresse]'}
-${(npa && v) ? npa + ' ' + v : '[NPA Ville]'}
-Tél. : ${tel || '[Téléphone]'}
-E-mail : ${mail || '[E-mail]'}
+  L.innerHTML = `
+<div class="sp-25">
+${p} ${n.toUpperCase()}<br>
+${adr}<br>
+${npa} ${v}<br>
+Tél. : ${tel}<br>
+E-mail : ${mail}
+</div>
 
+<div class="destinataire sp-25">
+${ent}<br>
+${adrE}<br>
+${npaE}
+</div>
 
-${(ent || '[Entreprise]').padStart(60)}
-${(adrE || '[Adresse entreprise]').padStart(60)}
-${(npaE || '[NPA Ville entreprise]').padStart(60)}
+<div class="sp-25"><strong>Objet : ${objet}</strong></div>
 
+<div class="sp-20">Madame, Monsieur,</div>
 
-Objet : ${objet}
+<div class="sp-20">${intro}</div>
 
-Bonjour Madame, Monsieur,
+<div class="sp-20">${qualTxt}</div>
 
-${intro}
+<div class="sp-20">
+Je souhaite m’inscrire dans une collaboration sérieuse et durable,
+en respectant les règles de travail et en contribuant activement
+au bon fonctionnement de votre équipe.
+</div>
 
-${qual}
+<div class="sp-20">
+Disponible immédiatement, je reste à votre disposition pour un entretien.
+</div>
 
-Par ailleurs, je souhaite m’inscrire dans une collaboration sérieuse et durable, en respectant les règles de travail et en contribuant activement au bon fonctionnement de votre équipe.
+<div class="sp-45">Cordialement,</div>
 
-Disponible rapidement, je reste à votre disposition pour un entretien.
-
-Cordialement,
-
-
-
-
-
-${p} ${n.toUpperCase()}`;
+<div class="signature">
+${p} ${n.toUpperCase()}
+</div>
+`;
 }
 
-function resetLetterOnly(){
-  const L = document.getElementById('letter');
-  if(L) L.textContent = '';
+/* =============================
+   PDF AVEC RENOMMAGE
+   ============================= */
+function exportPDF(){
+  const filename = prompt("Nom du fichier PDF :", "lettre_candidature.pdf") || "lettre_candidature.pdf";
+
+  const element = document.getElementById('letter');
+  const clone = element.cloneNode(true);
+
+  clone.style.width = "210mm";
+  clone.style.padding = "20mm";
+  clone.style.background = "white";
+  clone.style.fontFamily = "Times New Roman, serif";
+
+  document.body.appendChild(clone);
+
+  html2canvas(clone,{scale:2}).then(canvas=>{
+    const img = canvas.toDataURL("image/png");
+    const pdf = new jspdf.jsPDF("p","mm","a4");
+
+    const w = 210;
+    const h = canvas.height * w / canvas.width;
+
+    pdf.addImage(img,"PNG",0,0,w,h);
+    pdf.save(filename);
+    clone.remove();
+  });
 }
+
+/* =============================
+   RESET
+   ============================= */
+function resetLetterOnly(){ document.getElementById('letter').innerHTML=""; }
 
 function resetAll(){
-  // reset tout sauf l’expéditeur
-  const ids = ['entreprise','adresseEnt','npaEnt','typeCand','site','poste'];
-  ids.forEach(id => {
-    const el = document.getElementById(id);
-    if(el) el.value = '';
-  });
+  ["entreprise","adresseEnt","npaEnt","typeCand","site","poste"]
+    .forEach(id => document.getElementById(id).value="");
+
+  document.getElementById("site").disabled = false;
 
   qualitesChoisies = [];
-  document.querySelectorAll('.qbtn').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.qbtn').forEach(btn=>btn.classList.remove('active'));
 
   updateLetter();
 }
 
+/* =============================
+   DESTINATAIRE AUTO
+   ============================= */
 function saveDestinataire(){
   const data = {
-    entreprise: document.getElementById('entreprise')?.value || '',
-    adresse: document.getElementById('adresseEnt')?.value || '',
-    npa: document.getElementById('npaEnt')?.value || ''
+    entreprise: entreprise.value,
+    adresse: adresseEnt.value,
+    npa: npaEnt.value
   };
-  localStorage.setItem('destinataire', JSON.stringify(data));
+  localStorage.setItem("destinataire", JSON.stringify(data));
 }
 
 function loadDestinataire(){
-  const d = localStorage.getItem('destinataire');
+  const d = localStorage.getItem("destinataire");
   if(!d) return;
   const data = JSON.parse(d);
-  if(document.getElementById('entreprise')) document.getElementById('entreprise').value = data.entreprise || '';
-  if(document.getElementById('adresseEnt')) document.getElementById('adresseEnt').value = data.adresse || '';
-  if(document.getElementById('npaEnt')) document.getElementById('npaEnt').value = data.npa || '';
+
+  entreprise.value = data.entreprise || "";
+  adresseEnt.value = data.adresse || "";
+  npaEnt.value = data.npa || "";
 }
 
-function boldSelection(){ document.execCommand('bold'); }
-function indentSelection(){ document.execCommand('indent'); }
-
-function exportPDF(){
-  const element = document.getElementById('letter');
-  if(!element) return;
-  const { jsPDF } = window.jspdf;
-  const clone = element.cloneNode(true);
-  clone.style.width = '210mm';
-  clone.style.padding = '20mm';
-  clone.style.background = 'white';
-  clone.style.fontFamily = 'Times New Roman, serif';
-  document.body.appendChild(clone);
-
-  html2canvas(clone,{scale:2}).then(canvas=>{
-    const imgData = canvas.toDataURL('image/png');
-    const pdf = new jsPDF('p','mm','a4');
-    const imgWidth = 210;
-    const imgHeight = canvas.height * imgWidth / canvas.width;
-    pdf.addImage(imgData,'PNG',0,0,imgWidth,imgHeight);
-    pdf.save('lettre_candidature.pdf');
-    document.body.removeChild(clone);
-  });
-}
-
-window.onload = function(){
+/* =============================
+   AU CHARGEMENT
+   ============================= */
+window.onload = () => {
+  loadExpediteur();
   loadDestinataire();
   updateLetter();
 };
 </script>
+
 </body>
 </html>
