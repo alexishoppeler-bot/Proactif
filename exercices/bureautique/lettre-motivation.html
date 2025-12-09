@@ -302,21 +302,21 @@ function updateLetter(){
   if(type === "ciblee" && site){
     intro = `Suite à l’annonce publiée sur ${site}, je vous soumets ma candidature pour le poste de ${poste || '[poste]'}.`;
   } else {
-    intro = `Je vous adresse ma candidature spontanée pour le poste de ${poste || '[poste]'}.`;
+  intro = `Je vous adresse ma candidature spontanée pour le poste de ${poste || '[poste]'}. Votre entreprise m’intéresse particulièrement, car elle est reconnue pour son sérieux et la qualité de son travail. J’aimerais contribuer à votre équipe avec motivation et professionnalisme.`;
   }
 
   /* Qualités */
   const mapQ = {
-    ponctuel:"Je respecte les horaires et je suis fiable dans ma présence au travail.",
-    motive:"Je montre de l’intérêt pour le travail confié et je m’implique.",
-    serieux:"Je travaille de manière appliquée et je respecte les consignes.",
-    autonome:"Je peux travailler de manière autonome lorsque nécessaire.",
-    organise:"Je m’organise pour travailler efficacement.",
-    fiable:"On peut compter sur moi pour les tâches confiées.",
-    respectueux:"Je respecte les collègues, la hiérarchie et les règles.",
-    polyvalent:"Je m’adapte facilement aux besoins du poste.",
-    soigneux:"Je fais attention à la qualité.",
-    rapide:"Je travaille efficacement tout en gardant la qualité."
+  ponctuel: "Je respecte toujours les horaires et je suis présent de manière fiable.",
+  motive: "Je m’intéresse au travail confié et je m’implique dans mes tâches.",
+  serieux: "Je travaille avec soin et je respecte les consignes données.",
+  autonome: "Je peux réaliser mon travail seul quand c’est nécessaire.",
+  organise: "Je m’organise pour travailler de façon efficace.",
+  fiable: "On peut compter sur moi pour accomplir les tâches demandées.",
+  respectueux: "Je respecte les collègues, la hiérarchie et les règles de l’entreprise.",
+  polyvalent: "Je m’adapte facilement aux différents besoins du poste.",
+  soigneux: "Je fais attention à la qualité de mon travail.",
+  rapide: "Je travaille rapidement tout en gardant une bonne qualité."
   };
 
   let qualTxt = "";
@@ -449,3 +449,4 @@ window.onload = () => {
 
 </body>
 </html>
+
