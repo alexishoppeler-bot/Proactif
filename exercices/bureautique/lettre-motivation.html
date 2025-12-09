@@ -5,9 +5,8 @@
   <title>Lettre de candidature – Pro Suisse</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <!-- PDF -->
+  <!-- jsPDF léger -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 
   <style>
     body{
@@ -46,12 +45,11 @@
     }
     input[readonly]{ background:#f2f4f7; }
 
-    h3{ 
-      margin-top:25px; 
+    h3{
+      margin-top:25px;
       color:#003366;
     }
 
-    /* Barre PDF */
     .toolbar{
       display:flex;
       justify-content:flex-end;
@@ -69,7 +67,6 @@
       border:none;
     }
 
-    /* Zone lettre */
     .letter{
       background:#f9fafb;
       padding:30px 45px;
@@ -79,18 +76,15 @@
       min-height:260px;
     }
 
-    /* Justifier le texte */
     .justif{
       text-align:justify;
       text-justify:inter-word;
     }
 
-    /* Espacements */
     .sp-md{margin-bottom:16px;}
     .sp-lg{margin-bottom:24px;}
     .sp-xl{margin-bottom:36px;}
 
-    /* Destinataire légèrement à droite */
     .destinataire{
       margin-left:auto;
       margin-right:3cm;
@@ -99,7 +93,6 @@
       line-height:1.2;
     }
 
-    /* Signature encore un peu plus à droite */
     .signature{
       margin-left:auto;
       margin-right:3cm;
@@ -127,7 +120,6 @@
       border-radius:8px;
     }
 
-    /* Qualités */
     .qual-buttons{
       display:grid;
       grid-template-columns:repeat(auto-fill,minmax(140px,1fr));
@@ -147,7 +139,6 @@
       background:#3f71ff;
       color:white;
     }
-
   </style>
 </head>
 
@@ -205,7 +196,7 @@
   </section>
 
   <div class="toolbar">
-    <button onclick="exportPDF()">📄 Export PDF</button>
+    <button onclick="exportPDF()">📄 Export PDF (léger)</button>
   </div>
 
   <div id="letter" class="letter" contenteditable="true"></div>
@@ -292,31 +283,28 @@ function updateLetter(){
     return;
   }
 
-  /* Activation/désactivation du site */
   const siteInput = document.getElementById("site");
   siteInput.disabled = (type === "spontanee");
   if(type === "spontanee") siteInput.value = "";
 
-  /* Introduction */
   let intro = "";
   if(type === "ciblee" && site){
     intro = `Suite à l’annonce publiée sur ${site}, je vous soumets ma candidature pour le poste de ${poste || '[poste]'}.`;
   } else {
-  intro = `Je vous adresse ma candidature spontanée pour le poste de ${poste || '[poste]'}. Votre entreprise m’intéresse particulièrement, car elle est reconnue pour son sérieux et la qualité de son travail. J’aimerais contribuer à votre équipe avec motivation et professionnalisme.`;
+    intro = `Je vous adresse ma candidature spontanée pour le poste de ${poste || '[poste]'}. Votre entreprise m’intéresse particulièrement, car elle est reconnue pour son sérieux et la qualité de son travail. J’aimerais contribuer à votre équipe avec motivation et professionnalisme.`;
   }
 
-  /* Qualités */
   const mapQ = {
-  ponctuel: "Je respecte toujours les horaires et je suis présent de manière fiable.",
-  motive: "Je m’intéresse au travail confié et je m’implique dans mes tâches.",
-  serieux: "Je travaille avec soin et je respecte les consignes données.",
-  autonome: "Je peux réaliser mon travail seul quand c’est nécessaire.",
-  organise: "Je m’organise pour travailler de façon efficace.",
-  fiable: "On peut compter sur moi pour accomplir les tâches demandées.",
-  respectueux: "Je respecte les collègues, la hiérarchie et les règles de l’entreprise.",
-  polyvalent: "Je m’adapte facilement aux différents besoins du poste.",
-  soigneux: "Je fais attention à la qualité de mon travail.",
-  rapide: "Je travaille rapidement tout en gardant une bonne qualité."
+    ponctuel: "Je respecte toujours les horaires et je suis présent de manière fiable.",
+    motive: "Je m’intéresse au travail confié et je m’implique dans mes tâches.",
+    serieux: "Je travaille avec soin et je respecte les consignes données.",
+    autonome: "Je peux réaliser mon travail seul quand c’est nécessaire.",
+    organise: "Je m’organise pour travailler de façon efficace.",
+    fiable: "On peut compter sur moi pour accomplir les tâches demandées.",
+    respectueux: "Je respecte les collègues, la hiérarchie et les règles de l’entreprise.",
+    polyvalent: "Je m’adapte facilement aux différents besoins du poste.",
+    soigneux: "Je fais attention à la qualité de mon travail.",
+    rapide: "Je travaille rapidement tout en gardant une bonne qualité."
   };
 
   let qualTxt = "";
@@ -325,12 +313,10 @@ function updateLetter(){
     qualTxt += " Ces qualités me permettent de répondre efficacement aux attentes du poste.";
   }
 
-  /* Objet */
   const objet = type==="spontanee"
     ? `Candidature spontanée – ${poste || '[poste]'}`
     : `Candidature – ${poste || '[poste]'}`;
 
-  /* LETTRE GÉNÉRÉE */
   L.innerHTML = `
 <div class="sp-md">
 ${p} ${n.toUpperCase()}<br>
@@ -354,10 +340,10 @@ ${npaE}
   <div class="sp-md">${intro}</div>
   <div class="sp-md">${qualTxt}</div>
 
-<div class="sp-md">
-  Je souhaite m’engager sur la durée au sein de votre entreprise 
-  et contribuer de manière efficace et positive au travail de votre équipe.
-</div>
+  <div class="sp-md">
+    Je souhaite m’engager sur la durée au sein de votre entreprise 
+    et contribuer de manière efficace et positive au travail de votre équipe.
+  </div>
 
   <div class="sp-md">
     Disponible immédiatement, je reste à votre disposition pour un entretien.
@@ -373,31 +359,111 @@ ${p} ${n.toUpperCase()}
 }
 
 
-/* PDF – ARIAL */
-function exportPDF(){
+/* PDF – MISE EN PAGE FIDÈLE ET LÉGÈRE */
+function exportPDF() {
+  const { jsPDF } = jspdf;
+
   const filename = prompt("Nom du fichier PDF :", "lettre_candidature.pdf") || "lettre_candidature.pdf";
 
-  const element = document.getElementById('letter');
-  const clone = element.cloneNode(true);
+  const doc = new jsPDF({ unit: "mm", format: "a4" });
+  doc.setFont("Helvetica", "");
+  doc.setFontSize(12);
 
-  clone.style.width = "210mm";
-  clone.style.padding = "20mm";
-  clone.style_background = "white";
-  clone.style.fontFamily = "Arial, sans-serif";
+  const get = id => document.getElementById(id).value.trim();
 
-  document.body.appendChild(clone);
+  const prenom = get("prenom");
+  const nom = get("nom").toUpperCase();
+  const adresse = get("adresse");
+  const npa = get("npa");
+  const ville = get("ville");
+  const tel = get("tel");
+  const mail = get("mail");
 
-  html2canvas(clone,{scale:2}).then(canvas=>{
-    const img = canvas.toDataURL("image/png");
-    const pdf = new jspdf.jsPDF("p","mm","a4");
+  const entreprise = get("entreprise");
+  const adrE = get("adresseEnt");
+  const npaE = get("npaEnt");
 
-    const w = 210;
-    const h = canvas.height * w / canvas.width;
+  const poste = get("poste") || "[poste]";
+  const type = get("typeCand");
+  const site = get("site");
 
-    pdf.addImage(img,"PNG",0,0,w,h);
-    pdf.save(filename);
-    clone.remove();
-  });
+  let y = 20;
+
+  // EXPÉDITEUR
+  doc.text(`${prenom} ${nom}`, 20, y); y += 6;
+  doc.text(`${adresse}`, 20, y); y += 6;
+  doc.text(`${npa} ${ville}`, 20, y); y += 6;
+  doc.text(`Tél. : ${tel}`, 20, y); y += 6;
+  doc.text(`E-mail : ${mail}`, 20, y); y += 12;
+
+  // DESTINATAIRE
+  doc.text(`${entreprise}`, 120, y); y += 6;
+  doc.text(`${adrE}`, 120, y); y += 6;
+  doc.text(`${npaE}`, 120, y); y += 12;
+
+  // OBJET
+  doc.setFont(undefined, "bold");
+  doc.text(`Objet : ${type === "spontanee" ? "Candidature spontanée – " : "Candidature – "} ${poste}`, 20, y);
+  doc.setFont(undefined, "");
+  y += 12;
+
+  // FORMULE
+  doc.text("Madame, Monsieur,", 20, y);
+  y += 10;
+
+  // INTRO
+  let intro = "";
+  if (type === "ciblee" && site) {
+    intro = `Suite à l’annonce publiée sur ${site}, je vous soumets ma candidature pour le poste de ${poste}.`;
+  } else {
+    intro = `Je vous adresse ma candidature spontanée pour le poste de ${poste}. Votre entreprise m’intéresse particulièrement, car elle est reconnue pour son sérieux et la qualité de son travail. J’aimerais contribuer à votre équipe avec motivation et professionnalisme.`;
+  }
+
+  let introLines = doc.splitTextToSize(intro, 170);
+  doc.text(introLines, 20, y);
+  y += introLines.length * 6 + 4;
+
+  // QUALITÉS
+  if (qualitesChoisies.length > 0) {
+    const mapQ = {
+      ponctuel: "Je suis ponctuel et fiable.",
+      motive: "Je suis motivé et impliqué.",
+      serieux: "Je suis sérieux et appliqué.",
+      autonome: "Je travaille de manière autonome.",
+      organise: "Je suis organisé et efficace.",
+      fiable: "Je suis fiable dans mes tâches.",
+      respectueux: "Je suis respectueux des règles.",
+      polyvalent: "Je suis polyvalent et adaptable.",
+      soigneux: "Je travaille soigneusement.",
+      rapide: "Je suis rapide tout en gardant la qualité."
+    };
+
+    let qTxt = qualitesChoisies.map(k => mapQ[k]).join(" ");
+    let qLines = doc.splitTextToSize(qTxt, 170);
+    doc.text(qLines, 20, y);
+    y += qLines.length * 6 + 6;
+  }
+
+  // PARAGRAPHE 2
+  const p2 = `Je souhaite m’engager sur la durée au sein de votre entreprise et contribuer de manière efficace et positive au travail de votre équipe.`;
+  let p2Lines = doc.splitTextToSize(p2, 170);
+  doc.text(p2Lines, 20, y);
+  y += p2Lines.length * 6 + 6;
+
+  // PARAGRAPHE 3
+  const p3 = `Disponible immédiatement, je reste à votre disposition pour un entretien.`;
+  let p3Lines = doc.splitTextToSize(p3, 170);
+  doc.text(p3Lines, 20, y);
+  y += p3Lines.length * 6 + 12;
+
+  // CORDIALEMENT
+  doc.text("Cordialement,", 20, y);
+  y += 20;
+
+  // SIGNATURE
+  doc.text(`${prenom} ${nom}`, 120, y);
+
+  doc.save(filename);
 }
 
 
@@ -448,5 +514,3 @@ window.onload = () => {
 
 </body>
 </html>
-
-
