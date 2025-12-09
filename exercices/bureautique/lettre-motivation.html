@@ -2,7 +2,7 @@
 <html lang="fr">
 <head>
   <meta charset="UTF-8">
-  <title>Lettre de candidature – Pro</title>
+  <title>Lettre de candidature – Pro Suisse</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   <!-- PDF -->
@@ -17,6 +17,7 @@
       justify-content:center;
       padding:30px 10px;
     }
+
     .app{
       width:820px;
       background:#fff;
@@ -24,6 +25,7 @@
       box-shadow:0 6px 25px rgba(0,0,0,.12);
       overflow:hidden;
     }
+
     header{
       background:#004c97;
       color:#fff;
@@ -31,6 +33,7 @@
       text-align:center;
       font-size:20px;
     }
+
     section{padding:20px}
 
     input,select{
@@ -40,13 +43,13 @@
       border:1px solid #bbb;
       margin-bottom:10px;
       font-size:15px;
+      font-family:Arial, sans-serif;
     }
-    input[readonly]{
-      background:#f2f4f7;
-    }
+    input[readonly]{ background:#f2f4f7; }
 
-    h3{margin-top:25px;color:#003366}
+    h3{ margin-top:25px; color:#003366; }
 
+    /* Barre PDF */
     .toolbar{
       display:flex;
       justify-content:flex-end;
@@ -64,29 +67,36 @@
       border:none;
     }
 
+    /* Zone lettre */
     .letter{
       background:#f9fafb;
-      padding:40px 50px;
-      line-height:1.55;
+      padding:30px 45px;
+      line-height:1.4;
       border-top:1px solid #ddd;
       font-size:16px;
       min-height:260px;
+      white-space:normal;
     }
 
-    .sp-12{margin-bottom:12px;}
-    .sp-20{margin-bottom:20px;}
-    .sp-25{margin-bottom:25px;}
-    .sp-45{margin-bottom:45px;}
+    /* Justifier le texte */
+    .justif{
+      text-align:justify;
+      text-justify:inter-word;
+    }
 
+    /* Espacements optimisés */
+    .sp-sm{margin-bottom:10px;}
+    .sp-md{margin-bottom:16px;}
+    .sp-lg{margin-bottom:24px;}
+    .sp-xl{margin-bottom:36px;}
+
+    /* Destinataire + signature alignés à gauche mais positionnés à droite */
     .destinataire, .signature{
       margin-left:auto;
       margin-right:4cm;
       width:fit-content;
       text-align:left;
-      white-space:normal;
       line-height:1.2;
-      padding:0;
-      margin-bottom:0;
     }
 
     button{
@@ -99,6 +109,7 @@
       font-size:16px;
       border-radius:10px;
       cursor:pointer;
+      font-family:Arial, sans-serif;
     }
     .reset{background:#777}
 
@@ -106,8 +117,10 @@
       padding:8px 15px;
       font-size:13px;
       border-radius:8px;
+      font-family:Arial;
     }
 
+    /* Qualités */
     .qual-buttons{
       display:grid;
       grid-template-columns:repeat(auto-fill,minmax(140px,1fr));
@@ -130,9 +143,10 @@
   </style>
 </head>
 
+
 <body>
 <div class="app">
-  <header>📄 Lettre de candidature professionnelle</header>
+  <header>📄 Lettre de candidature – Format Suisse</header>
 
   <section>
 
@@ -164,7 +178,7 @@
     </select>
 
     <input id="site" placeholder="Site d’annonce (Indeed…)" oninput="updateLetter()">
-    <input id="poste" placeholder="Poste" oninput="updateLetter()">
+    <input id="poste" placeholder="Poste recherché" oninput="updateLetter()">
 
     <h3>⭐ Qualités (max 3)</h3>
     <div class="qual-buttons">
@@ -179,9 +193,9 @@
       <button class="qbtn" data-key="soigneux" onclick="toggleQualite('soigneux')">Soigneux·se</button>
       <button class="qbtn" data-key="rapide" onclick="toggleQualite('rapide')">Rapide</button>
     </div>
+
   </section>
 
-  <!-- TOOLBAR SIMPLIFIÉE -->
   <div class="toolbar">
     <button onclick="exportPDF()">📄 Export PDF</button>
   </div>
@@ -192,11 +206,9 @@
   <button class="reset" onclick="resetAll()">🔄 Réinitialiser tout</button>
 </div>
 
-<script>
-/* =============================
-   AUTO-SAUVEGARDE EXPÉDITEUR
-   ============================= */
 
+<script>
+/* AUTO-SAUVEGARDE EXPÉDITEUR */
 const expFields = ["prenom","nom","adresse","npa","ville","tel","mail"];
 
 function loadExpediteur(){
@@ -227,9 +239,8 @@ function lockAndSaveExpediteur(){
   updateLetter();
 }
 
-/* =============================
-   QUALITÉS
-   ============================= */
+
+/* QUALITÉS */
 let qualitesChoisies = [];
 
 function toggleQualite(key){
@@ -244,10 +255,10 @@ function toggleQualite(key){
   updateLetter();
 }
 
-/* =============================
-   LETTRE AUTOMATIQUE
-   ============================= */
+
+/* LETTRE GÉNÉRÉE */
 function updateLetter(){
+
   const val = id => document.getElementById(id).value.trim();
 
   const p = val("prenom");
@@ -269,14 +280,16 @@ function updateLetter(){
   const L = document.getElementById("letter");
 
   if(!(p && n)){
-    L.innerHTML = "<div class='sp-20'>👉 Entrez au minimum le prénom et le nom.</div>";
+    L.innerHTML = "<div class='sp-md'>👉 Entrez au minimum le prénom et le nom.</div>";
     return;
   }
 
+  /* Site désactivé si spontanée */
   const siteInput = document.getElementById("site");
   siteInput.disabled = (type === "spontanee");
   if(type === "spontanee") siteInput.value = "";
 
+  /* Introduction */
   let intro = "";
   if(type === "ciblee" && site){
     intro = `Suite à l’annonce publiée sur ${site}, je vous soumets ma candidature pour le poste de ${poste || '[poste]'}.`;
@@ -284,6 +297,7 @@ function updateLetter(){
     intro = `Je vous adresse ma candidature spontanée pour le poste de ${poste || '[poste]'}.`;
   }
 
+  /* Qualités */
   const mapQ = {
     ponctuel:"Je respecte les horaires et je suis fiable dans ma présence au travail.",
     motive:"Je montre de l’intérêt pour le travail confié et je m’implique.",
@@ -303,12 +317,14 @@ function updateLetter(){
     qualTxt += " Ces qualités me permettent de répondre efficacement aux attentes du poste.";
   }
 
+  /* Objet */
   const objet = type==="spontanee"
     ? `Candidature spontanée – ${poste || '[poste]'}`
     : `Candidature – ${poste || '[poste]'}`;
 
+  /* LETTRE */
   L.innerHTML = `
-<div class="sp-25">
+<div class="sp-md">
 ${p} ${n.toUpperCase()}<br>
 ${adr}<br>
 ${npa} ${v}<br>
@@ -316,31 +332,32 @@ Tél. : ${tel}<br>
 E-mail : ${mail}
 </div>
 
-<div class="destinataire sp-25">
+<div class="destinataire sp-lg">
 ${ent}<br>
 ${adrE}<br>
 ${npaE}
 </div>
 
-<div class="sp-25"><strong>Objet : ${objet}</strong></div>
+<div class="sp-md"><strong>Objet : ${objet}</strong></div>
 
-<div class="sp-20">Madame, Monsieur,</div>
+<div class="sp-md">Madame, Monsieur,</div>
 
-<div class="sp-20">${intro}</div>
+<div class="justif">
+  <div class="sp-md">${intro}</div>
+  <div class="sp-md">${qualTxt}</div>
 
-<div class="sp-20">${qualTxt}</div>
+  <div class="sp-md">
+    Je souhaite m’inscrire dans une collaboration sérieuse et durable,
+    en respectant les règles de travail et en contribuant activement
+    au bon fonctionnement de votre équipe.
+  </div>
 
-<div class="sp-20">
-Je souhaite m’inscrire dans une collaboration sérieuse et durable,
-en respectant les règles de travail et en contribuant activement
-au bon fonctionnement de votre équipe.
+  <div class="sp-md">
+    Disponible immédiatement, je reste à votre disposition pour un entretien.
+  </div>
 </div>
 
-<div class="sp-20">
-Disponible immédiatement, je reste à votre disposition pour un entretien.
-</div>
-
-<div class="sp-45">Cordialement,</div>
+<div class="sp-xl">Cordialement,</div>
 
 <div class="signature">
 ${p} ${n.toUpperCase()}
@@ -348,9 +365,8 @@ ${p} ${n.toUpperCase()}
 `;
 }
 
-/* =============================
-   PDF AVEC RENOMMAGE
-   ============================= */
+
+/* PDF – ARIAL */
 function exportPDF(){
   const filename = prompt("Nom du fichier PDF :", "lettre_candidature.pdf") || "lettre_candidature.pdf";
 
@@ -360,7 +376,7 @@ function exportPDF(){
   clone.style.width = "210mm";
   clone.style.padding = "20mm";
   clone.style.background = "white";
-  clone.style.fontFamily = "Times New Roman, serif";
+  clone.style.fontFamily = "Arial, sans-serif";
 
   document.body.appendChild(clone);
 
@@ -377,9 +393,8 @@ function exportPDF(){
   });
 }
 
-/* =============================
-   RESET
-   ============================= */
+
+/* RESET */
 function resetLetterOnly(){ document.getElementById('letter').innerHTML=""; }
 
 function resetAll(){
@@ -394,9 +409,8 @@ function resetAll(){
   updateLetter();
 }
 
-/* =============================
-   DESTINATAIRE AUTO
-   ============================= */
+
+/* DESTINATAIRE AUTO-SAUVEGARDE */
 function saveDestinataire(){
   const data = {
     entreprise: entreprise.value,
@@ -416,9 +430,8 @@ function loadDestinataire(){
   npaEnt.value = data.npa || "";
 }
 
-/* =============================
-   AU CHARGEMENT
-   ============================= */
+
+/* AU CHARGEMENT */
 window.onload = () => {
   loadExpediteur();
   loadDestinataire();
