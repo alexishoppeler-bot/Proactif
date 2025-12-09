@@ -43,11 +43,13 @@
       border:1px solid #bbb;
       margin-bottom:10px;
       font-size:15px;
-      font-family:Arial, sans-serif;
     }
     input[readonly]{ background:#f2f4f7; }
 
-    h3{ margin-top:25px; color:#003366; }
+    h3{ 
+      margin-top:25px; 
+      color:#003366;
+    }
 
     /* Barre PDF */
     .toolbar{
@@ -75,7 +77,6 @@
       border-top:1px solid #ddd;
       font-size:16px;
       min-height:260px;
-      white-space:normal;
     }
 
     /* Justifier le texte */
@@ -84,16 +85,24 @@
       text-justify:inter-word;
     }
 
-    /* Espacements optimisés */
-    .sp-sm{margin-bottom:10px;}
+    /* Espacements */
     .sp-md{margin-bottom:16px;}
     .sp-lg{margin-bottom:24px;}
     .sp-xl{margin-bottom:36px;}
 
-    /* Destinataire + signature alignés à gauche mais positionnés à droite */
-    .destinataire, .signature{
+    /* Destinataire légèrement à droite */
+    .destinataire{
       margin-left:auto;
-      margin-right:4cm;
+      margin-right:3cm;
+      width:fit-content;
+      text-align:left;
+      line-height:1.2;
+    }
+
+    /* Signature encore un peu plus à droite */
+    .signature{
+      margin-left:auto;
+      margin-right:3cm;
       width:fit-content;
       text-align:left;
       line-height:1.2;
@@ -109,7 +118,6 @@
       font-size:16px;
       border-radius:10px;
       cursor:pointer;
-      font-family:Arial, sans-serif;
     }
     .reset{background:#777}
 
@@ -117,7 +125,6 @@
       padding:8px 15px;
       font-size:13px;
       border-radius:8px;
-      font-family:Arial;
     }
 
     /* Qualités */
@@ -140,6 +147,7 @@
       background:#3f71ff;
       color:white;
     }
+
   </style>
 </head>
 
@@ -284,7 +292,7 @@ function updateLetter(){
     return;
   }
 
-  /* Site désactivé si spontanée */
+  /* Activation/désactivation du site */
   const siteInput = document.getElementById("site");
   siteInput.disabled = (type === "spontanee");
   if(type === "spontanee") siteInput.value = "";
@@ -322,7 +330,7 @@ function updateLetter(){
     ? `Candidature spontanée – ${poste || '[poste]'}`
     : `Candidature – ${poste || '[poste]'}`;
 
-  /* LETTRE */
+  /* LETTRE GÉNÉRÉE */
   L.innerHTML = `
 <div class="sp-md">
 ${p} ${n.toUpperCase()}<br>
@@ -375,7 +383,7 @@ function exportPDF(){
 
   clone.style.width = "210mm";
   clone.style.padding = "20mm";
-  clone.style.background = "white";
+  clone.style_background = "white";
   clone.style.fontFamily = "Arial, sans-serif";
 
   document.body.appendChild(clone);
