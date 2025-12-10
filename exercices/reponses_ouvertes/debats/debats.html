@@ -6,49 +6,69 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <style>
+  :root {
+    --bg: #e8f3f1;
+    --card: #ffffff;
+    --text: #00332e;
+    --accent: #009688;
+  }
+  body.dark {
+    --bg: #0d1514;
+    --card: #1c2625;
+    --text: #d6f5ef;
+    --accent: #4dd0e1;
+  }
+
   body{
     font-family: Arial, sans-serif;
-    background:#e8f3f1;
+    background:var(--bg);
+    color:var(--text);
     padding:20px;
     display:flex;
     flex-direction:column;
     align-items:center;
+    transition:0.3s;
   }
-
   .app{
-    width:950px;
-    max-width:98%;
-    background:white;
+    width:900px;
+    max-width:95%;
+    background:var(--card);
     padding:30px;
     border-radius:18px;
-    box-shadow:0 6px 22px rgba(0,0,0,0.15);
-    border-top:10px solid #009688;
+    box-shadow:0 6px 22px rgba(0,0,0,0.2);
+    border-top:10px solid var(--accent);
+    transition:0.3s;
   }
-
   h1{
     text-align:center;
-    margin-bottom:10px;
-    color:#00695c;
+    margin-bottom:20px;
     font-size:28px;
+    color:var(--accent);
   }
-
   .controls{
     text-align:center;
-    margin-bottom:25px;
+    margin-bottom:20px;
   }
-
   button{
     padding:12px 20px;
     border:none;
     border-radius:10px;
     margin:5px;
-    background:#009688;
+    background:var(--accent);
     color:white;
     font-size:16px;
     cursor:pointer;
     transition:0.2s;
   }
-  button:hover{ background:#00796b; }
+  button:hover{
+    opacity:0.8;
+  }
+  .toggle-dark{
+    position:absolute;
+    top:20px;
+    right:20px;
+    background:#263230;
+  }
 
   .bloc{
     margin-bottom:25px;
@@ -57,10 +77,10 @@
     border-radius:12px;
     font-size:20px;
     line-height:1.5;
+    transition:0.3s;
   }
-
-  .aides{
-    font-size:18px;
+  body.dark .bloc{
+    background:#1e2b2a;
   }
 
   textarea{
@@ -69,225 +89,112 @@
     padding:15px;
     font-size:18px;
     border-radius:10px;
-    border:1px solid #90a4ae;
+    border:1px solid #7bb1a8;
+    background:var(--card);
+    color:var(--text);
     resize:none;
-    margin-top:10px;
   }
 
   .validate-btn{
     width:100%;
-    background:#00695c;
     margin-top:15px;
     font-size:18px;
-  }
-
-  /* Progression */
-  .progress-container{
-    width:100%;
-    height:22px;
-    background:#d9efeb;
-    border-radius:10px;
-    overflow:hidden;
-    margin-bottom:10px;
-  }
-  .progress-bar{
-    height:100%;
-    width:0%;
-    transition:0.4s;
-    background:#009688;
-  }
-
-  #progressText{
-    text-align:right;
-    font-size:17px;
-    color:#004d40;
-    margin-bottom:15px;
-  }
-
-  /* Checklist */
-  .checklist{
-    background:#ffffff;
-    border-radius:12px;
-    padding:20px;
-    border:1px solid #b2dfdb;
-    max-height:400px;
-    overflow-y:auto;
-    margin-bottom:25px;
-  }
-  .check-item{
-    font-size:18px;
-    padding:6px 0;
+    background:#00695c;
   }
 </style>
 </head>
 
 <body>
+
+<button class="toggle-dark" onclick="toggleDark()">🌙 / ☀️</button>
+
 <div class="app">
 
   <h1>Débats oraux – Proactif</h1>
 
-  <!-- Progression -->
-  <div id="progressText">0 / 0</div>
-  <div class="progress-container">
-    <div id="progressBar" class="progress-bar"></div>
-  </div>
-
-  <!-- Boutons -->
   <div class="controls">
-    <button onclick="choisirNiveau('A1')">Débat A1</button>
-    <button onclick="choisirNiveau('A2')">Débat A2</button>
-    <button onclick="choisirNiveau('B1')">Débat B1</button>
-    <button onclick="choisirNiveau('ALL')">Tous niveaux (90)</button>
-    <button onclick="recommencer()">Recommencer</button>
+    <button onclick="choisirNiveau(1)">Niveau 1</button>
+    <button onclick="choisirNiveau(2)">Niveau 2</button>
+    <button onclick="choisirNiveau(3)">Niveau 3</button>
   </div>
 
-  <!-- Débat -->
-  <div id="zone-debat" class="bloc">👉 Choisissez un niveau pour commencer.</div>
+  <div id="zone-debat" class="bloc">
+    👉 Choisissez un niveau pour commencer.
+  </div>
 
-  <!-- Aides -->
-  <div id="zone-aides" class="bloc aides"></div>
+  <div id="zone-aides" class="bloc"></div>
 
-  <!-- Réponse -->
   <div class="bloc">
     <b>Votre réponse :</b>
     <textarea id="reponse" placeholder="Écrivez avant de valider..."></textarea>
-    <button class="validate-btn" onclick="validerReponse()">Valider la réponse</button>
+    <button class="validate-btn" onclick="valider()">Valider</button>
   </div>
-
-  <!-- Checklist -->
-  <h2 style="color:#00695c;">Progression détaillée</h2>
-  <div id="checklist" class="checklist"></div>
-
-  <!-- Motivation -->
-  <div id="msg-motivation" style="text-align:center;font-size:18px;color:#00796b;margin-top:10px;font-style:italic;"></div>
 
 </div>
 
 <script>
 let DATA = null;
-let pool = [];
-let niveauActuel = null;
-let vus = 0;
-let total = 0;
+let niveau = 0;
+let index = 0;
+let liste = [];
+
+// Mode sombre
+function toggleDark(){
+  document.body.classList.toggle("dark");
+}
 
 // Charger JSON
 fetch("debats.json")
-  .then(response => response.json())
+  .then(r => r.json())
   .then(json => DATA = json)
-  .catch(() => alert("❌ Impossible de charger debats.json"));
+  .catch(() => alert("Impossible de charger debats.json"));
 
-// Sélecteurs
-const zoneDebat = document.getElementById("zone-debat");
-const zoneAides = document.getElementById("zone-aides");
-const progressBar = document.getElementById("progressBar");
-const progressText = document.getElementById("progressText");
-const checklistDiv = document.getElementById("checklist");
-
-// Messages motivation
-const MOTIV = [
-  "Bravo, continue !", "Très bien !", "Tu progresses !",
-  "Excellent, garde le rythme !", "Courage, ça avance !",
-  "Super, continue comme ça !"
-];
-
-// Choix niveau
-function choisirNiveau(niv){
+// Choisir niveau (1 = A1, 2 = A2, 3 = B1)
+function choisirNiveau(n){
   if(!DATA){ alert("JSON pas encore chargé"); return; }
 
-  niveauActuel = niv;
-  vus = 0;
+  niveau = n;
+  index = 0;
 
-  if(niv === "A1"){ pool = [...DATA.A1]; total = DATA.A1.length; }
-  else if(niv === "A2"){ pool = [...DATA.A2]; total = DATA.A2.length; }
-  else if(niv === "B1"){ pool = [...DATA.B1]; total = DATA.B1.length; }
-  else { pool = [...DATA.A1, ...DATA.A2, ...DATA.B1]; total = pool.length; }
+  if(n == 1) liste = DATA.A1;
+  if(n == 2) liste = DATA.A2;
+  if(n == 3) liste = DATA.B1;
 
-  genererChecklist();
-  updateProgress();
   afficherDebat();
 }
 
-// Afficher un débat
+// Affiche le débat courant
 function afficherDebat(){
-  if(pool.length === 0){
-    zoneDebat.innerHTML = "🎉 <b>Série terminée !</b>";
-    zoneAides.innerHTML = "";
+  if(index >= liste.length){
+    document.getElementById("zone-debat").innerHTML = "🎉 Série terminée !";
+    document.getElementById("zone-aides").innerHTML = "";
     return;
   }
 
-  const index = Math.floor(Math.random()*pool.length);
-  const debat = pool.splice(index,1)[0];
+  const debat = liste[index];
 
-  zoneDebat.innerHTML = `<b>${debat.titre}</b><br><br>${debat.question}`;
-  zoneAides.innerHTML = `<b>Phrases d’aide :</b><ul>${debat.aides.map(a=>`<li>${a}</li>`).join("")}</ul>`;
-  document.getElementById("msg-motivation").innerHTML = "";
+  document.getElementById("zone-debat").innerHTML =
+    `<b>Débat ${index+1}</b><br><br>${debat.titre}<br><br>${debat.question}`;
+
+  document.getElementById("zone-aides").innerHTML =
+    `<b>Phrases d’aide :</b><br><ul>${debat.aides.map(a=>`<li>${a}</li>`).join("")}</ul>`;
+
   document.getElementById("reponse").value = "";
 }
 
-// Validation
-function validerReponse(){
+// Valider → passer au prochain
+function valider(){
   const rep = document.getElementById("reponse").value.trim();
   if(rep === ""){
     alert("❗ Écris une réponse avant de valider.");
     return;
   }
 
-  // Sauvegarde locale
-  localStorage.setItem("rep_"+Date.now(), rep);
+  // Sauvegarde locale optionnelle
+  localStorage.setItem("deb_"+Date.now(), rep);
 
-  vus++;
-  updateProgress();
-  genererChecklist();
-
-  // Message motivant
-  const msg = MOTIV[Math.floor(Math.random()*MOTIV.length)];
-  document.getElementById("msg-motivation").innerHTML = msg;
-
-  setTimeout(()=>{ afficherDebat(); }, 600);
-}
-
-// Checklist
-function genererChecklist(){
-  checklistDiv.innerHTML = "";
-  for(let i=1; i<=total; i++){
-    let done = (i <= vus);
-    let ligne = document.createElement("div");
-    ligne.className = "check-item";
-    ligne.innerHTML = done ? `🟩 Débat ${i}` : `⬜ Débat ${i}`;
-    checklistDiv.appendChild(ligne);
-  }
-}
-
-// Progression
-function updateProgress(){
-  if(total === 0){ progressBar.style.width = "0%"; return; }
-
-  const pct = (vus/total)*100;
-  progressBar.style.width = pct+"%";
-
-  // Couleurs auto
-  if(pct < 30) progressBar.style.background = "#f9a825";     // orange
-  else if(pct < 70) progressBar.style.background = "#0277bd"; // bleu
-  else progressBar.style.background = "#2e7d32";              // vert
-
-  progressText.innerHTML =
-    `${vus} / ${total} débats vus — ${niveauActuel ? niveauActuel : ""}`;
-}
-
-// Recommencer
-function recommencer(){
-  vus = 0;
-  pool = [];
-  niveauActuel = null;
-  total = 0;
-
-  progressBar.style.width = "0%";
-  progressText.innerHTML = "0 / 0";
-  checklistDiv.innerHTML = "";
-
-  zoneDebat.innerHTML = "👉 Série réinitialisée.";
-  zoneAides.innerHTML = "";
-  document.getElementById("msg-motivation").innerHTML = "";
+  index++;
+  afficherDebat();
 }
 </script>
 
