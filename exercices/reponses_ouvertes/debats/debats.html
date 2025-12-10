@@ -1,73 +1,301 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>Débats – Proactif</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<!-- jsPDF -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+<style>
+  :root {
+    --bg: #e8f3f1;
+    --card: #ffffff;
+    --text: #00332e;
+    --accent: #009688;
+  }
+  body.dark {
+    --bg: #0d1514;
+    --card: #1c2625;
+    --text: #d6f5ef;
+    --accent: #4dd0e1;
+  }
+
+  body{
+    font-family: Arial, sans-serif;
+    background:var(--bg);
+    color:var(--text);
+    padding:20px;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    transition:0.3s;
+  }
+
+  .app{
+    width:900px;
+    max-width:95%;
+    background:var(--card);
+    padding:30px;
+    border-radius:18px;
+    box-shadow:0 6px 22px rgba(0,0,0,0.2);
+    border-top:10px solid var(--accent);
+    transition:0.3s;
+  }
+
+  h1{
+    text-align:center;
+    margin-bottom:5px;
+    font-size:32px;
+    color:var(--accent);
+  }
+  h2{
+    text-align:center;
+    margin-top:0;
+    color:#00695c;
+    font-size:20px;
+    font-weight:normal;
+  }
+
+  .controls{
+    text-align:center;
+    margin-bottom:20px;
+  }
+
+  button{
+    padding:12px 20px;
+    border:none;
+    border-radius:10px;
+    margin:5px;
+    background:var(--accent);
+    color:white;
+    font-size:16px;
+    cursor:pointer;
+    transition:0.2s;
+  }
+  button:hover{ opacity:0.85; }
+
+  .toggle-dark{
+    position:absolute;
+    top:20px;
+    right:20px;
+    background:#263230;
+  }
+
+  /* Bloc question */
+  .bloc-question{
+    font-size:28px;
+    font-weight:bold;
+    text-align:center;
+    padding:28px;
+    border-radius:16px;
+    margin-bottom:20px;
+    line-height:1.4;
+    box-shadow:0 4px 14px rgba(0,0,0,0.12);
+    transition:0.3s;
+  }
+
+  /* Anim de fond */
+  @keyframes fondAnime {
+    0% {background-position:0% 50%;}
+    50%{background-position:100% 50%;}
+    100%{background-position:0% 50%;}
+  }
+
+  /* Couleurs par niveau + glow */
+  .niveau1{
+    background:linear-gradient(120deg,#cbe7ff,#e3f2ff,#cbe7ff);
+    background-size:300% 300%;
+    animation:fondAnime 12s ease-in-out infinite;
+    box-shadow:0 0 18px rgba(0,118,255,0.35);
+  }
+  .niveau2{
+    background:linear-gradient(120deg,#c8f3ea,#e0f7f4,#c8f3ea);
+    background-size:300% 300%;
+    animation:fondAnime 12s ease-in-out infinite;
+    box-shadow:0 0 18px rgba(0,150,136,0.35);
+  }
+  .niveau3{
+    background:linear-gradient(120deg,#ffe4c4,#fff1de,#ffe4c4);
+    background-size:300% 300%;
+    animation:fondAnime 12s ease-in-out infinite;
+    box-shadow:0 0 18px rgba(255,140,0,0.35);
+  }
+
+  .bloc{
+    margin-bottom:25px;
+    padding:20px;
+    background:#f4fbfa;
+    border-radius:12px;
+    font-size:20px;
+  }
+  body.dark .bloc{ background:#1e2b2a; }
+
+  textarea{
+    width:100%;
+    height:130px;
+    padding:15px;
+    font-size:18px;
+    border-radius:10px;
+    border:1px solid #7bb1a8;
+    background:var(--card);
+    color:var(--text);
+  }
+
+  .btn-audio{
+    padding:10px 18px;
+    background:#00796b;
+    color:white;
+    border:none;
+    border-radius:10px;
+    cursor:pointer;
+    font-size:17px;
+  }
+  .btn-example{
+    padding:10px 18px;
+    background:#ffb300;
+    color:white;
+    border:none;
+    border-radius:10px;
+    cursor:pointer;
+    font-size:17px;
+    margin-left:5px;
+  }
+
+  .validate-btn{
+    width:100%;
+    margin-top:15px;
+    font-size:18px;
+    background:#00695c;
+  }
+</style>
+</head>
+
+<body>
+
+<button class="toggle-dark" onclick="toggleDark()">🌙 / ☀️</button>
+
+<div class="app">
+
+  <h1>Débats</h1>
+  <h2>Consigne : répondez à l’oral et à l’écrit, on avance ensemble !</h2>
+
+  <!-- Nom participant -->
+  <div style="text-align:center; margin-bottom:20px;">
+    <input id="nomParticipant" type="text" placeholder="Nom du participant"
+      style="padding:10px; width:260px; font-size:16px; border-radius:8px; border:1px solid #7bb1a8;">
+  </div>
+
+  <!-- Boutons -->
+  <div class="controls">
+    <button onclick="choisirNiveau(1)">Niveau 1</button>
+    <button onclick="choisirNiveau(2)">Niveau 2</button>
+    <button onclick="choisirNiveau(3)">Niveau 3</button>
+    <button onclick="exportPDF()">📄 PDF global</button>
+    <button onclick="exportPDFparticipant()">📄 PDF participant</button>
+    <button onclick="resetHistorique()">🗑️ Effacer historique</button>
+  </div>
+
+  <!-- Zone débat + aides -->
+  <div id="zone-debat" class="bloc">
+    👉 Choisissez un niveau pour commencer.
+  </div>
+
+  <div id="zone-aides" class="bloc"></div>
+
+  <!-- Réponse -->
+  <div class="bloc">
+    <b>Votre réponse :</b>
+    <textarea id="reponse"></textarea>
+    <button class="validate-btn" onclick="valider()">Valider</button>
+  </div>
+
+  <div id="msg-motivation" style="text-align:center; font-size:18px; color:#00796b;"></div>
+
+</div>
+
 <script>
 let DATA = null;
 let niveau = 0;
 let index = 0;
 let liste = [];
+let currentQuestionText = "";
 let historique = JSON.parse(localStorage.getItem("historique_debats")) || [];
 
-// mémoire niveaux
+// mémorisation des indices de niveau
 let mem = {
   1: parseInt(localStorage.getItem("niv1_index")) || 0,
   2: parseInt(localStorage.getItem("niv2_index")) || 0,
   3: parseInt(localStorage.getItem("niv3_index")) || 0
 };
 
-// mode sombre au chargement
+// appliquer le mode sombre si déjà actif
 if (localStorage.getItem("darkmode") === "true") {
-  document.addEventListener("DOMContentLoaded", () => {
-    document.body.classList.add("dark");
-  });
+  document.body.classList.add("dark");
 }
 
-function toggleDark() {
+// Toggle dark
+function toggleDark(){
   document.body.classList.toggle("dark");
   localStorage.setItem("darkmode", document.body.classList.contains("dark"));
 }
 
-// charger JSON
+// Charger debats.json
 fetch("debats.json")
   .then(r => r.json())
-  .then(j => DATA = j)
-  .catch(() => alert("Erreur chargement JSON"));
+  .then(j => {
+    DATA = j;
+  })
+  .catch(() => {
+    alert("Erreur : impossible de charger debats.json.\nAssure-toi qu'il est dans le même dossier et que la page est ouverte via un serveur (pas en file://).");
+  });
 
-// choisir niveau
-function choisirNiveau(n) {
-  if (!DATA) { alert("JSON pas prêt"); return; }
+// Choisir niveau
+function choisirNiveau(n){
+  if(!DATA){
+    alert("Le fichier JSON n'est pas encore chargé.");
+    return;
+  }
 
   niveau = n;
-  if (n == 1) liste = DATA.A1;
-  if (n == 2) liste = DATA.A2;
-  if (n == 3) liste = DATA.B1;
+  if(n === 1) liste = DATA.A1;
+  if(n === 2) liste = DATA.A2;
+  if(n === 3) liste = DATA.B1;
 
-  index = mem[n];
+  index = mem[n] || 0;
   afficherDebat();
 }
 
-// afficher débat
-function afficherDebat() {
+// Afficher débat
+function afficherDebat(){
   const zoneDebat = document.getElementById("zone-debat");
   const zoneAides = document.getElementById("zone-aides");
 
-  if (index >= liste.length) {
-    zoneDebat.innerHTML = "🎉 Série terminée !";
+  if(!liste || liste.length === 0){
+    zoneDebat.innerHTML = "Pas de débats pour ce niveau.";
+    zoneAides.innerHTML = "";
+    return;
+  }
+
+  if(index >= liste.length){
+    zoneDebat.innerHTML = "🎉 Série terminée pour ce niveau.";
     zoneAides.innerHTML = "";
     return;
   }
 
   const debat = liste[index];
+  currentQuestionText = debat.question;
 
   zoneDebat.innerHTML = `
     <div class="bloc-question niveau${niveau}">
       ${debat.question}
     </div>
-
     <div style="text-align:center;">
-      <button class="btn-audio" onclick="lireQuestion('${debat.question.replace(/'/g,'\\\'')}')">🔊 Lire</button>
+      <button class="btn-audio" onclick="lireQuestion()">🔊 Lire la question</button>
       <button class="btn-example" onclick="montrerExemple(${niveau})">💡 Exemple</button>
     </div>
-
     <div id="exemple-zone" style="text-align:center; margin-top:10px;"></div>
-
     <div style="text-align:center; margin-top:10px; font-size:20px;">
       <b>${debat.titre}</b>
     </div>
@@ -80,80 +308,102 @@ function afficherDebat() {
   document.getElementById("msg-motivation").innerHTML = "";
 }
 
-// lecture audio
-function lireQuestion(texte) {
-  const u = new SpeechSynthesisUtterance(texte);
+// Lecture audio
+function lireQuestion(){
+  if(!currentQuestionText) return;
+  const u = new SpeechSynthesisUtterance(currentQuestionText);
   u.lang = "fr-FR";
+  u.rate = 1;
+  u.pitch = 1;
   speechSynthesis.speak(u);
 }
 
-// exemple
-function montrerExemple(niv) {
+// Exemple simple selon niveau
+function montrerExemple(niv){
   let phrase = "";
-  if (niv == 1) phrase = "Je préfère le matin parce que je suis plus tranquille.";
-  if (niv == 2) phrase = "Je choisis le travail d’équipe car c’est plus motivant pour moi.";
-  if (niv == 3) phrase = "Je pense que discuter calmement permet de résoudre un conflit.";
-  document.getElementById("exemple-zone").innerHTML = `<i>${phrase}</i>`;
+  if(niv === 1) phrase = "Je préfère le matin parce que je suis plus tranquille.";
+  if(niv === 2) phrase = "Je choisis le travail d’équipe car c’est plus motivant pour moi.";
+  if(niv === 3) phrase = "Je pense que discuter calmement permet de résoudre un conflit.";
+  const exZone = document.getElementById("exemple-zone");
+  if(exZone){
+    exZone.innerHTML = `<i>${phrase}</i>`;
+  }
 }
 
-// valider
-function valider() {
-  const rep = document.getElementById("reponse").value.trim();
-  if (rep === "") { alert("Écris une réponse."); return; }
+// Valider réponse
+function valider(){
+  if(!niveau || !liste || liste.length === 0){
+    alert("Choisis d'abord un niveau.");
+    return;
+  }
 
-  // sauvegarde complète
+  const rep = document.getElementById("reponse").value.trim();
+  if(rep === ""){
+    alert("Écris une réponse avant de valider.");
+    return;
+  }
+
+  const participant = document.getElementById("nomParticipant").value.trim() || "Sans nom";
+  const debat = liste[index];
+
+  // Sauvegarde complète
   historique.push({
-    participant: document.getElementById("nomParticipant").value || "Sans nom",
+    participant: participant,
     niveau: niveau,
     debat_numero: index + 1,
-    titre: liste[index].titre,
-    question: liste[index].question,
+    titre: debat.titre,
+    question: debat.question,
     reponse: rep,
     date: new Date().toLocaleString()
   });
+
   localStorage.setItem("historique_debats", JSON.stringify(historique));
 
+  // avancer dans ce niveau
   index++;
   mem[niveau] = index;
-  localStorage.setItem("niv" + niveau + "_index", index);
+  localStorage.setItem("niv"+niveau+"_index", index);
 
   afficherDebat();
 }
 
-// effacer historique
-function resetHistorique() {
-  if (confirm("Effacer tout l'historique ?")) {
+// Effacer historique
+function resetHistorique(){
+  if(confirm("Effacer tout l'historique des réponses ?")){
     historique = [];
     localStorage.removeItem("historique_debats");
-    alert("Historique effacé !");
+    alert("Historique effacé.");
   }
 }
 
-// PDF global
-function exportPDF() {
+// Export PDF global
+function exportPDF(){
   const { jsPDF } = window.jspdf;
-  const pdf = new jsPDF({ unit: "pt", format: "a4" });
+  const pdf = new jsPDF({ unit:"pt", format:"a4" });
   let y = 40;
 
-  pdf.setFont("Helvetica", "bold");
+  pdf.setFont("Helvetica","bold");
   pdf.setFontSize(20);
   pdf.text("Réponses aux débats (tous participants)", 40, y);
   y += 35;
 
-  pdf.setFont("Helvetica", "normal");
+  pdf.setFont("Helvetica","normal");
   pdf.setFontSize(12);
 
-  if (historique.length === 0) {
+  if(historique.length === 0){
     pdf.text("Aucune réponse enregistrée.", 40, y);
   } else {
     historique.forEach(item => {
-      if (y > 760) { pdf.addPage(); y = 40; }
+      if(y > 760){
+        pdf.addPage();
+        y = 40;
+      }
 
-      pdf.setFont("Helvetica", "bold");
+      pdf.setFont("Helvetica","bold");
       pdf.text(`Participant : ${item.participant}`, 40, y); y += 18;
       pdf.text(`Niveau ${item.niveau} – Débat ${item.debat_numero}`, 40, y); y += 18;
 
-      pdf.setFont("Helvetica", "normal");
+      pdf.setFont("Helvetica","normal");
       pdf.text(`Question : ${item.question}`, 40, y, { maxWidth: 520 }); y += 35;
       pdf.text(`Réponse : ${item.reponse}`, 40, y, { maxWidth: 520 }); y += 35;
 
@@ -172,33 +422,42 @@ function exportPDF() {
   pdf.save("reponses_debats.pdf");
 }
 
-// PDF par participant
-function exportPDFparticipant() {
+// Export PDF participant
+function exportPDFparticipant(){
   const nom = document.getElementById("nomParticipant").value.trim();
-  if (nom === "") { alert("Entrez le nom du participant."); return; }
+  if(nom === ""){
+    alert("Entrez le nom du participant.");
+    return;
+  }
 
-  const data = historique.filter(i => i.participant === nom);
-  if (data.length === 0) { alert("Aucune réponse trouvée."); return; }
+  const data = historique.filter(item => item.participant === nom);
+  if(data.length === 0){
+    alert("Aucune réponse trouvée pour ce participant.");
+    return;
+  }
 
   const { jsPDF } = window.jspdf;
-  const pdf = new jsPDF({ unit: "pt", format: "a4" });
+  const pdf = new jsPDF({ unit:"pt", format:"a4" });
   let y = 40;
 
-  pdf.setFont("Helvetica", "bold");
+  pdf.setFont("Helvetica","bold");
   pdf.setFontSize(20);
   pdf.text(`Réponses du participant : ${nom}`, 40, y);
   y += 35;
 
-  pdf.setFont("Helvetica", "normal");
+  pdf.setFont("Helvetica","normal");
   pdf.setFontSize(12);
 
   data.forEach(item => {
-    if (y > 760) { pdf.addPage(); y = 40; }
+    if(y > 760){
+      pdf.addPage();
+      y = 40;
+    }
 
-    pdf.setFont("Helvetica", "bold");
+    pdf.setFont("Helvetica","bold");
     pdf.text(`Niveau ${item.niveau} – Débat ${item.debat_numero}`, 40, y); y += 18;
 
-    pdf.setFont("Helvetica", "normal");
+    pdf.setFont("Helvetica","normal");
     pdf.text(`Question : ${item.question}`, 40, y, { maxWidth: 520 }); y += 35;
     pdf.text(`Réponse : ${item.reponse}`, 40, y, { maxWidth: 520 }); y += 35;
 
@@ -216,3 +475,6 @@ function exportPDFparticipant() {
   pdf.save(`Debats_${nom}.pdf`);
 }
 </script>
+
+</body>
+</html>
