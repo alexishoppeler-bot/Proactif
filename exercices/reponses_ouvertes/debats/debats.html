@@ -79,7 +79,6 @@
     background:#263230;
   }
 
-  /* Question */
   .bloc-question{
     font-size:26px;
     font-weight:bold;
@@ -90,7 +89,6 @@
     line-height:1.4;
   }
 
-  /* Animation */
   @keyframes fondAnime{
     0%{background-position:0% 50%;}
     50%{background-position:100% 50%;}
@@ -178,7 +176,7 @@
   <div id="zone-debat" class="bloc">👉 Choisissez un niveau pour commencer.</div>
   <div id="zone-aides" class="bloc"></div>
 
-  <div class="bloc">
+  <div id="bloc-reponse" class="bloc">
     <b>Votre réponse :</b>
     <textarea id="reponse"></textarea>
     <button class="validate-btn" onclick="valider()">Valider</button>
@@ -207,17 +205,20 @@ function toggleDark(){
   localStorage.setItem("darkmode", document.body.classList.contains("dark"));
 }
 
+// CHARGEMENT JSON
 fetch("debats.json")
   .then(r=>r.json())
   .then(j=>DATA=j)
-  .catch(()=>alert("Erreur chargement JSON"));
+  .catch(()=>alert("Erreur chargement debats.json"));
 
 function choisirNiveau(n){
-  if(!DATA){alert("JSON pas prêt");return;}
+  if(!DATA){ alert("JSON pas prêt"); return;}
 
   niveau=n;
-  liste=DATA["A"+(n===1?"1":(n===2?"2":"3"))];
-  
+  if(n===1) liste=DATA.A1;
+  if(n===2) liste=DATA.A2;
+  if(n===3) liste=DATA.B1;
+
   index=mem[niveau];
   afficherDebat();
 }
@@ -226,17 +227,21 @@ function afficherDebat(){
   const q=document.getElementById("zone-debat");
   const a=document.getElementById("zone-aides");
   const p=document.getElementById("progression");
+  const blocRep=document.getElementById("bloc-reponse");
 
-  if(index>=liste.length){
+  if(index >= liste.length){
     q.innerHTML="🎉 Série terminée pour ce niveau.";
     a.innerHTML="";
-    p.innerHTML=`Débat ${liste.length} / ${liste.length}`;
+    p.innerHTML="";
+    blocRep.style.display="none"; // ❌ cacher réponse + valider
     return;
   }
 
+  blocRep.style.display="block"; // ✔ réaffiche réponse
+
   const debat=liste[index];
 
-  p.innerHTML = `Débat ${index+1} / ${liste.length}`;
+  p.innerHTML=`Débat ${index+1} / ${liste.length}`;
 
   q.innerHTML=`
     <div class="bloc-question niveau${niveau}">
@@ -247,7 +252,7 @@ function afficherDebat(){
     </div>
   `;
 
-  a.innerHTML = `<b>Phrases d’aide :</b><ul>${debat.aides.map(x=>`<li>${x}</li>`).join("")}</ul>`;
+  a.innerHTML=`<b>Phrases d’aide :</b><ul>${debat.aides.map(x=>`<li>${x}</li>`).join("")}</ul>`;
 
   document.getElementById("reponse").value="";
 }
@@ -260,13 +265,13 @@ function valider(){
   const debat=liste[index];
 
   historique.push({
-    participant: participant,
-    niveau: niveau,
-    debat_numero: index+1,
-    titre: debat.titre,
-    question: debat.question,
-    reponse: rep,
-    date: new Date().toLocaleString()
+    participant,
+    niveau,
+    debat_numero:index+1,
+    titre:debat.titre,
+    question:debat.question,
+    reponse:rep,
+    date:new Date().toLocaleString()
   });
 
   localStorage.setItem("historique_debats", JSON.stringify(historique));
@@ -280,10 +285,10 @@ function valider(){
 
 function exportPDFparticipant(){
   const nom=document.getElementById("nomParticipant").value.trim();
-  if(nom===""){alert("Entrez le nom du participant.");return;}
+  if(nom===""){ alert("Entrez le nom du participant."); return;}
 
   const data=historique.filter(i=>i.participant===nom);
-  if(data.length===0){alert("Aucune réponse trouvée.");return;}
+  if(data.length===0){ alert("Aucune réponse trouvée."); return;}
 
   const {jsPDF}=window.jspdf;
   const pdf=new jsPDF({unit:"pt",format:"a4"});
@@ -294,18 +299,22 @@ function exportPDFparticipant(){
   pdf.text(`Réponses du participant : ${nom}`,40,y);
   y+=35;
 
-  pdf.setFontSize(12);
   pdf.setFont("Helvetica","normal");
+  pdf.setFontSize(12);
 
   data.forEach(item=>{
-    if(y>760){pdf.addPage();y=40;}
+    if(y>760){ pdf.addPage(); y=40;}
 
     pdf.setFont("Helvetica","bold");
-    pdf.text(`Niveau ${item.niveau} – Débat ${item.debat_numero}`,40,y); y+=18;
+    pdf.text(`Niveau ${item.niveau} – Débat ${item.debat_numero}`,40,y);
+    y+=18;
 
     pdf.setFont("Helvetica","normal");
-    pdf.text(`Question : ${item.question}`,40,y,{maxWidth:520}); y+=35;
-    pdf.text(`Réponse : ${item.reponse}`,40,y,{maxWidth:520}); y+=35;
+    pdf.text(`Question : ${item.question}`,40,y,{maxWidth:520});
+    y+=35;
+
+    pdf.text(`Réponse : ${item.reponse}`,40,y,{maxWidth:520});
+    y+=35;
 
     pdf.setFontSize(10);
     pdf.setTextColor(120);
