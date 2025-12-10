@@ -2,7 +2,7 @@
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
-<title>Débats – Proactif</title>
+<title>Débats</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <!-- jsPDF -->
@@ -191,12 +191,14 @@ let index=0;
 let liste=[];
 let historique = JSON.parse(localStorage.getItem("historique_debats")) || [];
 
+// mémoire progression par niveau
 let mem={
   1:parseInt(localStorage.getItem("niv1_index"))||0,
   2:parseInt(localStorage.getItem("niv2_index"))||0,
   3:parseInt(localStorage.getItem("niv3_index"))||0
 };
 
+// mode sombre
 if(localStorage.getItem("darkmode")==="true")
   document.body.classList.add("dark");
 
@@ -205,24 +207,35 @@ function toggleDark(){
   localStorage.setItem("darkmode", document.body.classList.contains("dark"));
 }
 
-// CHARGEMENT JSON
+// charger JSON
 fetch("debats.json")
   .then(r=>r.json())
   .then(j=>DATA=j)
   .catch(()=>alert("Erreur chargement debats.json"));
 
+// choisir niveau
 function choisirNiveau(n){
   if(!DATA){ alert("JSON pas prêt"); return;}
 
   niveau=n;
   if(n===1) liste=DATA.A1;
   if(n===2) liste=DATA.A2;
-  if(n===3) liste=DATA.B1;
+  if(n===3) liste=DATA.B1; // B1 pour niveau 3
 
-  index=mem[niveau];
+  // récupérer l'index mémorisé
+  index = mem[niveau] || 0;
+
+  // si l'index enregistré est trop grand → on recommence à 0
+  if(index >= liste.length){
+    index = 0;
+    mem[niveau] = 0;
+    localStorage.setItem("niv"+niveau+"_index", 0);
+  }
+
   afficherDebat();
 }
 
+// afficher débat
 function afficherDebat(){
   const q=document.getElementById("zone-debat");
   const a=document.getElementById("zone-aides");
@@ -233,11 +246,11 @@ function afficherDebat(){
     q.innerHTML="🎉 Série terminée pour ce niveau.";
     a.innerHTML="";
     p.innerHTML="";
-    blocRep.style.display="none"; // ❌ cacher réponse + valider
+    blocRep.style.display="none"; // cacher réponse + bouton
     return;
   }
 
-  blocRep.style.display="block"; // ✔ réaffiche réponse
+  blocRep.style.display="block"; // au cas où il était caché
 
   const debat=liste[index];
 
@@ -257,6 +270,7 @@ function afficherDebat(){
   document.getElementById("reponse").value="";
 }
 
+// valider
 function valider(){
   const rep=document.getElementById("reponse").value.trim();
   if(rep===""){alert("Écris une réponse.");return;}
@@ -283,6 +297,7 @@ function valider(){
   afficherDebat();
 }
 
+// PDF participant
 function exportPDFparticipant(){
   const nom=document.getElementById("nomParticipant").value.trim();
   if(nom===""){ alert("Entrez le nom du participant."); return;}
