@@ -4,68 +4,111 @@
 <meta charset="UTF-8">
 <title>Débats oraux – Proactif</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 <style>
   body{
     font-family: Arial, sans-serif;
-    background:#eef2f6;
+    background:#e8f3f1;
     padding:20px;
     display:flex;
     flex-direction:column;
     align-items:center;
   }
+
   .app{
     width:900px;
     max-width:95%;
     background:white;
     padding:30px;
-    border-radius:16px;
-    box-shadow:0 6px 25px rgba(0,0,0,.12);
+    border-radius:18px;
+    box-shadow:0 6px 22px rgba(0,0,0,0.15);
+    border-top:10px solid #009688;
   }
+
   h1{
     text-align:center;
     margin-bottom:10px;
+    color:#00695c;
+    font-size:28px;
   }
+
   .controls{
     text-align:center;
     margin-bottom:25px;
   }
   button{
-    padding:10px 18px;
+    padding:12px 20px;
     border:none;
     border-radius:10px;
     margin:5px;
-    background:#006bb3;
+    background:#009688;
     color:white;
     font-size:16px;
     cursor:pointer;
+    transition:0.2s;
   }
   button:hover{
-    background:#005999;
+    background:#00796b;
   }
+
   .bloc{
     margin-bottom:25px;
     padding:20px;
-    background:#f7f9fb;
+    background:#f4fbfa;
     border-radius:12px;
     font-size:20px;
     line-height:1.5;
   }
+
   .aides{
     font-size:18px;
-    margin-top:15px;
   }
+
   .aides ul{
     padding-left:23px;
   }
+
   textarea{
     width:100%;
     height:120px;
     padding:15px;
     font-size:18px;
     border-radius:10px;
-    border:1px solid #aaa;
-    margin-top:10px;
+    border:1px solid #90a4ae;
     resize:none;
+    margin-top:10px;
+    background:white;
+  }
+
+  .validate-btn{
+    width:100%;
+    background:#00695c;
+    margin-top:15px;
+    font-size:18px;
+  }
+
+  /* Barre de progression */
+  .progress-container{
+    width:100%;
+    height:20px;
+    background:#d9efeb;
+    border-radius:10px;
+    overflow:hidden;
+    margin-bottom:20px;
+  }
+  .progress-bar{
+    height:100%;
+    background:#009688;
+    width:0%;
+    transition:0.4s;
+  }
+
+  .motivation{
+    text-align:center;
+    font-size:18px;
+    color:#00796b;
+    margin-top:10px;
+    font-style:italic;
   }
 </style>
 </head>
@@ -74,56 +117,131 @@
 <div class="app">
   <h1>Débats oraux – Proactif</h1>
 
+  <!-- Barre progression -->
+  <div class="progress-container">
+    <div id="progressBar" class="progress-bar"></div>
+  </div>
+
   <div class="controls">
-    <button onclick="charger('A1')">Débat A1</button>
-    <button onclick="charger('A2')">Débat A2</button>
-    <button onclick="charger('B1')">Débat B1</button>
-    <button onclick="charger()">Débat aléatoire</button>
+    <button onclick="choisirNiveau('A1')">Débat A1</button>
+    <button onclick="choisirNiveau('A2')">Débat A2</button>
+    <button onclick="choisirNiveau('B1')">Débat B1</button>
+    <button onclick="choisirNiveau('ALL')">Aléatoire (90)</button>
+    <button onclick="recommencer()">Recommencer</button>
   </div>
 
   <div id="zone-debat" class="bloc">
-    👉 Cliquez sur un bouton pour afficher un débat.
+    👉 Choisissez un niveau pour commencer.
   </div>
 
   <div id="zone-aides" class="bloc aides"></div>
 
   <div class="bloc">
     <b>Votre réponse :</b>
-    <textarea placeholder="Parlez... écrivez... utilisez les phrases d’aide !"></textarea>
+    <textarea id="reponse" placeholder="Écrivez ici avant de valider..."></textarea>
+    <button class="validate-btn" onclick="validerReponse()">Valider la réponse</button>
   </div>
+
+  <div id="msg-motivation" class="motivation"></div>
 </div>
 
 <script>
 let DATA = null;
+let niveauActuel = null;
+let pool = [];
+let total = 0;
+let vus = 0;
 
-// Charger le fichier JSON
-fetch('debats.json')
-  .then(response => response.json())
-  .then(json => { DATA = json; })
-  .catch(() => alert("Erreur : impossible de charger debats.json"));
+// Messages motivants
+const MOTIV = [
+  "Bravo, continue !",
+  "Très bien, tu progresses !",
+  "Super, exprime ton idée !",
+  "Excellent, garde le rythme !",
+  "Courage, tu fais bien !",
+  "Parfait, continue comme ça !"
+];
 
-// Afficher un débat
-function charger(niveau){
-  if(!DATA){
-    alert("Le fichier JSON n'est pas encore chargé.");
+// Charger JSON
+fetch("debats.json")
+  .then(r => r.json())
+  .then(json => DATA = json)
+  .catch(() => alert("❌ Impossible de charger debats.json"));
+
+function choisirNiveau(niv){
+  if(!DATA){ alert("JSON pas encore chargé"); return; }
+
+  niveauActuel = niv;
+  vus = 0;
+
+  if(niv === "A1") pool = [...DATA.A1], total = DATA.A1.length;
+  else if(niv === "A2") pool = [...DATA.A2], total = DATA.A2.length;
+  else if(niv === "B1") pool = [...DATA.B1], total = DATA.B1.length;
+  else pool = [...DATA.A1, ...DATA.A2, ...DATA.B1], total = pool.length;
+
+  afficherDebat();
+  updateProgress();
+}
+
+function afficherDebat(){
+  if(pool.length === 0){
+    document.getElementById("zone-debat").innerHTML =
+      "🎉 Série terminée ! Cliquez sur Recommencer.";
+    document.getElementById("zone-aides").innerHTML = "";
     return;
   }
 
-  let liste = [];
-
-  if(niveau){
-    liste = DATA[niveau];
-  } else {
-    liste = [...DATA.A1, ...DATA.A2, ...DATA.B1];
-  }
-
-  const debat = liste[Math.floor(Math.random() * liste.length)];
+  const index = Math.floor(Math.random()*pool.length);
+  const debat = pool.splice(index,1)[0];
 
   document.getElementById("zone-debat").innerHTML =
     `<b>${debat.titre}</b><br><br>${debat.question}`;
 
   document.getElementById("zone-aides").innerHTML =
     `<b>Phrases d’aide :</b><ul>${debat.aides.map(a=>`<li>${a}</li>`).join("")}</ul>`;
+
+  document.getElementById("msg-motivation").innerHTML = "";
+
+  document.getElementById("reponse").value = "";
+}
+
+function validerReponse(){
+  const rep = document.getElementById("reponse").value.trim();
+
+  if(rep === ""){
+    alert("❗ Écris une réponse avant de valider.");
+    return;
+  }
+
+  // Sauvegarde automatique
+  const key = "reponse_" + Date.now();
+  localStorage.setItem(key, rep);
+
+  vus++;
+  updateProgress();
+
+  // Message motivant
+  const msg = MOTIV[Math.floor(Math.random()*MOTIV.length)];
+  document.getElementById("msg-motivation").innerHTML = msg;
+
+  // Montrer débat suivant
+  setTimeout(()=>{ afficherDebat(); }, 700);  
+}
+
+function updateProgress(){
+  const percent = (vus/total)*100;
+  document.getElementById("progressBar").style.width = percent+"%";
+}
+
+function recommencer(){
+  niveauActuel = null;
+  pool = [];
+  vus = 0;
+  total = 0;
+  updateProgress();
+  document.getElementById("zone-debat").innerHTML = "👉 Série réinitialisée.";
+  document.getElementById("zone-aides").innerHTML = "";
+  document.getElementById("msg-motivation").innerHTML = "";
 }
 </script>
 
