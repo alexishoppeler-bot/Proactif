@@ -1,0 +1,181 @@
+[
+  {
+    "id": "d1",
+    "titre": "Mieux vivre en ville ou à la campagne ?",
+    "question": "Où préférez-vous vivre : en ville ou à la campagne ? Pourquoi ?",
+    "aides": ["La ville, parce que…", "La campagne, parce que…", "Moi, ça dépend…"],
+    "relances": [
+      "Où avez-vous grandi ?",
+      "Qu’est-ce qui est plus pratique pour vous ?",
+      "Où vous sentez-vous plus tranquille ?",
+      "Si vous pouviez choisir demain, vous iriez où ?"
+    ]
+  },
+  {
+    "id": "d2",
+    "titre": "Sortir ou rester à la maison ?",
+    "question": "Vous préférez sortir ou rester tranquille chez vous ? Pourquoi ?",
+    "aides": ["Sortir, parce que…", "Rester à la maison, parce que…"],
+    "relances": ["Vous sortez souvent ?", "Qu’aimez-vous faire dehors ?", "Qu’est-ce qui vous repose le plus ?"]
+  },
+  {
+    "id": "d3",
+    "titre": "Travail rapide ou travail tranquille ?",
+    "question": "Qu’est-ce qui est mieux pour vous : un travail très rapide ou un travail calme ?",
+    "aides": ["Travail rapide, car…", "Travail calme, car…", "Ça dépend…"],
+    "relances": ["Aimez-vous quand ça bouge ?", "Qu’est-ce qui vous fatigue ?"]
+  },
+  {
+    "id": "d4",
+    "titre": "Téléphoner ou écrire des messages ?",
+    "question": "Vous préférez appeler ou envoyer un message ?",
+    "aides": ["Téléphoner, parce que…", "Messages, parce que…"],
+    "relances": ["Dans quelles situations vous préférez appeler ?", "Qu’est-ce qui est plus simple pour vous ?"]
+  },
+  {
+    "id": "d5",
+    "titre": "Sortir ou rester tranquille ?",
+    "question": "Vous préférez sortir ou rester à la maison pendant votre temps libre ?",
+    "aides": ["Sortir, car…", "Rester à la maison, car…"],
+    "relances": ["Qu’est-ce qui vous relaxe ?", "Sortez-vous souvent ?"]
+  },
+  {
+    "id": "d6",
+    "titre": "Travail proche ou mieux payé loin ?",
+    "question": "Vous préférez un travail près de chez vous ou plus loin mais mieux payé ?",
+    "aides": ["Travail proche, car…", "Mieux payé loin, car…", "Ça dépend…"],
+    "relances": ["Combien de temps acceptez-vous pour aller au travail ?", "Le salaire change-t-il votre choix ?"]
+  },
+  {
+    "id": "d7",
+    "titre": "Manger sain ou rapide ?",
+    "question": "Qu’est-ce qui est plus important pour vous : manger sain ou manger vite ?",
+    "aides": ["Manger sain car…", "Manger rapide car…"],
+    "relances": ["Cuisinez-vous souvent ?", "Le temps est-il un problème pour vous ?"]
+  },
+  {
+    "id": "d8",
+    "titre": "Apprendre seul ou en groupe ?",
+    "question": "Vous apprenez mieux seul ou en groupe ?",
+    "aides": ["Seul car…", "En groupe car…"],
+    "relances": ["Qu’est-ce qui est plus facile pour vous ?", "Aimez-vous travailler avec les autres ?"]
+  },
+  {
+    "id": "d9",
+    "titre": "Faire du sport ou se reposer ?",
+    "question": "Quand vous êtes fatigué, vous préférez faire du sport ou vous reposer ?",
+    "aides": ["Faire du sport car…", "Me reposer car…"],
+    "relances": ["Faites-vous souvent du sport ?", "Qu’est-ce qui vous détend ?"]
+  },
+  {
+    "id": "d10",
+    "titre": "Téléphone cher ou téléphone simple ?",
+    "question": "Vous préférez un téléphone cher ou un téléphone simple ?",
+    "aides": ["Téléphone cher car…", "Téléphone simple car…"],
+    "relances": ["Utilisez-vous beaucoup d’applications ?", "Qu’est-ce qui est important pour vous ?"]
+  },
+  {
+    "id": "d11",
+    "titre": "Travailler le matin ou l’après-midi ?",
+    "question": "Vous préférez travailler tôt le matin ou l’après-midi ?",
+    "aides": ["Le matin car…", "L’après-midi car…"],
+    "relances": ["Quand êtes-vous plus en forme ?", "Quels horaires vous fatiguent le plus ?"]
+  },
+  {
+    "id": "d12",
+    "titre": "Travail fixe ou changer souvent ?",
+    "question": "Vous préférez rester longtemps dans un travail ou changer régulièrement ?",
+    "aides": ["Rester car…", "Changer car…"],
+    "relances": ["Vous aimez la routine ?", "Aimez-vous découvrir de nouvelles choses ?"]
+  },
+  {
+    "id": "d13",
+    "titre": "Acheter neuf ou d’occasion ?",
+    "question": "Qu’est-ce qui est mieux pour vous : acheter neuf ou d’occasion ?",
+    "aides": ["Neuf car…", "Occasion car…"],
+    "relances": ["Achetez-vous souvent en occasion ?", "Qu’est-ce qui compte le plus pour vous ?"]
+  },
+  {
+    "id": "d14",
+    "titre": "Télévision ou téléphone ?",
+    "question": "Vous utilisez plus la télévision ou le téléphone ?",
+    "aides": ["Télévision car…", "Téléphone car…"],
+    "relances": ["Qu’est-ce que vous regardez le plus ?", "Avec quoi vous vous détendez ?"]
+  },
+  {
+    "id": "d15",
+    "titre": "Courses une fois par semaine ou tous les jours ?",
+    "question": "Vous préférez faire vos courses une fois par semaine ou tous les jours ?",
+    "aides": ["Une fois par semaine car…", "Tous les jours car…"],
+    "relances": ["Planifiez-vous vos courses ?", "Achetez-vous souvent au dernier moment ?"]
+  },
+  {
+    "id": "d16",
+    "titre": "Travail physique ou travail tranquille ?",
+    "question": "Vous préférez un travail physique ou un travail calme ?",
+    "aides": ["Physique car…", "Tranquille car…"],
+    "relances": ["Aimez-vous bouger ?", "Qu’est-ce qui vous fatigue le plus ?"]
+  },
+  {
+    "id": "d17",
+    "titre": "Vidéos ou lecture ?",
+    "question": "Vous apprenez mieux en regardant des vidéos ou en lisant ?",
+    "aides": ["Vidéos car…", "Lecture car…"],
+    "relances": ["Qu’est-ce qui vous aide à comprendre plus vite ?", "Utilisez-vous Internet pour apprendre ?"]
+  },
+  {
+    "id": "d18",
+    "titre": "Dormir tôt ou tard ?",
+    "question": "Vous préférez vous coucher tôt ou tard ?",
+    "aides": ["Tôt car…", "Tard car…"],
+    "relances": ["Quelle est votre heure habituelle ?", "Qu’est-ce qui dérange votre sommeil ?"]
+  },
+  {
+    "id": "d19",
+    "titre": "Manger à la maison ou au restaurant ?",
+    "question": "Vous préférez manger à la maison ou au restaurant ?",
+    "aides": ["À la maison car…", "Au restaurant car…"],
+    "relances": ["Vous cuisinez souvent ?", "Qu’est-ce qui coûte le moins cher ?"]
+  },
+  {
+    "id": "d20",
+    "titre": "Métier qu’on aime ou métier qui paie mieux ?",
+    "question": "Pour vous, qu’est-ce qui est plus important : aimer le métier ou le salaire ?",
+    "aides": ["Aimer le métier car…", "Salaire car…"],
+    "relances": ["Avez-vous déjà fait un métier que vous aimiez ?", "Le salaire influence-t-il votre motivation ?"]
+  },
+  {
+    "id": "d21",
+    "titre": "Transports publics pratiques ou compliqués ?",
+    "question": "Pour vous, les transports publics sont pratiques ou compliqués ?",
+    "aides": ["Pratiques car…", "Compliqués car…"],
+    "relances": ["Les utilisez-vous souvent ?", "Qu’est-ce qui est difficile ?"]
+  },
+  {
+    "id": "d22",
+    "titre": "Avec animal ou sans animal ?",
+    "question": "Vous préférez vivre avec un animal ou sans animal ?",
+    "aides": ["Avec car…", "Sans car…"],
+    "relances": ["Avez-vous déjà eu un animal ?", "Quel animal préférez-vous ?"]
+  },
+  {
+    "id": "d23",
+    "titre": "Faire vite ou prendre son temps ?",
+    "question": "Vous préférez faire les choses vite ou tranquillement ?",
+    "aides": ["Vite car…", "Tranquillement car…"],
+    "relances": ["Êtes-vous patient ?", "Qu’est-ce qui vous stresse ?"]
+  },
+  {
+    "id": "d24",
+    "titre": "Commencer tôt ou finir tôt ?",
+    "question": "Vous préférez commencer le travail tôt ou finir plus tôt ?",
+    "aides": ["Commencer tôt car…", "Finir tôt car…"],
+    "relances": ["Quand êtes-vous le plus efficace ?"]
+  },
+  {
+    "id": "d25",
+    "titre": "Apprendre par la pratique ou en regardant ?",
+    "question": "Vous apprenez mieux en faisant vous-même ou en regardant quelqu’un ?",
+    "aides": ["En faisant, car…", "En regardant, car…"],
+    "relances": ["Qu’est-ce qui vous aide à comprendre plus vite ?", "Avez-vous besoin d’exemples ?"]
+  }
