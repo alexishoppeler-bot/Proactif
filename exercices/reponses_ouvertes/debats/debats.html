@@ -89,7 +89,7 @@ h1{
   transition:width .4s ease;
 }
 
-/* ----------- BUTTONS ----------- */
+/* ----------- S ----------- */
 
 .btn{
   display:block;
@@ -195,7 +195,6 @@ ul li{ margin-bottom:6px; opacity:0; animation:fadeIn .5s forwards; }
   <div class="sectionTitle">❓ Question</div>
   <div id="question"></div>
 
-  <button id="btnCopy" class="btn" onclick="copyQuestion()">📋 Copier la question</button>
 
   <div class="sectionTitle">🧩 Aides pour commencer</div>
   <ul id="aides"></ul>
@@ -1010,14 +1009,9 @@ function resetAll(){
   document.getElementById("doneMsg").style.display="none";
 }
 
-/* --- COPIER LA QUESTION --- */
-function copyQuestion(){
-  navigator.clipboard.writeText(current.question);
-  alert("Question copiée !");
-}
-
 updateProgress();
 
 </script>
 </body>
 </html>
+
