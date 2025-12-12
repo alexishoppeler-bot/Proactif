@@ -2,113 +2,189 @@
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
-<title>Débats – Proactif</title>
+<title>Débats – Proactif Premium</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <style>
-  body{
-    font-family: Arial, sans-serif;
-    background:#eef2f6;
-    padding:20px;
-    margin:0;
-  }
 
-  h1{
-    text-align:center;
-    color:#004c97;
-    margin-bottom:30px;
-  }
+/* ----------- GLOBAL ----------- */
 
-  /* BOUTONS */
-  .btn{
-    display:block;
-    margin:0 auto 20px;
-    padding:12px 20px;
-    font-size:17px;
-    border:none;
-    border-radius:10px;
-    cursor:pointer;
-    transition:.2s;
-    font-weight:bold;
-  }
+:root {
+  --main:#004c97;
+  --bg:#eef2f6;
+  --card-bg:rgba(255,255,255,0.45);
+  --text:#000;
+  --glass-border:rgba(255,255,255,0.35);
+}
 
-  #btnRandom{
-    background:#004c97;
-    color:white;
-  }
-  #btnRandom:hover{
-    background:#0059b8;
-  }
+body.dark {
+  --bg:#0f172a;
+  --card-bg:rgba(255,255,255,0.1);
+  --text:#fff;
+  --glass-border:rgba(255,255,255,0.15);
+}
 
-  #btnDone{
-    background:#2e7d32;
-    color:white;
-    margin-top:25px;
-  }
-  #btnDone:hover{
-    background:#3fa043;
-  }
+body{
+  margin:0;
+  padding:20px;
+  font-family:Arial, sans-serif;
+  background:var(--bg);
+  color:var(--text);
+  transition:.3s;
+}
 
-  #btnReset{
-    background:#c62828;
-    color:white;
-    display:none;
-  }
-  #btnReset:hover{
-    background:#e53935;
-  }
+/* ----------- HEADER ----------- */
 
-  /* BLOC DÉBAT PREMIUM */
-  #box{
-    display:none;
-    max-width:720px;
-    margin:20px auto;
-    background:white;
-    padding:25px 30px;
-    border-radius:14px;
-    box-shadow:0 6px 16px rgba(0,0,0,.15);
-    animation:fade .3s ease;
-  }
+.topBar{
+  max-width:750px;
+  margin:auto;
+  text-align:center;
+  position:relative;
+}
 
-  @keyframes fade {
-    from {opacity:0; transform:translateY(10px);}
-    to {opacity:1; transform:translateY(0);}
-  }
+h1{
+  color:var(--main);
+  margin-bottom:10px;
+}
 
-  .titre{
-    font-size:22px;
-    font-weight:bold;
-    color:#004c97;
-    margin-bottom:15px;
-  }
+/* DARK MODE BUTTON */
 
-  .sectionTitle{
-    font-weight:bold;
-    font-size:16px;
-    color:#004c97;
-    margin-top:20px;
-  }
+#darkToggle{
+  position:absolute;
+  right:0;
+  top:0;
+  cursor:pointer;
+  font-size:22px;
+  padding:6px 10px;
+  border-radius:8px;
+  transition:.3s;
+}
 
-  ul{
-    margin:8px 0 0 18px;
-  }
-  ul li{
-    margin-bottom:6px;
-  }
+#darkToggle:hover{
+  background:rgba(0,0,0,0.1);
+}
 
-  .doneMsg{
-    text-align:center;
-    font-size:22px;
-    margin-top:30px;
-    color:#004c97;
-    display:none;
-  }
+/* COMPTEUR + PROGRESSION */
+
+#compteur{
+  margin-top:5px;
+  font-size:17px;
+  font-weight:bold;
+  color:var(--text);
+}
+
+.progressContainer{
+  width:100%;
+  background:rgba(0,0,0,0.1);
+  height:10px;
+  border-radius:10px;
+  margin:10px auto 25px;
+  overflow:hidden;
+}
+
+.progressBar{
+  width:0%;
+  height:100%;
+  background:var(--main);
+  transition:width .4s ease;
+}
+
+/* ----------- BUTTONS ----------- */
+
+.btn{
+  display:block;
+  margin:0 auto 20px;
+  padding:12px 20px;
+  font-size:17px;
+  border:none;
+  border-radius:12px;
+  cursor:pointer;
+  transition:.2s;
+  font-weight:bold;
+  max-width:300px;
+  color:white;
+}
+
+#btnRandom{ background:var(--main); }
+#btnRandom:hover{ transform:scale(1.03); }
+
+#btnDone{ background:#2e7d32; }
+#btnDone:hover{ transform:scale(1.03); }
+
+#btnReset{
+  background:#c62828;
+  display:none;
+}
+#btnReset:hover{ transform:scale(1.03); }
+
+#btnCopy{
+  background:#555;
+  margin-top:10px;
+}
+#btnCopy:hover{ transform:scale(1.03); }
+
+/* ----------- CARD (Glassmorphism) ----------- */
+
+#box{
+  display:none;
+  max-width:750px;
+  margin:20px auto;
+  padding:25px 30px;
+  border-radius:18px;
+  background:var(--card-bg);
+  backdrop-filter:blur(12px);
+  border:1px solid var(--glass-border);
+  box-shadow:0 10px 25px rgba(0,0,0,0.15);
+  animation:fadeUp .4s ease;
+}
+
+@keyframes fadeUp {
+  from { opacity:0; transform:translateY(20px); }
+  to { opacity:1; transform:translateY(0); }
+}
+
+.titre{
+  font-size:23px;
+  font-weight:bold;
+  color:var(--main);
+  margin-bottom:15px;
+}
+
+.sectionTitle{
+  font-weight:bold;
+  font-size:17px;
+  color:var(--main);
+  margin-top:20px;
+}
+
+ul{ padding-left:20px; }
+ul li{ margin-bottom:6px; opacity:0; animation:fadeIn .5s forwards; }
+
+@keyframes fadeIn {
+  to { opacity:1; }
+}
+
+/* MESSAGE FIN */
+
+.doneMsg{
+  text-align:center;
+  font-size:24px;
+  margin-top:30px;
+  color:var(--main);
+  display:none;
+}
+
 </style>
-
 </head>
 <body>
 
-<h1>🎭 Débats – Proactif</h1>
+<div class="topBar">
+  <h1>🎭 Débats – Proactif Premium</h1>
+  <div id="darkToggle">🌙</div>
+
+  <div id="compteur">Débats faits : 0 / 100</div>
+  <div class="progressContainer"><div class="progressBar" id="progressBar"></div></div>
+</div>
 
 <button id="btnRandom" class="btn" onclick="newDebat()">🎲 Nouveau débat aléatoire</button>
 <button id="btnReset" class="btn" onclick="resetAll()">🔄 Réinitialiser tout</button>
@@ -119,23 +195,33 @@
   <div class="sectionTitle">❓ Question</div>
   <div id="question"></div>
 
+  <button id="btnCopy" class="btn" onclick="copyQuestion()">📋 Copier la question</button>
+
   <div class="sectionTitle">🧩 Aides pour commencer</div>
   <ul id="aides"></ul>
 
   <div class="sectionTitle">💬 Relances</div>
   <ul id="relances"></ul>
 
-  <button id="btnDone" onclick="markDone()">✔ Marquer comme fait</button>
+  <button id="btnDone" class="btn" onclick="markDone()">✔ Marquer comme fait</button>
 </div>
 
 <div class="doneMsg" id="doneMsg">🎉 Tous les débats sont faits !</div>
 
 <script>
 
-/* ---------------------------------------
-   ICI COMMENCE LE SCRIPT
-   Les débats seront insérés après cette ligne
----------------------------------------- */
+/* DARK MODE */
+document.getElementById("darkToggle").onclick = () => {
+  document.body.classList.toggle("dark");
+  localStorage.setItem("darkMode", document.body.classList.contains("dark"));
+};
+if(localStorage.getItem("darkMode") === "true"){
+  document.body.classList.add("dark");
+}
+
+/* -------------------------------
+      DÉBUT DES DÉBATS
+------------------------------- */
 
 const debats = [
   {
@@ -213,12 +299,13 @@ const debats = [
     "aides": ["Téléphone cher car…", "Téléphone simple car…"],
     "relances": ["Utilisez-vous beaucoup d’applications ?", "Qu’est-ce qui est important pour vous ?"]
   },
+
   {
     "id": "d11",
     "titre": "Travailler le matin ou l’après-midi ?",
     "question": "Vous préférez travailler tôt le matin ou l’après-midi ?",
     "aides": ["Le matin car…", "L’après-midi car…"],
-    "relances": ["Quand êtes-vous plus en forme ?", "Quels horaires vous fatiguent le plus ?"]
+    "relances": ["Quand êtes-vous le plus en forme ?", "Quels horaires vous fatiguent le plus ?"]
   },
   {
     "id": "d12",
@@ -243,16 +330,16 @@ const debats = [
   },
   {
     "id": "d15",
-    "titre": "Courses une fois par semaine ou tous les jours ?",
+    "titre": "Courses hebdomadaires ou quotidiennes ?",
     "question": "Vous préférez faire vos courses une fois par semaine ou tous les jours ?",
     "aides": ["Une fois par semaine car…", "Tous les jours car…"],
     "relances": ["Planifiez-vous vos courses ?", "Achetez-vous souvent au dernier moment ?"]
   },
   {
     "id": "d16",
-    "titre": "Travail physique ou travail tranquille ?",
+    "titre": "Travail physique ou travail calme ?",
     "question": "Vous préférez un travail physique ou un travail calme ?",
-    "aides": ["Physique car…", "Tranquille car…"],
+    "aides": ["Physique car…", "Calme car…"],
     "relances": ["Aimez-vous bouger ?", "Qu’est-ce qui vous fatigue le plus ?"]
   },
   {
@@ -271,7 +358,7 @@ const debats = [
   },
   {
     "id": "d19",
-    "titre": "Manger à la maison ou au restaurant ?",
+    "titre": "Manger maison ou restaurant ?",
     "question": "Vous préférez manger à la maison ou au restaurant ?",
     "aides": ["À la maison car…", "Au restaurant car…"],
     "relances": ["Vous cuisinez souvent ?", "Qu’est-ce qui coûte le moins cher ?"]
@@ -283,9 +370,10 @@ const debats = [
     "aides": ["Aimer le métier car…", "Salaire car…"],
     "relances": ["Avez-vous déjà fait un métier que vous aimiez ?", "Le salaire influence-t-il votre motivation ?"]
   },
+
   {
     "id": "d21",
-    "titre": "Transports publics pratiques ou compliqués ?",
+    "titre": "Transports publics faciles ou compliqués ?",
     "question": "Pour vous, les transports publics sont pratiques ou compliqués ?",
     "aides": ["Pratiques car…", "Compliqués car…"],
     "relances": ["Les utilisez-vous souvent ?", "Qu’est-ce qui est difficile ?"]
@@ -353,6 +441,7 @@ const debats = [
     "aides": ["Oui car…", "Non car…"],
     "relances": ["Vous prenez des photos de quoi ?", "Est-ce important pour vous ?"]
   },
+
   {
     "id": "d31",
     "titre": "Message vocal ou message écrit ?",
@@ -388,6 +477,7 @@ const debats = [
     "aides": ["Oui car…", "Non car…"],
     "relances": ["Qui vient chez vous ?", "Qu’est-ce qui vous dérange ?"]
   },
+
   {
     "id": "d36",
     "titre": "Organiser ou improviser ?",
@@ -423,6 +513,7 @@ const debats = [
     "aides": ["Économiser car…", "Se faire plaisir car…"],
     "relances": ["Vous dépensez facilement ?", "Qu’est-ce qui est important pour vous ?"]
   },
+
   {
     "id": "d41",
     "titre": "Acheter en promotion ou juste le nécessaire ?",
@@ -458,6 +549,7 @@ const debats = [
     "aides": ["Faciles car…", "Difficiles car…"],
     "relances": ["Qu’est-ce qui vous motive au début ?", "Comment organisez-vous votre journée ?"]
   },
+
   {
     "id": "d46",
     "titre": "Ouvrir les rideaux ou rester dans le sombre ?",
@@ -493,7 +585,8 @@ const debats = [
     "aides": ["Four car…", "Poêle car…"],
     "relances": ["Qu’est-ce que vous cuisinez souvent ?", "Qu’est-ce qui est plus simple ?"]
   },
-  {
+
+    {
     "id": "d51",
     "titre": "Ranger tout de suite ou plus tard ?",
     "question": "Quand vous rentrez chez vous, vous rangez tout de suite ou plus tard ?",
@@ -547,7 +640,7 @@ const debats = [
     "titre": "Magasin bio ou magasin normal ?",
     "question": "Vous préférez acheter dans un magasin bio ou normal ?",
     "aides": ["Bio car…", "Normal car…"],
-    "relances": ["Regardez-vous les ingrédients ?", "La qualité est-elle importante pour vous ?"]
+    "relances": ["Regardez-vous les ingrédients ?", "La qualité est-elle importante ?"]
   },
   {
     "id": "d59",
@@ -845,32 +938,38 @@ const debats = [
   }
 ];
 
-/* ---------------------------------------
-   FIN DU TABLEAU DE DÉBATS
----------------------------------------- */
+/* -----------------------------------
+      FIN DU TABLEAU
+------------------------------------ */
 
 let done = JSON.parse(localStorage.getItem("debatsDone") || "[]");
 let current = null;
 
-/* NOUVEAU DÉBAT */
+/* --- Mise à jour du compteur --- */
+function updateProgress(){
+  const count = done.length;
+  document.getElementById("compteur").innerText = `Débats faits : ${count} / 100`;
+  document.getElementById("progressBar").style.width = (count)+"%";
+}
+
+/* --- NOUVEAU DÉBAT --- */
 function newDebat(){
   const remaining = debats.filter(d => !done.includes(d.id));
-
   if(remaining.length === 0){
-    document.getElementById("box").style.display = "none";
-    document.getElementById("doneMsg").style.display = "block";
+    document.getElementById("box").style.display="none";
+    document.getElementById("doneMsg").style.display="block";
     return;
   }
 
-  document.getElementById("doneMsg").style.display = "none";
+  document.getElementById("doneMsg").style.display="none";
 
-  current = remaining[Math.floor(Math.random() * remaining.length)];
+  current = remaining[Math.floor(Math.random()*remaining.length)];
 
   document.getElementById("titre").innerText = current.titre;
   document.getElementById("question").innerText = current.question;
 
   const a = document.getElementById("aides");
-  a.innerHTML = "";
+  a.innerHTML="";
   current.aides.forEach(x=>{
     const li=document.createElement("li");
     li.innerText=x;
@@ -878,49 +977,47 @@ function newDebat(){
   });
 
   const r = document.getElementById("relances");
-  r.innerHTML = "";
+  r.innerHTML="";
   current.relances.forEach(x=>{
     const li=document.createElement("li");
     li.innerText=x;
     r.appendChild(li);
   });
 
-  document.getElementById("box").style.display = "block";
+  document.getElementById("box").style.display="block";
 }
 
-/* MARQUER COMME FAIT */
+/* --- MARQUER COMME FAIT --- */
 function markDone(){
   if(!current) return;
-
   if(!done.includes(current.id)){
     done.push(current.id);
     localStorage.setItem("debatsDone", JSON.stringify(done));
   }
-
-  updateResetVisibility();
+  updateProgress();
   newDebat();
+  document.getElementById("btnReset").style.display="block";
 }
 
-/* RÉINITIALISATION */
+/* --- RÉINITIALISER --- */
 function resetAll(){
   if(!confirm("Réinitialiser tous les débats ?")) return;
-
-  done = [];
+  done=[];
   localStorage.removeItem("debatsDone");
-  document.getElementById("box").style.display = "none";
-  document.getElementById("doneMsg").style.display = "none";
-  updateResetVisibility();
+  updateProgress();
+  document.getElementById("btnReset").style.display="none";
+  document.getElementById("box").style.display="none";
+  document.getElementById("doneMsg").style.display="none";
 }
 
-/* AFFICHER OU CACHER LE BOUTON RESET */
-function updateResetVisibility(){
-  document.getElementById("btnReset").style.display =
-    done.length > 0 ? "block" : "none";
+/* --- COPIER LA QUESTION --- */
+function copyQuestion(){
+  navigator.clipboard.writeText(current.question);
+  alert("Question copiée !");
 }
 
-updateResetVisibility();
+updateProgress();
 
 </script>
-
 </body>
 </html>
