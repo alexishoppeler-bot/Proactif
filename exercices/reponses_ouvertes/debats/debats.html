@@ -5,368 +5,209 @@
 <title>Débats – Proactif</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<!-- jsPDF -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-
 <style>
-  :root {
-    --bg:#e8f3f1;
-    --card:#ffffff;
-    --text:#00332e;
-    --accent:#009688;
-  }
-  body.dark {
-    --bg:#0d1514;
-    --card:#1c2625;
-    --text:#d6f5ef;
-    --accent:#4dd0e1;
-  }
-
   body{
-    font-family:Arial, sans-serif;
-    background:var(--bg);
-    color:var(--text);
+    font-family: Arial, sans-serif;
+    background:#eef2f6;
     padding:20px;
-    display:flex;
-    flex-direction:column;
-    align-items:center;
-    transition:0.3s;
-  }
-
-  .app{
-    width:900px;
-    max-width:95%;
-    background:var(--card);
-    padding:30px;
-    border-radius:18px;
-    box-shadow:0 6px 22px rgba(0,0,0,0.22);
-    border-top:10px solid var(--accent);
+    margin:0;
   }
 
   h1{
     text-align:center;
-    margin-bottom:5px;
-    font-size:32px;
-    color:var(--accent);
-  }
-  h2{
-    text-align:center;
-    margin-top:0;
-    color:#00695c;
-    font-size:20px;
-    font-weight:normal;
+    color:#004c97;
+    margin-bottom:30px;
   }
 
-  .controls{
-    text-align:center;
-    margin-bottom:20px;
-  }
-  button{
+  /* BOUTONS */
+  .btn{
+    display:block;
+    margin:0 auto 20px;
     padding:12px 20px;
+    font-size:17px;
     border:none;
     border-radius:10px;
-    margin:5px;
-    background:var(--accent);
-    color:white;
-    font-size:16px;
     cursor:pointer;
-  }
-
-  .toggle-dark{
-    position:absolute;
-    top:20px;
-    right:20px;
-    background:#263230;
-  }
-
-  .bloc-question{
-    font-size:26px;
+    transition:.2s;
     font-weight:bold;
+  }
+
+  #btnRandom{
+    background:#004c97;
+    color:white;
+  }
+  #btnRandom:hover{
+    background:#0059b8;
+  }
+
+  #btnDone{
+    background:#2e7d32;
+    color:white;
+    margin-top:25px;
+  }
+  #btnDone:hover{
+    background:#3fa043;
+  }
+
+  #btnReset{
+    background:#c62828;
+    color:white;
+    display:none;
+  }
+  #btnReset:hover{
+    background:#e53935;
+  }
+
+  /* BLOC DÉBAT */
+  #box{
+    display:none;
+    max-width:720px;
+    margin:20px auto;
+    background:white;
+    padding:25px 30px;
+    border-radius:14px;
+    box-shadow:0 6px 16px rgba(0,0,0,.15);
+    animation:fade .3s ease;
+  }
+
+  @keyframes fade {
+    from {opacity:0; transform:translateY(10px);}
+    to {opacity:1; transform:translateY(0);}
+  }
+
+  .titre{
+    font-size:22px;
+    font-weight:bold;
+    color:#004c97;
+    margin-bottom:15px;
+  }
+
+  .sectionTitle{
+    font-weight:bold;
+    font-size:16px;
+    color:#004c97;
+    margin-top:20px;
+  }
+
+  ul{
+    margin:8px 0 0 18px;
+  }
+  ul li{
+    margin-bottom:6px;
+  }
+
+  .doneMsg{
     text-align:center;
-    padding:25px;
-    border-radius:16px;
-    margin-bottom:20px;
-    line-height:1.4;
-  }
-
-  @keyframes fondAnime{
-    0%{background-position:0% 50%;}
-    50%{background-position:100% 50%;}
-    100%{background-position:0% 50%;}
-  }
-
-  .niveau1{
-    background:linear-gradient(120deg,#cbe7ff,#e3f2ff,#cbe7ff);
-    background-size:300% 300%;
-    animation:fondAnime 10s infinite;
-    box-shadow:0 0 16px rgba(0,118,255,0.35);
-  }
-  .niveau2{
-    background:linear-gradient(120deg,#c8f3ea,#e0f7f4,#c8f3ea);
-    background-size:300% 300%;
-    animation:fondAnime 10s infinite;
-    box-shadow:0 0 16px rgba(0,150,136,0.35);
-  }
-  .niveau3{
-    background:linear-gradient(120deg,#ffe4c4,#fff1de,#ffe4c4);
-    background-size:300% 300%;
-    animation:fondAnime 10s infinite;
-    box-shadow:0 0 16px rgba(255,140,0,0.35);
-  }
-
-  .bloc{
-    margin-bottom:25px;
-    padding:20px;
-    background:#f4fbfa;
-    border-radius:12px;
-    font-size:20px;
-  }
-  body.dark .bloc{ background:#1e2b2a; }
-
-  textarea{
-    width:100%;
-    height:130px;
-    padding:15px;
-    font-size:18px;
-    border-radius:10px;
-    border:1px solid #7bb1a8;
-    background:var(--card);
-    color:var(--text);
-  }
-
-  .progress{
-    text-align:center;
-    font-size:20px;
-    margin-bottom:10px;
-    color:#00695c;
-  }
-
-  .validate-btn{
-    flex:1;
-    background:#00695c;
-    font-size:18px;
+    font-size:22px;
+    margin-top:30px;
+    color:#004c97;
+    display:none;
   }
 </style>
-</head>
 
+</head>
 <body>
 
-<button class="toggle-dark" onclick="toggleDark()">🌙 / ☀️</button>
+<h1>🎭 Débats – Proactif</h1>
 
-<div class="app">
+<button id="btnRandom" class="btn" onclick="newDebat()">🎲 Nouveau débat aléatoire</button>
+<button id="btnReset" class="btn" onclick="resetAll()">🔄 Réinitialiser tout</button>
 
-  <h1>Débats</h1>
-  <h2>Consigne : répondez à l’oral et à l’écrit, on avance ensemble !</h2>
+<div id="box">
+  <div class="titre" id="titre"></div>
 
-  <div style="text-align:center; margin-bottom:20px;">
-    <input id="nomParticipant" type="text" placeholder="Nom du participant"
-      style="padding:10px; width:260px; font-size:16px; border-radius:8px; border:1px solid #7bb1a8;">
-  </div>
+  <div class="sectionTitle">❓ Question</div>
+  <div id="question"></div>
 
-  <div class="controls">
-    <button onclick="choisirNiveau(1)">Niveau 1</button>
-    <button onclick="choisirNiveau(2)">Niveau 2</button>
-    <button onclick="choisirNiveau(3)">Niveau 3</button>
-    <button onclick="exportPDFparticipant()">📄 PDF</button>
-  </div>
+  <div class="sectionTitle">🧩 Aides pour commencer</div>
+  <ul id="aides"></ul>
 
-  <div id="progression" class="progress"></div>
+  <div class="sectionTitle">💬 Relances</div>
+  <ul id="relances"></ul>
 
-  <div id="zone-debat" class="bloc">👉 Choisissez un niveau pour commencer.</div>
-  <div id="zone-aides" class="bloc"></div>
-
-  <div id="bloc-reponse" class="bloc">
-    <b>Votre réponse :</b>
-    <textarea id="reponse"></textarea>
-
-    <div style="display:flex; gap:10px; margin-top:15px;">
-        <button style="flex:1; background:#757575;" onclick="precedent()">⬅️ Précédent</button>
-        <button class="validate-btn" onclick="valider()">Valider ➡️</button>
-    </div>
-
-    <button onclick="resetAll()" style="margin-top:15px; width:100%; background:#b71c1c;">
-      🔄 Réinitialiser tout
-    </button>
-  </div>
-
+  <button id="btnDone" onclick="markDone()">✔ Marquer comme fait</button>
 </div>
 
+<div class="doneMsg" id="doneMsg">🎉 Tous les débats sont faits !</div>
+
 <script>
-let DATA=null;
-let niveau=0;
-let index=0;
-let liste=[];
-let historique = JSON.parse(localStorage.getItem("historique_debats")) || [];
+let debats = [];
+let done = JSON.parse(localStorage.getItem("debatsDone") || "[]");
+let current = null;
 
-let mem={
-  1:parseInt(localStorage.getItem("niv1_index"))||0,
-  2:parseInt(localStorage.getItem("niv2_index"))||0,
-  3:parseInt(localStorage.getItem("niv3_index"))||0
-};
-
-if(localStorage.getItem("darkmode")==="true")
-  document.body.classList.add("dark");
-
-function toggleDark(){
-  document.body.classList.toggle("dark");
-  localStorage.setItem("darkmode", document.body.classList.contains("dark"));
-}
-
+/* Charger le JSON */
 fetch("debats.json")
-  .then(r=>r.json())
-  .then(j=>DATA=j)
-  .catch(()=>alert("Erreur chargement debats.json"));
+  .then(res => res.json())
+  .then(data => {
+    debats = data;
+    updateResetVisibility();
+  });
 
-function choisirNiveau(n){
-  if(!DATA){ alert("JSON pas prêt"); return;}
+/* Nouveau débat */
+function newDebat(){
+  const remaining = debats.filter(d => !done.includes(d.id));
 
-  niveau=n;
-  if(n===1) liste=DATA.A1;
-  if(n===2) liste=DATA.A2;
-  if(n===3) liste=DATA.B1;
-
-  index=mem[niveau] || 0;
-
-  if(index >= liste.length){
-    index = 0;
-    mem[niveau] = 0;
-    localStorage.setItem("niv"+niveau+"_index", 0);
-  }
-
-  afficherDebat();
-}
-
-function afficherDebat(){
-  const q=document.getElementById("zone-debat");
-  const a=document.getElementById("zone-aides");
-  const p=document.getElementById("progression");
-  const blocRep=document.getElementById("bloc-reponse");
-
-  if(index >= liste.length){
-    q.innerHTML="🎉 Série terminée pour ce niveau.";
-    a.innerHTML="";
-    p.innerHTML="";
-    blocRep.style.display="none";
+  if(remaining.length === 0){
+    document.getElementById("box").style.display = "none";
+    document.getElementById("doneMsg").style.display = "block";
     return;
   }
 
-  blocRep.style.display="block";
+  document.getElementById("doneMsg").style.display = "none";
 
-  const debat=liste[index];
+  current = remaining[Math.floor(Math.random() * remaining.length)];
 
-  p.innerHTML=`Débat ${index+1} / ${liste.length}`;
+  // Remplir l'affichage
+  document.getElementById("titre").innerText = current.titre;
+  document.getElementById("question").innerText = current.question;
 
-  q.innerHTML=`
-    <div class="bloc-question niveau${niveau}">
-      ${debat.question}
-    </div>
-    <div style="text-align:center; margin-top:10px; font-size:20px;">
-      <b>${debat.titre}</b>
-    </div>
-  `;
-
-  a.innerHTML=`<b>Phrases d’aide :</b><ul>${debat.aides.map(x=>`<li>${x}</li>`).join("")}</ul>`;
-
-  document.getElementById("reponse").value="";
-}
-
-function valider(){
-  const rep=document.getElementById("reponse").value.trim();
-  if(rep===""){alert("Écris une réponse.");return;}
-
-  const participant=document.getElementById("nomParticipant").value.trim() || "Sans nom";
-  const debat=liste[index];
-
-  historique.push({
-    participant,
-    niveau,
-    debat_numero:index+1,
-    titre:debat.titre,
-    question:debat.question,
-    reponse:rep,
-    date:new Date().toLocaleString()
+  const a = document.getElementById("aides");
+  a.innerHTML = "";
+  current.aides.forEach(x=>{
+    const li=document.createElement("li");
+    li.innerText=x;
+    a.appendChild(li);
   });
 
-  localStorage.setItem("historique_debats", JSON.stringify(historique));
+  const r = document.getElementById("relances");
+  r.innerHTML = "";
+  current.relances.forEach(x=>{
+    const li=document.createElement("li");
+    li.innerText=x;
+    r.appendChild(li);
+  });
 
-  index++;
-  mem[niveau]=index;
-  localStorage.setItem("niv"+niveau+"_index", index);
-
-  afficherDebat();
+  document.getElementById("box").style.display = "block";
 }
 
-// PRECEDENT
-function precedent(){
-  if(index > 0){
-    index--;
-    mem[niveau]=index;
-    localStorage.setItem("niv"+niveau+"_index", index);
-    afficherDebat();
+/* Marquer comme fait */
+function markDone(){
+  if(!current) return;
+
+  if(!done.includes(current.id)){
+    done.push(current.id);
+    localStorage.setItem("debatsDone", JSON.stringify(done));
   }
+
+  updateResetVisibility();
+  newDebat();
 }
 
-// PDF PARTICIPANT
-function exportPDFparticipant(){
-  const nom=document.getElementById("nomParticipant").value.trim();
-  if(nom===""){ alert("Entrez le nom du participant."); return;}
-
-  const data=historique.filter(i=>i.participant===nom);
-  if(data.length===0){ alert("Aucune réponse trouvée."); return;}
-
-  const {jsPDF}=window.jspdf;
-  const pdf=new jsPDF({unit:"pt",format:"a4"});
-  let y=40;
-
-  pdf.setFont("Helvetica","bold");
-  pdf.setFontSize(20);
-  pdf.text(`Réponses du participant : ${nom}`,40,y);
-  y+=35;
-
-  pdf.setFont("Helvetica","normal");
-  pdf.setFontSize(12);
-
-  data.forEach(item=>{
-    if(y>760){ pdf.addPage(); y=40;}
-
-    pdf.text(`Niveau ${item.niveau} – Débat ${item.debat_numero}`,40,y); 
-    y+=18;
-    pdf.text(`Question : ${item.question}`,40,y,{maxWidth:520}); 
-    y+=35;
-    pdf.text(`Réponse : ${item.reponse}`,40,y,{maxWidth:520}); 
-    y+=35;
-
-    pdf.setFontSize(10);
-    pdf.setTextColor(120);
-    pdf.text(`Date : ${item.date}`,40,y);
-
-    pdf.setFontSize(12);
-    pdf.setTextColor(0);
-    y+=25;
-    pdf.line(40,y,560,y);
-    y+=20;
-  });
-
-  pdf.save(`Debats_${nom}.pdf`);
-}
-
-// RESET TOTAL
+/* Reset */
 function resetAll(){
-  if(!confirm("Tout réinitialiser ?")) return;
+  if(!confirm("Réinitialiser tous les débats ?")) return;
 
-  historique = [];
-  mem = {1:0,2:0,3:0};
+  done = [];
+  localStorage.removeItem("debatsDone");
+  document.getElementById("box").style.display = "none";
+  document.getElementById("doneMsg").style.display = "none";
+  updateResetVisibility();
+}
 
-  localStorage.removeItem("historique_debats");
-  localStorage.removeItem("niv1_index");
-  localStorage.removeItem("niv2_index");
-  localStorage.removeItem("niv3_index");
-
-  document.getElementById("zone-debat").innerHTML="👉 Choisissez un niveau pour commencer.";
-  document.getElementById("zone-aides").innerHTML="";
-  document.getElementById("progression").innerHTML="";
-  document.getElementById("bloc-reponse").style.display="block";
-  document.getElementById("reponse").value="";
+/* Affichage du bouton reset */
+function updateResetVisibility(){
+  document.getElementById("btnReset").style.display =
+    done.length > 0 ? "block" : "none";
 }
 </script>
 
