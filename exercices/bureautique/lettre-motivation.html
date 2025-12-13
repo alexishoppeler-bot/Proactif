@@ -68,6 +68,25 @@
 </head>
 
 <body>
+
+<div class="back-home" style="max-width:1100px;margin:10px auto 0;padding:0 20px;">
+  <a class="back-home__link" href="#" style="display:inline-flex;align-items:center;gap:6px;text-decoration:none;color:#004c6d;font-weight:700;border:1px solid #cfdff0;padding:6px 14px;border-radius:999px;background:#fff;box-shadow:0 2px 4px rgba(0,0,0,0.08);">← Retour à l’index</a>
+</div>
+<script>
+  (function () {
+    var link = document.querySelector('.back-home__link');
+    if (!link) return;
+    var href = String(window.location.href || '');
+    var marker = '/exercices/';
+    var idx = href.indexOf(marker);
+    if (idx !== -1) {
+      link.href = href.slice(0, idx) + '/index.html';
+    } else {
+      link.href = href.replace(/[^/]*$/, 'index.html');
+    }
+  })();
+</script>
+
 <div class="app">
 
   <header>📄 Lettre de candidature – Universelle</header>
