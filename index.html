@@ -17,6 +17,67 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="styles.css">
+  <!-- Inline SVG sprite for icons (inlined to avoid extra requests/CORS issues) -->
+  <!-- sprite start -->
+  <svg xmlns="http://www.w3.org/2000/svg" style="display:none">
+    <symbol id="email" viewBox="0 0 24 24">
+      <rect width="24" height="24" rx="4" fill="#e9f6ff" />
+      <path d="M4 7l8 6 8-6" fill="none" stroke="#004c6d" stroke-width="1.2" stroke-linecap="round"
+        stroke-linejoin="round" />
+    </symbol>
+
+    <symbol id="doc" viewBox="0 0 24 24">
+      <rect width="24" height="24" rx="4" fill="#e9f6ff" />
+      <path d="M6 2h7l5 5v11a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2z" fill="#9dd7ff" />
+      <path d="M8 12h8M8 15h8M8 18h6" stroke="#004c6d" stroke-width="1" fill="none" stroke-linecap="round" />
+    </symbol>
+
+    <symbol id="folder" viewBox="0 0 24 24">
+      <rect width="24" height="24" rx="4" fill="#e9f6ff" />
+      <path d="M3 7a1 1 0 0 1 1-1h4l2 2h8a1 1 0 0 1 1 1v7a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V7z" fill="#d0f0e8" />
+    </symbol>
+
+    <symbol id="audio" viewBox="0 0 24 24">
+      <rect width="24" height="24" rx="4" fill="#e9f6ff" />
+      <path d="M3 9v6h3l4 3V6L6 9H3z" fill="#cfeef8" />
+      <path d="M16 8a4 4 0 010 8" stroke="#004c6d" stroke-width="1.2" fill="none" stroke-linecap="round" />
+    </symbol>
+
+    <symbol id="quiz" viewBox="0 0 24 24">
+      <rect width="24" height="24" rx="4" fill="#e9f6ff" />
+      <circle cx="12" cy="12" r="9" fill="#e9f6ff" />
+      <text x="12" y="16" text-anchor="middle" font-size="12" fill="#004c6d" font-family="Arial">?</text>
+    </symbol>
+
+    <symbol id="game" viewBox="0 0 24 24">
+      <rect width="24" height="24" rx="4" fill="#e9f6ff" />
+      <rect x="7" y="7" width="10" height="4" fill="#dff7ed" />
+      <rect x="10" y="14" width="4" height="4" fill="#cfeaff" />
+    </symbol>
+
+    <symbol id="match" viewBox="0 0 24 24">
+      <rect width="24" height="24" rx="4" fill="#e9f6ff" />
+      <path d="M10 14l-4 4a4 4 0 01-5-5l4-4" stroke="#004c6d" stroke-width="1.2" fill="none" stroke-linecap="round" />
+    </symbol>
+
+    <symbol id="keyboard" viewBox="0 0 24 24">
+      <rect width="24" height="24" rx="4" fill="#e9f6ff" />
+      <rect x="3" y="7" width="18" height="10" rx="1" fill="#dff7ed" />
+      <path d="M6 10h2M10 10h8M6 14h12" stroke="#004c6d" stroke-width="1" fill="none" stroke-linecap="round" />
+    </symbol>
+
+    <symbol id="search" viewBox="0 0 24 24">
+      <rect width="24" height="24" rx="4" fill="#e9f6ff" />
+      <path d="M11 4a7 7 0 100 14 7 7 0 000-14zm7.5 13.5L21 19" stroke="#004c6d" stroke-width="1.2" fill="none"
+        stroke-linecap="round" />
+    </symbol>
+
+    <symbol id="default" viewBox="0 0 24 24">
+      <rect width="24" height="24" rx="4" fill="#e9f6ff" />
+      <text x="12" y="16" text-anchor="middle" font-size="12" fill="#004c6d" font-family="Arial">P</text>
+    </symbol>
+  </svg>
+  <!-- sprite end -->
 </head>
 
 <body>
@@ -230,10 +291,9 @@
 
     });
 
-    /* REMPLACER EMOJIS PAR SVG EXTERNES */
+    /* REMPLACER EMOJIS PAR SVG VIA mapping.json (avec fallback) */
     function enhanceIcons() {
-      // mapping exact des chemins vers les icônes
-      const mapping = {
+      const hardcoded = {
         'exercices/bureautique/editeur-a4.html': 'doc',
         'exercices/bureautique/emails-professionnels.html': 'email',
         'exercices/bureautique/lettre-motivation.html': 'doc',
@@ -271,44 +331,50 @@
         'exercices/jeux/mot-image-metiers.html': 'match'
       };
 
-      document.querySelectorAll('.exercise-btn').forEach(link => {
-        const iconSpan = link.querySelector('.icon');
-        if (!iconSpan) return;
+      // try to fetch external mapping.json, otherwise use hardcoded
+      fetch('/icons/mapping.json').then(r => {
+        if (!r.ok) throw new Error('no mapping');
+        return r.json();
+      }).catch(() => hardcoded).then(mapping => {
+        document.querySelectorAll('.exercise-btn').forEach(link => {
+          const iconSpan = link.querySelector('.icon');
+          if (!iconSpan) return;
 
-        const href = (link.getAttribute('href') || '').toLowerCase();
-        const label = link.textContent.replace(iconSpan.textContent, '').trim();
+          const href = (link.getAttribute('href') || '').toLowerCase();
+          const label = link.textContent.replace(iconSpan.textContent, '').trim();
 
-        let kind = mapping[href];
-        if (!kind) {
-          // fallback heuristique
-          if (/email|mail/.test(href) || /emails-/.test(href)) kind = 'email';
-          else if (/lettre|motivation|editeur|doc|texte/.test(href)) kind = 'doc';
-          else if (/organiser|dossier|documents/.test(href)) kind = 'folder';
-          else if (/audio|entretien|ecoute|compréhension/.test(href)) kind = 'audio';
-          else if (/quiz|question|examen/.test(href)) kind = 'quiz';
-          else if (/jeu|heure|clics|directions|mot-image/.test(href)) kind = 'game';
-          else if (/apparier/.test(href)) kind = 'match';
-          else if (/recherche_emploi|annonces|parler|qualites|entretien/.test(href)) kind = 'search';
-          else if (/retaper|clavier/.test(href)) kind = 'keyboard';
-          else kind = 'default';
-        }
+          let kind = mapping[href];
+          if (!kind) {
+            // fallback heuristique
+            if (/email|mail/.test(href) || /emails-/.test(href)) kind = 'email';
+            else if (/lettre|motivation|editeur|doc|texte/.test(href)) kind = 'doc';
+            else if (/organiser|dossier|documents/.test(href)) kind = 'folder';
+            else if (/audio|entretien|ecoute|compréhension/.test(href)) kind = 'audio';
+            else if (/quiz|question|examen/.test(href)) kind = 'quiz';
+            else if (/jeu|heure|clics|directions|mot-image/.test(href)) kind = 'game';
+            else if (/apparier/.test(href)) kind = 'match';
+            else if (/recherche_emploi|annonces|parler|qualites|entretien/.test(href)) kind = 'search';
+            else if (/retaper|clavier/.test(href)) kind = 'keyboard';
+            else kind = 'default';
+          }
 
-        // créer un <svg><use href="/icons/sprite.svg#kind"></use></svg>
-        const ns = 'http://www.w3.org/2000/svg';
-        const svg = document.createElementNS(ns, 'svg');
-        svg.setAttribute('class', 'icon-img');
-        svg.setAttribute('role', 'img');
-        svg.setAttribute('width', '20');
-        svg.setAttribute('height', '20');
-        const use = document.createElementNS(ns, 'use');
-        // set both for compatibility
-        use.setAttribute('href', '/icons/sprite.svg#' + kind);
-        use.setAttributeNS('http://www.w3.org/1999/xlink', 'xlink:href', '/icons/sprite.svg#' + kind);
-        svg.appendChild(use);
+          // use inlined sprite via <use> referencing the symbol id
+          const ns = 'http://www.w3.org/2000/svg';
+          const svg = document.createElementNS(ns, 'svg');
+          svg.setAttribute('class', 'icon-img');
+          svg.setAttribute('role', 'img');
+          svg.setAttribute('width', '20');
+          svg.setAttribute('height', '20');
+          const use = document.createElementNS(ns, 'use');
+          // reference the inlined symbol
+          use.setAttribute('href', '#' + kind);
+          use.setAttributeNS('http://www.w3.org/1999/xlink', 'xlink:href', '#' + kind);
+          svg.appendChild(use);
 
-        svg.setAttribute('aria-label', label + ' icône');
-        iconSpan.innerHTML = '';
-        iconSpan.appendChild(svg);
+          svg.setAttribute('aria-label', label + ' icône');
+          iconSpan.innerHTML = '';
+          iconSpan.appendChild(svg);
+        });
       });
     }
 
