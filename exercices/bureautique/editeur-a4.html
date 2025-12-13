@@ -345,6 +345,13 @@
     const AUTOSAVE_DELAY = 600;
     const PLACEHOLDER_TEXT = 'Tapez ici...';
     const alignCommandMap = {left:'justifyLeft', center:'justifyCenter', right:'justifyRight', justify:'justifyFull'};
+    const PAGE_MM = {width:210, height:297, margin:25.4};
+    const mmToPx = mm => (mm * 96) / 25.4;
+    const PAGE_PX = {
+      width:mmToPx(PAGE_MM.width),
+      height:mmToPx(PAGE_MM.height),
+      margin:mmToPx(PAGE_MM.margin)
+    };
 
     let history = [];
     let position = 0;
@@ -744,19 +751,22 @@
       wrapper.style.left='-9999px';
       wrapper.style.zIndex='-1';
       wrapper.style.background='#fff';
-      wrapper.style.width='210mm';
-      wrapper.style.minHeight='297mm';
+      wrapper.style.width=`${PAGE_PX.width}px`;
+      wrapper.style.minHeight=`${PAGE_PX.height}px`;
+      wrapper.style.padding='0';
 
       const clone = editor.cloneNode(true);
       clone.removeAttribute('contenteditable');
-      clone.style.width='210mm';
-      clone.style.minHeight='297mm';
+      clone.style.width=`${PAGE_PX.width}px`;
+      clone.style.minHeight=`${PAGE_PX.height}px`;
+      clone.style.maxWidth=`${PAGE_PX.width}px`;
       clone.style.boxShadow='none';
       clone.style.border='none';
       clone.style.margin='0';
-      clone.style.padding='25.4mm';
+      clone.style.padding=`${PAGE_PX.margin}px`;
       clone.style.height='auto';
       clone.style.overflow='visible';
+      clone.style.boxSizing='border-box';
 
       wrapper.appendChild(clone);
       document.body.appendChild(wrapper);
@@ -772,7 +782,24 @@
       persistContent(true);
       import('https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js').then(()=>{
         const exportNode = createExportNode();
-        const opt={margin:0,filename:'document.pdf',image:{type:'jpeg',quality:1},html2canvas:{scale:2,backgroundColor:'#ffffff'},jsPDF:{unit:'mm',format:'a4',orientation:'portrait'}};
+        const opt={
+          margin:[0,0,0,0],
+          filename:'document.pdf',
+          image:{type:'jpeg',quality:0.98},
+          html2canvas:{
+            scale:2,
+            backgroundColor:'#ffffff',
+            useCORS:true,
+            windowWidth:PAGE_PX.width,
+            windowHeight:PAGE_PX.height
+          },
+          jsPDF:{
+            unit:'mm',
+            format:[PAGE_MM.width,PAGE_MM.height],
+            orientation:'portrait'
+          },
+          pagebreak:{mode:['css','legacy']}
+        };
         return html2pdf().set(opt).from(exportNode.node).save().finally(()=>{ exportNode.wrapper.remove(); });
       });
     });
