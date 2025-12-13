@@ -232,6 +232,45 @@
 
     /* REMPLACER EMOJIS PAR SVG EXTERNES */
     function enhanceIcons() {
+      // mapping exact des chemins vers les icônes
+      const mapping = {
+        'exercices/bureautique/editeur-a4.html': 'doc',
+        'exercices/bureautique/emails-professionnels.html': 'email',
+        'exercices/bureautique/lettre-motivation.html': 'doc',
+        'exercices/bureautique/miniwindows-mise-en-forme.html': 'doc',
+        'exercices/bureautique/organiser-documents-dossiers.html': 'folder',
+
+        'exercices/quiz/100quiz_html.html': 'quiz',
+        'exercices/quiz/comprehension-1.html': 'quiz',
+        'exercices/quiz/comprehension-2.html': 'quiz',
+        'exercices/quiz/communication-3.html': 'quiz',
+        'exercices/quiz/examen-ecrit.html': 'quiz',
+
+        'exercices/retaper/clavier-reecriture.html': 'keyboard',
+
+        'exercices/reponses_ouvertes/competences-pro.html': 'doc',
+        'exercices/reponses_ouvertes/ecrire-en-francais-situations-professionnelle.html': 'doc',
+        'exercices/reponses_ouvertes/les-bonnes-attitudes-au-travail.html': 'doc',
+        'exercices/reponses_ouvertes/simulation-de-situations-professionnelles.html': 'doc',
+        'exercices/reponses_ouvertes/debats/debats.html': 'match',
+
+        'exercices/recherche_emploi/formulaire-profil.html': 'doc',
+        'exercices/recherche_emploi/parler-de-mon-dernier-travail.html': 'doc',
+        'exercices/recherche_emploi/qualites-personnelles.html': 'doc',
+        'exercices/recherche_emploi/questions-entretien.html': 'search',
+        'exercices/recherche_emploi/annonces.html': 'search',
+
+        'exercices/audio/audio-fabrice.html': 'audio',
+
+        'exercices/apparier/apparier-metiers-outils.html': 'match',
+        'exercices/apparier/apparier100.html': 'match',
+
+        'exercices/jeux/heure.html': 'game',
+        'exercices/jeux/jeu-clics.html': 'game',
+        'exercices/jeux/jeu-directions.html': 'game',
+        'exercices/jeux/mot-image-metiers.html': 'match'
+      };
+
       document.querySelectorAll('.exercise-btn').forEach(link => {
         const iconSpan = link.querySelector('.icon');
         if (!iconSpan) return;
@@ -239,24 +278,37 @@
         const href = (link.getAttribute('href') || '').toLowerCase();
         const label = link.textContent.replace(iconSpan.textContent, '').trim();
 
-        let kind = 'default';
-        if (/email|mail/.test(href) || /emails-/.test(href)) kind = 'email';
-        else if (/lettre|motivation|editeur|doc|texte/.test(href)) kind = 'doc';
-        else if (/organiser|dossier|documents/.test(href)) kind = 'folder';
-        else if (/audio|entretien|ecoute|compréhension/.test(href)) kind = 'audio';
-        else if (/quiz|question|examen/.test(href)) kind = 'quiz';
-        else if (/jeu|heure|clics|directions|mot-image/.test(href)) kind = 'game';
-        else if (/apparier/.test(href)) kind = 'match';
-        else if (/recherche_emploi|annonces|parler|qualites|entretien/.test(href)) kind = 'search';
-        else if (/retaper|clavier/.test(href)) kind = 'keyboard';
+        let kind = mapping[href];
+        if (!kind) {
+          // fallback heuristique
+          if (/email|mail/.test(href) || /emails-/.test(href)) kind = 'email';
+          else if (/lettre|motivation|editeur|doc|texte/.test(href)) kind = 'doc';
+          else if (/organiser|dossier|documents/.test(href)) kind = 'folder';
+          else if (/audio|entretien|ecoute|compréhension/.test(href)) kind = 'audio';
+          else if (/quiz|question|examen/.test(href)) kind = 'quiz';
+          else if (/jeu|heure|clics|directions|mot-image/.test(href)) kind = 'game';
+          else if (/apparier/.test(href)) kind = 'match';
+          else if (/recherche_emploi|annonces|parler|qualites|entretien/.test(href)) kind = 'search';
+          else if (/retaper|clavier/.test(href)) kind = 'keyboard';
+          else kind = 'default';
+        }
 
-        const img = document.createElement('img');
-        img.className = 'icon-img';
-        img.src = '/icons/' + kind + '.svg';
-        img.alt = label + ' icône';
+        // créer un <svg><use href="/icons/sprite.svg#kind"></use></svg>
+        const ns = 'http://www.w3.org/2000/svg';
+        const svg = document.createElementNS(ns, 'svg');
+        svg.setAttribute('class', 'icon-img');
+        svg.setAttribute('role', 'img');
+        svg.setAttribute('width', '20');
+        svg.setAttribute('height', '20');
+        const use = document.createElementNS(ns, 'use');
+        // set both for compatibility
+        use.setAttribute('href', '/icons/sprite.svg#' + kind);
+        use.setAttributeNS('http://www.w3.org/1999/xlink', 'xlink:href', '/icons/sprite.svg#' + kind);
+        svg.appendChild(use);
 
+        svg.setAttribute('aria-label', label + ' icône');
         iconSpan.innerHTML = '';
-        iconSpan.appendChild(img);
+        iconSpan.appendChild(svg);
       });
     }
 
