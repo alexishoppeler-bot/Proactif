@@ -1,0 +1,29 @@
+# Automerge PRs de mise à jour du sprite SVG
+
+Ce workflow active la fusion automatique (auto-merge) sur les pull requests créées par le workflow `sync-inline-sprite` (mise à jour du sprite SVG inliné dans `index.html`).
+
+- Il utilise l’action officielle `peter-evans/enable-pull-request-automerge`.
+- Il s’exécute uniquement sur les PRs ouvertes par GitHub Actions (`github-actions[bot]`) et dont le titre contient `Mise à jour du sprite SVG inliné`.
+
+---
+
+```yaml
+name: Automerge sprite PR
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, labeled]
+
+jobs:
+  automerge:
+    if: |
+      github.actor == 'github-actions[bot]' &&
+      contains(github.event.pull_request.title, 'Mise à jour du sprite SVG inliné')
+    runs-on: ubuntu-latest
+    steps:
+      - name: Enable auto-merge for PR
+        uses: peter-evans/enable-pull-request-automerge@v3
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          merge-method: squash
+```
