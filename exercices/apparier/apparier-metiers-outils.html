@@ -4,18 +4,101 @@
 <meta charset="UTF-8">
 <title>Apparier – Métier et Outil</title>
 <style>
-body{font-family:Arial;padding:20px;}
-.pair{margin:10px 0;}
-select{padding:6px;}
+:root {
+  --match-accent: #0b6bff;
+  --match-soft: #eef4ff;
+}
+
+.exercise-card {
+  padding: 36px clamp(20px, 4vw, 48px);
+}
+
+.match-intro {
+  font-size: 1rem;
+  line-height: 1.6;
+  color: rgba(15, 27, 44, 0.9);
+  margin-bottom: 18px;
+}
+
+.match-steps {
+  background: rgba(11, 107, 255, 0.04);
+  border-radius: 18px;
+  padding: 18px 22px;
+  border: 1px solid rgba(11, 107, 255, 0.08);
+  list-style: decimal;
+  margin: 0 0 28px 0;
+  color: #0f1b2c;
+}
+
+.match-steps li {
+  margin: 4px 0;
+  padding-left: 4px;
+}
+
+.match-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 18px;
+}
+
+.match-card {
+  background: linear-gradient(135deg, #f6fbff, #edf4ff);
+  border-radius: 18px;
+  padding: 20px;
+  border: 1px solid rgba(12, 32, 63, 0.08);
+  box-shadow: 0 12px 25px rgba(12, 32, 63, 0.08);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  min-height: 160px;
+}
+
+.match-card h3 {
+  margin: 0;
+  font-size: 1.15rem;
+  color: #0b2a4a;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.match-card label {
+  font-weight: 600;
+  font-size: 0.95rem;
+  color: rgba(15, 27, 44, 0.8);
+}
+
+.match-card select {
+  margin-top: 8px;
+  border-radius: 12px;
+  padding: 10px 14px;
+  border: 1px solid rgba(12, 32, 63, 0.18);
+  font-size: 1rem;
+  background: #fff;
+  font-family: 'Open Sans', Arial, sans-serif;
+  font-weight: 600;
+  color: #0b2a4a;
+  transition: border 0.2s ease, box-shadow 0.2s ease;
+}
+
+.match-card select:focus-visible {
+  outline: none;
+  border-color: var(--match-accent);
+  box-shadow: 0 0 0 3px rgba(11, 107, 255, 0.15);
+}
+
+.match-note {
+  margin-top: 26px;
+  font-size: 0.9rem;
+  color: rgba(15, 27, 44, 0.65);
+  text-align: center;
+}
 </style>
   <link rel="stylesheet" href="/exercise-layout.css">
   <script defer src="/exercise-layout.js"></script>
 </head>
 <body>
 
-<div class="back-home" style="max-width:1100px;margin:10px auto 0;padding:0 20px;">
-  <a class="back-home__link" href="#" style="display:inline-flex;align-items:center;gap:6px;text-decoration:none;color:#004c6d;font-weight:700;border:1px solid #cfdff0;padding:6px 14px;border-radius:999px;background:#fff;box-shadow:0 2px 4px rgba(0,0,0,0.08);">← Retour à l’index</a>
-</div>
 <script>
   (function () {
     var STORAGE_KEY = 'proactif_progress_v1';
@@ -113,38 +196,54 @@ select{padding:6px;}
   <main class="exercise-card">
 
 
-<h2>🔗 Apparier : Métier → Outil</h2>
-<p>Choisissez l’outil correspondant au métier.</p>
+<h2 class="exercise-section-title">🔗 Apparier les métiers et leurs outils</h2>
+<p class="match-intro">Pour chaque métier, sélectionnez l’outil qui correspond le mieux. Cet exercice aide à ancrer le vocabulaire du monde professionnel et les gestes liés à chaque rôle.</p>
 
-<div class="pair">
-  Cuisinier → 
-  <select>
-    <option>-- choisir --</option>
-    <option>Casserole</option>
-    <option>Ordinateur</option>
-    <option>Balai</option>
-  </select>
+<ol class="match-steps">
+  <li>Lire le métier et imaginer les tâches quotidiennes.</li>
+  <li>Choisir l’outil le plus logique dans la liste.</li>
+  <li>Vérifier que chaque métier possède un outil différent.</li>
+</ol>
+
+<div class="match-grid">
+  <article class="match-card">
+    <h3>👨‍🍳 Cuisinier</h3>
+    <label>Outil principal
+      <select aria-label="Outil pour le métier de cuisinier">
+        <option value="">-- Choisir --</option>
+        <option>Casserole</option>
+        <option>Ordinateur</option>
+        <option>Balai</option>
+      </select>
+    </label>
+  </article>
+
+  <article class="match-card">
+    <h3>🔧 Mécanicien</h3>
+    <label>Outil principal
+      <select aria-label="Outil pour le métier de mécanicien">
+        <option value="">-- Choisir --</option>
+        <option>Clé à molette</option>
+        <option>Marmite</option>
+        <option>Stylo</option>
+      </select>
+    </label>
+  </article>
+
+  <article class="match-card">
+    <h3>🧹 Nettoyeur</h3>
+    <label>Outil principal
+      <select aria-label="Outil pour le métier de nettoyeur">
+        <option value="">-- Choisir --</option>
+        <option>Aspirateur</option>
+        <option>Tournevis</option>
+        <option>Cravate</option>
+      </select>
+    </label>
+  </article>
 </div>
 
-<div class="pair">
-  Mécanicien → 
-  <select>
-    <option>-- choisir --</option>
-    <option>Clé à molette</option>
-    <option>Marmite</option>
-    <option>Stylo</option>
-  </select>
-</div>
-
-<div class="pair">
-  Nettoyeur → 
-  <select>
-    <option>-- choisir --</option>
-    <option>Aspirateur</option>
-    <option>Tournevis</option>
-    <option>Cravate</option>
-  </select>
-</div>
+<p class="match-note">Astuce : pensez aux actions concrètes du métier (préparer, réparer, nettoyer…) pour identifier l’outil adapté.</p>
 
   </main>
 </div>
