@@ -1,0 +1,192 @@
+:root {
+    --blue: #2980ff;
+    --green: #1a8c6d;
+    --dark: #0b2a4a;
+    --bg: #f4f7fa;
+    --text: #1a1a1a;
+    --card: #ffffff;
+    --shadow: 0 4px 18px rgba(0, 0, 0, .12);
+}
+
+/* MODE SOMBRE */
+body.dark {
+    --bg: #0f172a;
+    --card: #1e293b;
+    --text: #e2e8f0;
+    --shadow: 0 4px 18px rgba(0, 0, 0, .4);
+}
+
+body {
+    margin: 0;
+    font-family: 'Open Sans', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    transition: 0.25s ease;
+    padding: 20px;
+}
+
+/* HEADER */
+header {
+    text-align: center;
+    padding: 30px;
+    background: var(--card);
+    border-radius: 20px;
+    box-shadow: var(--shadow);
+    max-width: 1000px;
+    margin: 0 auto 30px auto;
+    animation: fadeIn 0.5s ease;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+header h1 {
+    margin: 0;
+    font-size: 2rem;
+}
+
+header p {
+    margin-top: 8px;
+    opacity: 0.8;
+}
+
+/* GRID */
+.grid {
+    max-width: 1100px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 25px;
+}
+
+/* CATEGORY CARD */
+.card {
+    background: var(--card);
+    border-radius: 20px;
+    box-shadow: var(--shadow);
+    padding: 20px;
+    transition: 0.2s ease;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 6px 22px rgba(0, 0, 0, .18);
+}
+
+.card h2 {
+    margin: 0 0 14px;
+    font-size: 1.4rem;
+    color: var(--dark);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.tag {
+    display: inline-block;
+    padding: 6px 12px;
+    border-radius: 999px;
+    background: #e3f3ff;
+    color: #004c6d;
+    font-size: 0.8rem;
+    margin-bottom: 12px;
+    font-weight: 600;
+}
+
+/* EXERCISE ROW */
+.exercise-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 8px 0;
+}
+
+.exercise-btn {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: linear-gradient(120deg, #e7f8f1, #d7f2ff);
+    padding: 12px 15px;
+    border-radius: 12px;
+    text-decoration: none;
+    color: #003a52;
+    font-weight: 600;
+    transition: 0.15s;
+    border: 1px solid #cfdff0;
+    flex: 1 1 auto;
+}
+
+.exercise-btn:hover {
+    background: linear-gradient(120deg, #dff7ed, #cfeaff);
+    transform: translateX(5px);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.10);
+}
+
+.exercise-btn span.icon {
+    font-size: 1.3rem;
+}
+
+.icon-svg {
+    display: block;
+    vertical-align: middle;
+}
+
+/* Reset button */
+#reset-prog {
+    background: #f8f9fb;
+    border: 1px solid #d0d7e0;
+    padding: 8px 12px;
+    border-radius: 10px;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+#reset-prog:hover {
+    background: #fff;
+}
+
+/* STATUS BUTTON */
+.status-btn {
+    padding: 6px 10px;
+    border-radius: 10px;
+    font-size: 14px;
+    border: none;
+    cursor: pointer;
+    font-weight: 700;
+    min-width: 95px;
+    text-align: center;
+    transition: 0.18s ease;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.status-btn:focus-visible {
+    outline: 3px solid rgba(41, 128, 255, 0.18);
+    outline-offset: 3px;
+}
+
+/* Respect user preference for reduced motion */
+@media (prefers-reduced-motion: reduce) {
+    * {
+        transition: none !important;
+        animation: none !important;
+    }
+}
+
+/* Small screens adjustments */
+@media (max-width:420px) {
+    .status-btn {
+        min-width: 80px;
+        font-size: 13px;
+    }
+}
