@@ -782,6 +782,7 @@
       persistContent(true);
       import('https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js').then(()=>{
         const exportNode = createExportNode();
+        const contentHeight = exportNode.node.scrollHeight;
         const opt={
           margin:[0,0,0,0],
           filename:'document.pdf',
@@ -790,8 +791,12 @@
             scale:2,
             backgroundColor:'#ffffff',
             useCORS:true,
+            scrollX:0,
+            scrollY:0,
+            width:PAGE_PX.width,
+            height:contentHeight,
             windowWidth:PAGE_PX.width,
-            windowHeight:PAGE_PX.height
+            windowHeight:contentHeight
           },
           jsPDF:{
             unit:'mm',
