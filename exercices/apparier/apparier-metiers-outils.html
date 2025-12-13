@@ -305,6 +305,110 @@
     </select>
     <div class="match-feedback" aria-live="polite"></div>
   </article>
+
+  <article class="match-card" data-answer="Seringue">
+    <h3>🩺 Infirmier</h3>
+    <p>Quel outil utilise-t-on pour administrer un traitement précis ?</p>
+    <label for="select-infirmier">Outil principal</label>
+    <select id="select-infirmier" aria-label="Outil pour le métier d’infirmier">
+      <option value="">-- Choisir --</option>
+      <option value="Marteau">Marteau</option>
+      <option value="Seringue">Seringue</option>
+      <option value="Casque">Casque</option>
+    </select>
+    <div class="match-feedback" aria-live="polite"></div>
+  </article>
+
+  <article class="match-card" data-answer="Truelle">
+    <h3>🏗️ Maçon</h3>
+    <p>L’outil indispensable pour poser un mur ou faire un joint.</p>
+    <label for="select-macon">Outil principal</label>
+    <select id="select-macon" aria-label="Outil pour le métier de maçon">
+      <option value="">-- Choisir --</option>
+      <option value="Truelle">Truelle</option>
+      <option value="Scalpel">Scalpel</option>
+      <option value="Stylet">Stylet</option>
+    </select>
+    <div class="match-feedback" aria-live="polite"></div>
+  </article>
+
+  <article class="match-card" data-answer="Ciseaux">
+    <h3>💇 Coiffeur</h3>
+    <p>Quel outil permet de couper les cheveux précisément ?</p>
+    <label for="select-coiffeur">Outil principal</label>
+    <select id="select-coiffeur" aria-label="Outil pour le métier de coiffeur">
+      <option value="">-- Choisir --</option>
+      <option value="Ciseaux">Ciseaux</option>
+      <option value="Pelle">Pelle</option>
+      <option value="Serrure">Serrure</option>
+    </select>
+    <div class="match-feedback" aria-live="polite"></div>
+  </article>
+
+  <article class="match-card" data-answer="Marteau">
+    <h3>👷 Charpentier</h3>
+    <p>Choisissez l’outil pour assembler des pièces de bois.</p>
+    <label for="select-charpentier">Outil principal</label>
+    <select id="select-charpentier" aria-label="Outil pour le métier de charpentier">
+      <option value="">-- Choisir --</option>
+      <option value="Marteau">Marteau</option>
+      <option value="Pinceau">Pinceau</option>
+      <option value="Pipette">Pipette</option>
+    </select>
+    <div class="match-feedback" aria-live="polite"></div>
+  </article>
+
+  <article class="match-card" data-answer="Balance">
+    <h3>🍰 Pâtissier</h3>
+    <p>Quel instrument permet de doser avec précision ?</p>
+    <label for="select-patissier">Outil principal</label>
+    <select id="select-patissier" aria-label="Outil pour le métier de pâtissier">
+      <option value="">-- Choisir --</option>
+      <option value="Balance">Balance</option>
+      <option value="Perceuse">Perceuse</option>
+      <option value="Harnais">Harnais</option>
+    </select>
+    <div class="match-feedback" aria-live="polite"></div>
+  </article>
+
+  <article class="match-card" data-answer="Microphone">
+    <h3>🎤 Animateur radio</h3>
+    <p>L’outil clé pour être entendu par les auditeurs.</p>
+    <label for="select-animateur">Outil principal</label>
+    <select id="select-animateur" aria-label="Outil pour le métier d’animateur radio">
+      <option value="">-- Choisir --</option>
+      <option value="Microphone">Microphone</option>
+      <option value="Tondeuse">Tondeuse</option>
+      <option value="Équerre">Équerre</option>
+    </select>
+    <div class="match-feedback" aria-live="polite"></div>
+  </article>
+
+  <article class="match-card" data-answer="Thermomètre">
+    <h3>🌡️ Technicien de maintenance</h3>
+    <p>Quel instrument mesure une température d’installation ?</p>
+    <label for="select-technicien">Outil principal</label>
+    <select id="select-technicien" aria-label="Outil pour le métier de technicien">
+      <option value="">-- Choisir --</option>
+      <option value="Thermomètre">Thermomètre</option>
+      <option value="Râteau">Râteau</option>
+      <option value="Pelle">Pelle</option>
+    </select>
+    <div class="match-feedback" aria-live="polite"></div>
+  </article>
+
+  <article class="match-card" data-answer="Pinceau">
+    <h3>🎨 Peintre</h3>
+    <p>L’outil essentiel pour appliquer une couche uniforme.</p>
+    <label for="select-peintre">Outil principal</label>
+    <select id="select-peintre" aria-label="Outil pour le métier de peintre">
+      <option value="">-- Choisir --</option>
+      <option value="Pinceau">Pinceau</option>
+      <option value="Casque audio">Casque audio</option>
+      <option value="Scie">Scie</option>
+    </select>
+    <div class="match-feedback" aria-live="polite"></div>
+  </article>
 </div>
 
 <div class="match-actions">
@@ -371,16 +475,23 @@
         }
       });
 
-      if (note) {
-        if (correct === cards.length) {
-          note.textContent = 'Bravo ! Tous les métiers sont associés aux bons outils.';
-          if (window.proactifMarkExerciseDone) {
-            try { window.proactifMarkExerciseDone(); } catch (e) { }
-          }
-        } else {
-          note.textContent = `Résultat : ${correct} / ${cards.length}. Réfléchissez à l’activité principale de chaque métier pour ajuster vos choix.`;
+      if (!note) return;
+
+      if (correct === cards.length) {
+        note.textContent = 'Bravo ! Tous les métiers sont associés aux bons outils.';
+        if (window.proactifMarkExerciseDone) {
+          try { window.proactifMarkExerciseDone(); } catch (e) { }
         }
+        return;
       }
+
+      const hints = [
+        'Pensez au geste principal du métier : couper, soigner, mesurer…',
+        'Chaque outil n’est utilisé qu’une seule fois, vérifiez les doublons.',
+        'Si vous hésitez, imaginez-vous à la place de ce professionnel.'
+      ];
+      const suffix = hints[Math.floor(Math.random() * hints.length)];
+      note.textContent = `Résultat : ${correct} / ${cards.length}. ${suffix}`;
     }
 
     document.getElementById('check-btn')?.addEventListener('click', checkAnswers);
