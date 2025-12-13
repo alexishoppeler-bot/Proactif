@@ -5,8 +5,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Tu → Vous – validation pro</title>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-
 <style>
 body{font-family:Arial;background:#eef3f9;padding:20px}
 .container{
@@ -48,7 +46,6 @@ button{
   display:flex;gap:15px;margin-top:25px;flex-wrap:wrap
 }
 
-.pdf{background:#2e8b57;color:white}
 .reset{background:#ddd}
 .formateur{background:#444;color:white}
 
@@ -182,7 +179,6 @@ Changez seulement le pronom et le verbe.
 <div class="saved" id="savedMsg"></div>
 
 <div class="actions">
-  <button class="pdf" onclick="exportPDF()">📄 PDF</button>
   <button class="reset" onclick="resetAll()">🗑 Réinitialiser</button>
   <button class="formateur" onclick="accesFormateur()">🔐 Formateur</button>
 </div>
@@ -297,18 +293,6 @@ function accesFormateur(){
     document.getElementById("res"+i).className="result ok";
   });
   updateScore();
-}
-
-// 📄 PDF
-function exportPDF(){
-  const { jsPDF } = window.jspdf;
-  const pdf=new jsPDF();
-  let y=20;
-  phrases.forEach((_,i)=>{
-    pdf.text(`${i+1}. ${document.getElementById("r"+i).value||""}`,15,y);
-    y+=10;if(y>270){pdf.addPage();y=20;}
-  });
-  pdf.save("tu_vers_vous.pdf");
 }
 
 // 🔄 reset

@@ -157,9 +157,6 @@
     }
   </style>
 
-  <!-- Librairies PDF -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <link rel="stylesheet" href="/exercise-layout.css">
 </head>
 <body>
@@ -283,7 +280,7 @@
         <li>3️⃣ Écrivez des phrases simples et claires.</li>
         <li>4️⃣ Il n’y a pas une seule bonne réponse possible.</li>
         <li>5️⃣ Relisez votre réponse avant de passer à la suivante.</li>
-        <li>👉 Envoyez le PDF par e-mail à : alexis.hoppeler@proactif.ch</li>
+        <li>👉 Envoyez vos réponses par e-mail à : alexis.hoppeler@proactif.ch</li>
       </ol>
       <p class="astuce">💡 L’important est de montrer que vous avez compris le texte.</p>
     </div>
@@ -378,14 +375,6 @@
         <button class="danger" onclick="toutEffacer()">🔄 Tout effacer</button>
       </div>
 
-      <!-- Zone téléchargement PDF -->
-      <div class="code-box">
-        <strong>📄 Télécharger en PDF</strong><br>
-        <label for="pdfName">Nom du fichier :</label>
-        <input type="text" id="pdfName" placeholder="Nom_Prenom_attitudes">
-        <br>
-        <button onclick="telechargerPDF()">⬇️ Télécharger PDF</button>
-      </div>
     </div>
 
   </div>
@@ -425,53 +414,9 @@
         .forEach(k => localStorage.removeItem(k));
     }
 
-    function telechargerPDF(){
-      const { jsPDF } = window.jspdf;
-      const zone = document.querySelector('.app');
-
-      const prenom = document.getElementById('prenom').value.trim();
-      let nom = document.getElementById('pdfName').value.trim();
-
-      // Nom du fichier : priorité au champ nom, sinon prénom
-      if(nom === ''){
-        nom = prenom !== '' ? 'Attitudes_travail_' + prenom : 'questions_attitudes_travail';
-      }
-
-      // Ajuster la hauteur des textarea pour inclure toutes les réponses
-      document.querySelectorAll('textarea').forEach(t => {
-        t.style.height = 'auto';
-        t.style.height = t.scrollHeight + 'px';
-      });
-
-      html2canvas(zone, { scale: 2, useCORS:true }).then(canvas => {
-        const imgData = canvas.toDataURL('image/png');
-        const pdf = new jsPDF('p','mm','a4');
-
-        const pageWidth = 210;
-        const pageHeight = 297;
-        const imgWidth = pageWidth;
-        const imgHeight = canvas.height * imgWidth / canvas.width;
-
-        let heightLeft = imgHeight;
-        let position = 0;
-
-        pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
-        heightLeft -= pageHeight;
-
-        while (heightLeft > 0) {
-          position -= pageHeight;
-          pdf.addPage();
-          pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
-          heightLeft -= pageHeight;
-        }
-
-        pdf.save(nom + '.pdf');
-      });
-    }
-
-    // ENREGISTREMENT AUTOMATIQUE (localStorage)
-    document.addEventListener('DOMContentLoaded', () => {
-      const inputs = document.querySelectorAll('textarea, #prenom, #pdfName');
+// ENREGISTREMENT AUTOMATIQUE (localStorage)
+document.addEventListener('DOMContentLoaded', () => {
+  const inputs = document.querySelectorAll('textarea, #prenom');
 
       // Charger les données sauvegardées
       inputs.forEach((el, index) => {
