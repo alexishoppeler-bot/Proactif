@@ -359,18 +359,6 @@ header p {
     }
 }
 
-/* small admin link style (in-header) */
-#admin-link {
-    display: inline-block;
-    text-decoration: none;
-    padding: 8px 10px;
-    border-radius: 8px;
-    border: 1px solid #d0d7e0;
-    background: #fff;
-    color: #004c6d;
-    font-weight: 700;
-}
-
 /* icon img fallback if used */
 .icon-img {
     width: 20px;
