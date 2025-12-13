@@ -16,3 +16,18 @@ Utilisation
 Notes techniques
 - L'export/import est entièrement côté client (JavaScript) — aucune API serveur.
 - Pour sauvegarde serveur, exporter et envoyer le JSON via l'API de votre choix.
+
+Génération d'icônes (build)
+- Un script minimal est fourni pour générer et minifier le sprite SVG depuis les fichiers présents dans `icons/`.
+- Installer les dépendances de développement :
+
+```bash
+npm install --save-dev
+```
+
+- Commandes disponibles :
+  - `npm run icons:svgo` : optimise les SVG dans `icons/` et écrit dans `icons/optimized`.
+  - `npm run icons:sprite` : génère `icons/sprite.min.svg` depuis `icons/optimized`.
+  - `npm run icons:build` : exécute les deux étapes ci‑dessus.
+
+Remarque: le sprite est déjà inliné dans `index.html` pour la production; le script sert pour maintenance et CI.
