@@ -296,7 +296,7 @@ header p {
     border-radius: 10px;
     font-size: 14px;
     border: none;
-    cursor: pointer;
+    cursor: default;
     font-weight: 700;
     min-width: 95px;
     text-align: center;
@@ -304,6 +304,10 @@ header p {
     display: inline-flex;
     align-items: center;
     justify-content: center;
+}
+
+.status-btn:disabled {
+    opacity: 1;
 }
 
 .status-btn:focus-visible {

@@ -249,8 +249,9 @@
       const statusBtn = document.createElement('button');
       statusBtn.className = 'status-btn';
       statusBtn.type = 'button';
+      statusBtn.disabled = true;
       statusBtn.setAttribute('aria-pressed', 'false');
-      statusBtn.setAttribute('aria-label', 'Marquer comme terminé');
+      statusBtn.setAttribute('aria-label', 'Statut de réalisation');
 
       // Insérer le bouton dans un conteneur commun avec le lien
       const row = document.createElement('div');
@@ -268,7 +269,8 @@
         statusBtn.style.background = done ? '#18c96e' : '#f0f0f0';
         statusBtn.style.color = done ? 'white' : '#444';
         statusBtn.setAttribute('aria-pressed', done ? 'true' : 'false');
-        statusBtn.setAttribute('aria-label', done ? 'Marquer comme non terminé' : 'Marquer comme terminé');
+        statusBtn.setAttribute('aria-label', done ? 'Exercice terminé' : 'Exercice à faire');
+        statusBtn.setAttribute('title', done ? 'Marqué automatiquement comme terminé' : 'En attente');
 
         if (done) {
           btn.style.background = '#d6ffe8';
@@ -283,14 +285,12 @@
 
       sync(); // initialisation
 
-      // Toggle statut (click ou clavier géré par le bouton natif)
-      statusBtn.addEventListener('click', e => {
-        e.preventDefault();
-        progression[url] = !progression[url];
+      btn.addEventListener('click', () => {
+        progression[url] = true;
         try { localStorage.setItem(STORAGE_KEY, JSON.stringify(progression)); } catch (err) { }
         sync();
         if (window.updateProgress) window.updateProgress();
-      });
+      }, { once: false });
 
     });
 
