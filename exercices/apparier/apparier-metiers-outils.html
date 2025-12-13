@@ -269,143 +269,700 @@
 <div class="match-grid" id="match-grid">
   <article class="match-card" data-answer="Casserole">
     <h3>👨‍🍳 Cuisinier</h3>
-    <p>Sélectionnez l’outil le plus cohérent pour préparer des repas.</p>
-    <label for="select-cuisinier">Outil principal</label>
-    <select id="select-cuisinier" aria-label="Outil pour le métier de cuisinier">
+    <p>Associez l’outil utilisé habituellement par ce professionnel.</p>
+    <label for="select-1">Outil principal</label>
+    <select id="select-1" aria-label="Outil pour 👨‍🍳 Cuisinier">
       <option value="">-- Choisir --</option>
       <option value="Balai">Balai</option>
       <option value="Ordinateur">Ordinateur</option>
       <option value="Casserole">Casserole</option>
+      <option value="Marteau">Marteau</option>
+    </select>
+    <div class="match-feedback" aria-live="polite"></div>
+  </article>
+
+  <article class="match-card" data-answer="Stéthoscope">
+    <h3>👩‍⚕️ Médecin</h3>
+    <p>Reliez le soignant à l’outil de diagnostic incontournable.</p>
+    <label for="select-2">Outil principal</label>
+    <select id="select-2" aria-label="Outil pour 👩‍⚕️ Médecin">
+      <option value="">-- Choisir --</option>
+      <option value="Stéthoscope">Stéthoscope</option>
+      <option value="Casque audio">Casque audio</option>
+      <option value="Lampe frontale">Lampe frontale</option>
+      <option value="Clé Allen">Clé Allen</option>
+    </select>
+    <div class="match-feedback" aria-live="polite"></div>
+  </article>
+
+  <article class="match-card" data-answer="Scie circulaire">
+    <h3>🪵 Menuisier</h3>
+    <p>Choisissez l’outil utilisé pour découper le bois.</p>
+    <label for="select-3">Outil principal</label>
+    <select id="select-3" aria-label="Outil pour 🪵 Menuisier">
+      <option value="">-- Choisir --</option>
+      <option value="Scie circulaire">Scie circulaire</option>
+      <option value="Calculatrice">Calculatrice</option>
+      <option value="Tablier">Tablier</option>
+      <option value="Thermomètre">Thermomètre</option>
+    </select>
+    <div class="match-feedback" aria-live="polite"></div>
+  </article>
+
+  <article class="match-card" data-answer="Sécateur">
+    <h3>🌸 Fleuriste</h3>
+    <p>Cet outil permet de couper les tiges avec précision.</p>
+    <label for="select-4">Outil principal</label>
+    <select id="select-4" aria-label="Outil pour 🌸 Fleuriste">
+      <option value="">-- Choisir --</option>
+      <option value="Sécateur">Sécateur</option>
+      <option value="Truelle">Truelle</option>
+      <option value="Guitare électrique">Guitare électrique</option>
+      <option value="Pipette">Pipette</option>
+    </select>
+    <div class="match-feedback" aria-live="polite"></div>
+  </article>
+
+  <article class="match-card" data-answer="Ciseaux de coiffure">
+    <h3>✂️ Coiffeur</h3>
+    <p>Sélectionnez l’outil de coupe pour travailler les cheveux.</p>
+    <label for="select-5">Outil principal</label>
+    <select id="select-5" aria-label="Outil pour ✂️ Coiffeur">
+      <option value="">-- Choisir --</option>
+      <option value="Rasoir">Rasoir</option>
+      <option value="Ciseaux de coiffure">Ciseaux de coiffure</option>
+      <option value="Perceuse">Perceuse</option>
+      <option value="Pinceau">Pinceau</option>
+    </select>
+    <div class="match-feedback" aria-live="polite"></div>
+  </article>
+
+  <article class="match-card" data-answer="Tracteur">
+    <h3>🚜 Agriculteur</h3>
+    <p>Quel outil permet de travailler de grandes parcelles ?</p>
+    <label for="select-6">Outil principal</label>
+    <select id="select-6" aria-label="Outil pour 🚜 Agriculteur">
+      <option value="">-- Choisir --</option>
+      <option value="Tracteur">Tracteur</option>
+      <option value="Microscope">Microscope</option>
+      <option value="Fourchette">Fourchette</option>
+      <option value="Drone">Drone</option>
+    </select>
+    <div class="match-feedback" aria-live="polite"></div>
+  </article>
+
+  <article class="match-card" data-answer="Tensiomètre">
+    <h3>🩺 Infirmier</h3>
+    <p>Associez l’outil pour mesurer la pression artérielle.</p>
+    <label for="select-7">Outil principal</label>
+    <select id="select-7" aria-label="Outil pour 🩺 Infirmier">
+      <option value="">-- Choisir --</option>
+      <option value="Tensiomètre">Tensiomètre</option>
+      <option value="Compas">Compas</option>
+      <option value="Disque dur">Disque dur</option>
+      <option value="Rouleau à peinture">Rouleau à peinture</option>
     </select>
     <div class="match-feedback" aria-live="polite"></div>
   </article>
 
   <article class="match-card" data-answer="Clé à molette">
     <h3>🔧 Mécanicien</h3>
-    <p>Choisissez l’outil indispensable pour réparer des machines.</p>
-    <label for="select-mecanicien">Outil principal</label>
-    <select id="select-mecanicien" aria-label="Outil pour le métier de mécanicien">
+    <p>L’outil choisi sert à desserrer ou serrer les boulons.</p>
+    <label for="select-8">Outil principal</label>
+    <select id="select-8" aria-label="Outil pour 🔧 Mécanicien">
       <option value="">-- Choisir --</option>
-      <option value="Marmite">Marmite</option>
-      <option value="Stylo">Stylo</option>
       <option value="Clé à molette">Clé à molette</option>
+      <option value="Roue de secours">Roue de secours</option>
+      <option value="Éponge">Éponge</option>
+      <option value="Loupe">Loupe</option>
     </select>
     <div class="match-feedback" aria-live="polite"></div>
   </article>
 
-  <article class="match-card" data-answer="Aspirateur">
-    <h3>🧹 Nettoyeur</h3>
-    <p>Quel outil permet de garder les locaux propres ?</p>
-    <label for="select-nettoyeur">Outil principal</label>
-    <select id="select-nettoyeur" aria-label="Outil pour le métier de nettoyeur">
+  <article class="match-card" data-answer="Lance à incendie">
+    <h3>🚒 Pompier</h3>
+    <p>Identifiez l’outil utilisé pour projeter de l’eau.</p>
+    <label for="select-9">Outil principal</label>
+    <select id="select-9" aria-label="Outil pour 🚒 Pompier">
       <option value="">-- Choisir --</option>
-      <option value="Cravate">Cravate</option>
+      <option value="Lance à incendie">Lance à incendie</option>
+      <option value="Shaker inox">Shaker inox</option>
+      <option value="Truelle">Truelle</option>
+      <option value="Casque audio">Casque audio</option>
+    </select>
+    <div class="match-feedback" aria-live="polite"></div>
+  </article>
+
+  <article class="match-card" data-answer="Four à pain">
+    <h3>🥖 Boulanger</h3>
+    <p>L’outil indispensable pour cuire les fournées.</p>
+    <label for="select-10">Outil principal</label>
+    <select id="select-10" aria-label="Outil pour 🥖 Boulanger">
+      <option value="">-- Choisir --</option>
+      <option value="Four à pain">Four à pain</option>
+      <option value="Ventilateur">Ventilateur</option>
+      <option value="Pinceau">Pinceau</option>
+      <option value="Béquille">Béquille</option>
+    </select>
+    <div class="match-feedback" aria-live="polite"></div>
+  </article>
+
+  <article class="match-card" data-answer="Appareil photo reflex">
+    <h3>📸 Photographe</h3>
+    <p>Associez l’appareil permettant de capturer les images.</p>
+    <label for="select-11">Outil principal</label>
+    <select id="select-11" aria-label="Outil pour 📸 Photographe">
+      <option value="">-- Choisir --</option>
+      <option value="Appareil photo reflex">Appareil photo reflex</option>
       <option value="Tournevis">Tournevis</option>
-      <option value="Aspirateur">Aspirateur</option>
+      <option value="Bouteille">Bouteille</option>
+      <option value="Volant de bus">Volant de bus</option>
     </select>
     <div class="match-feedback" aria-live="polite"></div>
   </article>
 
-  <article class="match-card" data-answer="Seringue">
-    <h3>🩺 Infirmier</h3>
-    <p>Quel outil utilise-t-on pour administrer un traitement précis ?</p>
-    <label for="select-infirmier">Outil principal</label>
-    <select id="select-infirmier" aria-label="Outil pour le métier d’infirmier">
+  <article class="match-card" data-answer="Ventouse">
+    <h3>🧰 Plombier</h3>
+    <p>Sélectionnez l’outil utilisé pour déboucher un évier.</p>
+    <label for="select-12">Outil principal</label>
+    <select id="select-12" aria-label="Outil pour 🧰 Plombier">
       <option value="">-- Choisir --</option>
-      <option value="Marteau">Marteau</option>
+      <option value="Ventouse">Ventouse</option>
+      <option value="Stylo plume">Stylo plume</option>
+      <option value="Brosse">Brosse</option>
+      <option value="Chaise">Chaise</option>
+    </select>
+    <div class="match-feedback" aria-live="polite"></div>
+  </article>
+
+  <article class="match-card" data-answer="Multimètre">
+    <h3>⚡ Électricien</h3>
+    <p>Choisissez l’outil qui mesure tension et intensité.</p>
+    <label for="select-13">Outil principal</label>
+    <select id="select-13" aria-label="Outil pour ⚡ Électricien">
+      <option value="">-- Choisir --</option>
+      <option value="Multimètre">Multimètre</option>
+      <option value="Palette">Palette</option>
+      <option value="Bouilloire">Bouilloire</option>
+      <option value="Scanner de codes-barres">Scanner de codes-barres</option>
+    </select>
+    <div class="match-feedback" aria-live="polite"></div>
+  </article>
+
+  <article class="match-card" data-answer="Tableau blanc">
+    <h3>👩‍🏫 Enseignant</h3>
+    <p>Associez l’outil de présentation utilisé en classe.</p>
+    <label for="select-14">Outil principal</label>
+    <select id="select-14" aria-label="Outil pour 👩‍🏫 Enseignant">
+      <option value="">-- Choisir --</option>
+      <option value="Tableau blanc">Tableau blanc</option>
+      <option value="Casier">Casier</option>
+      <option value="Sabot">Sabot</option>
+      <option value="Perceuse">Perceuse</option>
+    </select>
+    <div class="match-feedback" aria-live="polite"></div>
+  </article>
+
+  <article class="match-card" data-answer="Planche à dessin">
+    <h3>🏗️ Architecte</h3>
+    <p>Sélectionnez l’outil pour tracer des plans détaillés.</p>
+    <label for="select-15">Outil principal</label>
+    <select id="select-15" aria-label="Outil pour 🏗️ Architecte">
+      <option value="">-- Choisir --</option>
+      <option value="Planche à dessin">Planche à dessin</option>
+      <option value="Chariot">Chariot</option>
+      <option value="Frein">Frein</option>
+      <option value="Pelle">Pelle</option>
+    </select>
+    <div class="match-feedback" aria-live="polite"></div>
+  </article>
+
+  <article class="match-card" data-answer="Pelle">
+    <h3>🌱 Jardinier</h3>
+    <p>L’outil devra retourner la terre facilement.</p>
+    <label for="select-16">Outil principal</label>
+    <select id="select-16" aria-label="Outil pour 🌱 Jardinier">
+      <option value="">-- Choisir --</option>
+      <option value="Pelle">Pelle</option>
+      <option value="Tapis">Tapis</option>
+      <option value="Thermos">Thermos</option>
+      <option value="Diode">Diode</option>
+    </select>
+    <div class="match-feedback" aria-live="polite"></div>
+  </article>
+
+  <article class="match-card" data-answer="Rouleau à peinture">
+    <h3>🎨 Peintre décorateur</h3>
+    <p>Quel outil couvre rapidement de larges surfaces ?</p>
+    <label for="select-17">Outil principal</label>
+    <select id="select-17" aria-label="Outil pour 🎨 Peintre décorateur">
+      <option value="">-- Choisir --</option>
+      <option value="Rouleau à peinture">Rouleau à peinture</option>
+      <option value="Set de couteaux">Set de couteaux</option>
+      <option value="Harpe">Harpe</option>
+      <option value="Compresseur">Compresseur</option>
+    </select>
+    <div class="match-feedback" aria-live="polite"></div>
+  </article>
+
+  <article class="match-card" data-answer="Guitare électrique">
+    <h3>🎸 Guitariste</h3>
+    <p>Associez l’instrument iconique à ce musicien.</p>
+    <label for="select-18">Outil principal</label>
+    <select id="select-18" aria-label="Outil pour 🎸 Guitariste">
+      <option value="">-- Choisir --</option>
+      <option value="Guitare électrique">Guitare électrique</option>
+      <option value="Lampe torche">Lampe torche</option>
+      <option value="Moule">Moule</option>
+      <option value="Compas">Compas</option>
+    </select>
+    <div class="match-feedback" aria-live="polite"></div>
+  </article>
+
+  <article class="match-card" data-answer="Machine à coudre">
+    <h3>🧵 Couturier</h3>
+    <p>Quel outil assemble les tissus rapidement ?</p>
+    <label for="select-19">Outil principal</label>
+    <select id="select-19" aria-label="Outil pour 🧵 Couturier">
+      <option value="">-- Choisir --</option>
+      <option value="Machine à coudre">Machine à coudre</option>
+      <option value="Béquille">Béquille</option>
+      <option value="Carte détaillée">Carte détaillée</option>
+      <option value="Pince coupante">Pince coupante</option>
+    </select>
+    <div class="match-feedback" aria-live="polite"></div>
+  </article>
+
+  <article class="match-card" data-answer="Volant de bus">
+    <h3>🚌 Conducteur de bus</h3>
+    <p>Choisissez l’outil qui permet de diriger le véhicule.</p>
+    <label for="select-20">Outil principal</label>
+    <select id="select-20" aria-label="Outil pour 🚌 Conducteur de bus">
+      <option value="">-- Choisir --</option>
+      <option value="Volant de bus">Volant de bus</option>
+      <option value="Chariot élévateur">Chariot élévateur</option>
+      <option value="Machette">Machette</option>
+      <option value="Pot à crayons">Pot à crayons</option>
+    </select>
+    <div class="match-feedback" aria-live="polite"></div>
+  </article>
+
+  <article class="match-card" data-answer="Badge magnétique">
+    <h3>💼 Agent d’accueil</h3>
+    <p>L’outil choisi permet d’identifier les visiteurs.</p>
+    <label for="select-21">Outil principal</label>
+    <select id="select-21" aria-label="Outil pour 💼 Agent d’accueil">
+      <option value="">-- Choisir --</option>
+      <option value="Badge magnétique">Badge magnétique</option>
+      <option value="Perceuse">Perceuse</option>
+      <option value="Râteau">Râteau</option>
+      <option value="Clé plate">Clé plate</option>
+    </select>
+    <div class="match-feedback" aria-live="polite"></div>
+  </article>
+
+  <article class="match-card" data-answer="Clavier mécanique">
+    <h3>🖥️ Développeur</h3>
+    <p>Associez l’outil utilisé pour saisir du code.</p>
+    <label for="select-22">Outil principal</label>
+    <select id="select-22" aria-label="Outil pour 🖥️ Développeur">
+      <option value="">-- Choisir --</option>
+      <option value="Clavier mécanique">Clavier mécanique</option>
+      <option value="Tablier">Tablier</option>
+      <option value="Tensiomètre">Tensiomètre</option>
+      <option value="Roue dentée">Roue dentée</option>
+    </select>
+    <div class="match-feedback" aria-live="polite"></div>
+  </article>
+
+  <article class="match-card" data-answer="Calculatrice financière">
+    <h3>🧮 Comptable</h3>
+    <p>Sélectionnez l’outil qui aide à vérifier les chiffres.</p>
+    <label for="select-23">Outil principal</label>
+    <select id="select-23" aria-label="Outil pour 🧮 Comptable">
+      <option value="">-- Choisir --</option>
+      <option value="Calculatrice financière">Calculatrice financière</option>
+      <option value="Coupe-ongles">Coupe-ongles</option>
+      <option value="Chaudière">Chaudière</option>
+      <option value="Clé de 12">Clé de 12</option>
+    </select>
+    <div class="match-feedback" aria-live="polite"></div>
+  </article>
+
+  <article class="match-card" data-answer="Microscope">
+    <h3>🔬 Scientifique</h3>
+    <p>Associez l’outil permettant d’observer le minuscule.</p>
+    <label for="select-24">Outil principal</label>
+    <select id="select-24" aria-label="Outil pour 🔬 Scientifique">
+      <option value="">-- Choisir --</option>
+      <option value="Microscope">Microscope</option>
+      <option value="Ponceuse">Ponceuse</option>
+      <option value="Fourche">Fourche</option>
+      <option value="Palette">Palette</option>
+    </select>
+    <div class="match-feedback" aria-live="polite"></div>
+  </article>
+
+  <article class="match-card" data-answer="Miroir dentaire">
+    <h3>😷 Dentiste</h3>
+    <p>L’outil sélectionné permet d’observer les dents.</p>
+    <label for="select-25">Outil principal</label>
+    <select id="select-25" aria-label="Outil pour 😷 Dentiste">
+      <option value="">-- Choisir --</option>
+      <option value="Miroir dentaire">Miroir dentaire</option>
+      <option value="Rouleau à peinture">Rouleau à peinture</option>
+      <option value="Pinceau de maquillage">Pinceau de maquillage</option>
+      <option value="Roue dentée">Roue dentée</option>
+    </select>
+    <div class="match-feedback" aria-live="polite"></div>
+  </article>
+
+  <article class="match-card" data-answer="Plateau de service">
+    <h3>🍽️ Serveur</h3>
+    <p>Sélectionnez l’outil permettant de porter plusieurs assiettes.</p>
+    <label for="select-26">Outil principal</label>
+    <select id="select-26" aria-label="Outil pour 🍽️ Serveur">
+      <option value="">-- Choisir --</option>
+      <option value="Plateau de service">Plateau de service</option>
+      <option value="Pistolet">Pistolet</option>
+      <option value="Truelle">Truelle</option>
+      <option value="Harpon">Harpon</option>
+    </select>
+    <div class="match-feedback" aria-live="polite"></div>
+  </article>
+
+  <article class="match-card" data-answer="Scanner de codes-barres">
+    <h3>📚 Bibliothécaire</h3>
+    <p>Associez l’outil vérifiant les prêts des livres.</p>
+    <label for="select-27">Outil principal</label>
+    <select id="select-27" aria-label="Outil pour 📚 Bibliothécaire">
+      <option value="">-- Choisir --</option>
+      <option value="Scanner de codes-barres">Scanner de codes-barres</option>
+      <option value="Tronçonneuse">Tronçonneuse</option>
+      <option value="Brosse à cheveux">Brosse à cheveux</option>
+      <option value="Boussole">Boussole</option>
+    </select>
+    <div class="match-feedback" aria-live="polite"></div>
+  </article>
+
+  <article class="match-card" data-answer="Sacoche postale">
+    <h3>📮 Facteur</h3>
+    <p>Cet outil permet de transporter les lettres.</p>
+    <label for="select-28">Outil principal</label>
+    <select id="select-28" aria-label="Outil pour 📮 Facteur">
+      <option value="">-- Choisir --</option>
+      <option value="Sacoche postale">Sacoche postale</option>
+      <option value="Gant isolant">Gant isolant</option>
+      <option value="Trompette">Trompette</option>
+      <option value="Coupe-haie">Coupe-haie</option>
+    </select>
+    <div class="match-feedback" aria-live="polite"></div>
+  </article>
+
+  <article class="match-card" data-answer="Chronomètre digital">
+    <h3>🏃 Coach sportif</h3>
+    <p>L’outil choisi mesure les temps de performance.</p>
+    <label for="select-29">Outil principal</label>
+    <select id="select-29" aria-label="Outil pour 🏃 Coach sportif">
+      <option value="">-- Choisir --</option>
+      <option value="Chronomètre digital">Chronomètre digital</option>
+      <option value="Louche">Louche</option>
+      <option value="Burin">Burin</option>
+      <option value="Sonde thermique">Sonde thermique</option>
+    </select>
+    <div class="match-feedback" aria-live="polite"></div>
+  </article>
+
+  <article class="match-card" data-answer="Tour de potier">
+    <h3>⚱️ Céramiste</h3>
+    <p>Associez l’outil permettant de façonner l’argile.</p>
+    <label for="select-30">Outil principal</label>
+    <select id="select-30" aria-label="Outil pour ⚱️ Céramiste">
+      <option value="">-- Choisir --</option>
+      <option value="Tour de potier">Tour de potier</option>
+      <option value="Piolet">Piolet</option>
       <option value="Seringue">Seringue</option>
-      <option value="Casque">Casque</option>
+      <option value="Bouteille">Bouteille</option>
     </select>
     <div class="match-feedback" aria-live="polite"></div>
   </article>
 
   <article class="match-card" data-answer="Truelle">
-    <h3>🏗️ Maçon</h3>
-    <p>L’outil indispensable pour poser un mur ou faire un joint.</p>
-    <label for="select-macon">Outil principal</label>
-    <select id="select-macon" aria-label="Outil pour le métier de maçon">
+    <h3>🧱 Maçon</h3>
+    <p>Sélectionnez l’outil qui étale le mortier.</p>
+    <label for="select-31">Outil principal</label>
+    <select id="select-31" aria-label="Outil pour 🧱 Maçon">
       <option value="">-- Choisir --</option>
       <option value="Truelle">Truelle</option>
-      <option value="Scalpel">Scalpel</option>
-      <option value="Stylet">Stylet</option>
+      <option value="Clavier mécanique">Clavier mécanique</option>
+      <option value="Ventouse">Ventouse</option>
+      <option value="Palette de peinture">Palette de peinture</option>
     </select>
     <div class="match-feedback" aria-live="polite"></div>
   </article>
 
-  <article class="match-card" data-answer="Ciseaux">
-    <h3>💇 Coiffeur</h3>
-    <p>Quel outil permet de couper les cheveux précisément ?</p>
-    <label for="select-coiffeur">Outil principal</label>
-    <select id="select-coiffeur" aria-label="Outil pour le métier de coiffeur">
-      <option value="">-- Choisir --</option>
-      <option value="Ciseaux">Ciseaux</option>
-      <option value="Pelle">Pelle</option>
-      <option value="Serrure">Serrure</option>
-    </select>
-    <div class="match-feedback" aria-live="polite"></div>
-  </article>
-
-  <article class="match-card" data-answer="Marteau">
-    <h3>👷 Charpentier</h3>
-    <p>Choisissez l’outil pour assembler des pièces de bois.</p>
-    <label for="select-charpentier">Outil principal</label>
-    <select id="select-charpentier" aria-label="Outil pour le métier de charpentier">
-      <option value="">-- Choisir --</option>
-      <option value="Marteau">Marteau</option>
-      <option value="Pinceau">Pinceau</option>
-      <option value="Pipette">Pipette</option>
-    </select>
-    <div class="match-feedback" aria-live="polite"></div>
-  </article>
-
-  <article class="match-card" data-answer="Balance">
+  <article class="match-card" data-answer="Fouet de pâtisserie">
     <h3>🍰 Pâtissier</h3>
-    <p>Quel instrument permet de doser avec précision ?</p>
-    <label for="select-patissier">Outil principal</label>
-    <select id="select-patissier" aria-label="Outil pour le métier de pâtissier">
+    <p>Associez l’outil qui monte les crèmes.</p>
+    <label for="select-32">Outil principal</label>
+    <select id="select-32" aria-label="Outil pour 🍰 Pâtissier">
       <option value="">-- Choisir --</option>
-      <option value="Balance">Balance</option>
-      <option value="Perceuse">Perceuse</option>
-      <option value="Harnais">Harnais</option>
-    </select>
-    <div class="match-feedback" aria-live="polite"></div>
-  </article>
-
-  <article class="match-card" data-answer="Microphone">
-    <h3>🎤 Animateur radio</h3>
-    <p>L’outil clé pour être entendu par les auditeurs.</p>
-    <label for="select-animateur">Outil principal</label>
-    <select id="select-animateur" aria-label="Outil pour le métier d’animateur radio">
-      <option value="">-- Choisir --</option>
-      <option value="Microphone">Microphone</option>
-      <option value="Tondeuse">Tondeuse</option>
-      <option value="Équerre">Équerre</option>
-    </select>
-    <div class="match-feedback" aria-live="polite"></div>
-  </article>
-
-  <article class="match-card" data-answer="Thermomètre">
-    <h3>🌡️ Technicien de maintenance</h3>
-    <p>Quel instrument mesure une température d’installation ?</p>
-    <label for="select-technicien">Outil principal</label>
-    <select id="select-technicien" aria-label="Outil pour le métier de technicien">
-      <option value="">-- Choisir --</option>
-      <option value="Thermomètre">Thermomètre</option>
-      <option value="Râteau">Râteau</option>
-      <option value="Pelle">Pelle</option>
-    </select>
-    <div class="match-feedback" aria-live="polite"></div>
-  </article>
-
-  <article class="match-card" data-answer="Pinceau">
-    <h3>🎨 Peintre</h3>
-    <p>L’outil essentiel pour appliquer une couche uniforme.</p>
-    <label for="select-peintre">Outil principal</label>
-    <select id="select-peintre" aria-label="Outil pour le métier de peintre">
-      <option value="">-- Choisir --</option>
-      <option value="Pinceau">Pinceau</option>
-      <option value="Casque audio">Casque audio</option>
+      <option value="Fouet de pâtisserie">Fouet de pâtisserie</option>
       <option value="Scie">Scie</option>
+      <option value="Casque moto">Casque moto</option>
+      <option value="Radio">Radio</option>
+    </select>
+    <div class="match-feedback" aria-live="polite"></div>
+  </article>
+
+  <article class="match-card" data-answer="Marteau de forge">
+    <h3>🔨 Forgeron</h3>
+    <p>Quel outil frappe le métal chauffé ?</p>
+    <label for="select-33">Outil principal</label>
+    <select id="select-33" aria-label="Outil pour 🔨 Forgeron">
+      <option value="">-- Choisir --</option>
+      <option value="Marteau de forge">Marteau de forge</option>
+      <option value="Flûte traversière">Flûte traversière</option>
+      <option value="Brosse à vaisselle">Brosse à vaisselle</option>
+      <option value="Télécommande">Télécommande</option>
+    </select>
+    <div class="match-feedback" aria-live="polite"></div>
+  </article>
+
+  <article class="match-card" data-answer="Carte détaillée">
+    <h3>🗺️ Guide touristique</h3>
+    <p>Choisissez l’outil pour présenter un itinéraire.</p>
+    <label for="select-34">Outil principal</label>
+    <select id="select-34" aria-label="Outil pour 🗺️ Guide touristique">
+      <option value="">-- Choisir --</option>
+      <option value="Carte détaillée">Carte détaillée</option>
+      <option value="Burette d’huile">Burette d’huile</option>
+      <option value="Seringue">Seringue</option>
+      <option value="Perceuse-visseuse">Perceuse-visseuse</option>
+    </select>
+    <div class="match-feedback" aria-live="polite"></div>
+  </article>
+
+  <article class="match-card" data-answer="Manche à balai">
+    <h3>✈️ Pilote</h3>
+    <p>Associez le dispositif qui contrôle l’avion.</p>
+    <label for="select-35">Outil principal</label>
+    <select id="select-35" aria-label="Outil pour ✈️ Pilote">
+      <option value="">-- Choisir --</option>
+      <option value="Manche à balai">Manche à balai</option>
+      <option value="Pinceau large">Pinceau large</option>
+      <option value="Ancre marine">Ancre marine</option>
+      <option value="Mixeur">Mixeur</option>
+    </select>
+    <div class="match-feedback" aria-live="polite"></div>
+  </article>
+
+  <article class="match-card" data-answer="Cage de transport">
+    <h3>🐾 Vétérinaire</h3>
+    <p>Sélectionnez l’outil pour déplacer sereinement l’animal.</p>
+    <label for="select-36">Outil principal</label>
+    <select id="select-36" aria-label="Outil pour 🐾 Vétérinaire">
+      <option value="">-- Choisir --</option>
+      <option value="Cage de transport">Cage de transport</option>
+      <option value="Perforatrice">Perforatrice</option>
+      <option value="Roue dentée">Roue dentée</option>
+      <option value="Chariot pliant">Chariot pliant</option>
+    </select>
+    <div class="match-feedback" aria-live="polite"></div>
+  </article>
+
+  <article class="match-card" data-answer="Talkie-walkie">
+    <h3>🛡️ Agent de sécurité</h3>
+    <p>Quel outil permet de communiquer avec l’équipe ?</p>
+    <label for="select-37">Outil principal</label>
+    <select id="select-37" aria-label="Outil pour 🛡️ Agent de sécurité">
+      <option value="">-- Choisir --</option>
+      <option value="Talkie-walkie">Talkie-walkie</option>
+      <option value="Pince à linge">Pince à linge</option>
+      <option value="Compteur électrique">Compteur électrique</option>
+      <option value="Lunettes VR">Lunettes VR</option>
+    </select>
+    <div class="match-feedback" aria-live="polite"></div>
+  </article>
+
+  <article class="match-card" data-answer="Caisse enregistreuse">
+    <h3>🛒 Caissier</h3>
+    <p>Associez l’outil qui encaisse les achats.</p>
+    <label for="select-38">Outil principal</label>
+    <select id="select-38" aria-label="Outil pour 🛒 Caissier">
+      <option value="">-- Choisir --</option>
+      <option value="Caisse enregistreuse">Caisse enregistreuse</option>
+      <option value="Bêche">Bêche</option>
+      <option value="Haut-parleur">Haut-parleur</option>
+      <option value="Manchette">Manchette</option>
+    </select>
+    <div class="match-feedback" aria-live="polite"></div>
+  </article>
+
+  <article class="match-card" data-answer="Tablette graphique">
+    <h3>🎨 Graphiste</h3>
+    <p>Sélectionnez l’outil numérique utilisé pour dessiner.</p>
+    <label for="select-39">Outil principal</label>
+    <select id="select-39" aria-label="Outil pour 🎨 Graphiste">
+      <option value="">-- Choisir --</option>
+      <option value="Tablette graphique">Tablette graphique</option>
+      <option value="Clé anglaise">Clé anglaise</option>
+      <option value="Tronçonneuse">Tronçonneuse</option>
+      <option value="Lampe de chevet">Lampe de chevet</option>
+    </select>
+    <div class="match-feedback" aria-live="polite"></div>
+  </article>
+
+  <article class="match-card" data-answer="Camion semi-remorque">
+    <h3>🚚 Chauffeur poids lourds</h3>
+    <p>Associez le véhicule adapté à ce métier.</p>
+    <label for="select-40">Outil principal</label>
+    <select id="select-40" aria-label="Outil pour 🚚 Chauffeur poids lourds">
+      <option value="">-- Choisir --</option>
+      <option value="Camion semi-remorque">Camion semi-remorque</option>
+      <option value="Lampe frontale">Lampe frontale</option>
+      <option value="Brodeuse">Brodeuse</option>
+      <option value="Mixeur plongeant">Mixeur plongeant</option>
+    </select>
+    <div class="match-feedback" aria-live="polite"></div>
+  </article>
+
+  <article class="match-card" data-answer="Diable de manutention">
+    <h3>📦 Livreur</h3>
+    <p>Quel outil facilite le transport de colis lourds ?</p>
+    <label for="select-41">Outil principal</label>
+    <select id="select-41" aria-label="Outil pour 📦 Livreur">
+      <option value="">-- Choisir --</option>
+      <option value="Diable de manutention">Diable de manutention</option>
+      <option value="Mètre ruban">Mètre ruban</option>
+      <option value="Chalumeau">Chalumeau</option>
+      <option value="Jarre en terre">Jarre en terre</option>
+    </select>
+    <div class="match-feedback" aria-live="polite"></div>
+  </article>
+
+  <article class="match-card" data-answer="Sifflet de sécurité">
+    <h3>🛟 Maître-nageur</h3>
+    <p>Associez l’outil qui sert à alerter les nageurs.</p>
+    <label for="select-42">Outil principal</label>
+    <select id="select-42" aria-label="Outil pour 🛟 Maître-nageur">
+      <option value="">-- Choisir --</option>
+      <option value="Sifflet de sécurité">Sifflet de sécurité</option>
+      <option value="Pinceau fin">Pinceau fin</option>
+      <option value="Sac à dos">Sac à dos</option>
+      <option value="Fusil de chasse">Fusil de chasse</option>
+    </select>
+    <div class="match-feedback" aria-live="polite"></div>
+  </article>
+
+  <article class="match-card" data-answer="Mètre ruban">
+    <h3>📏 Styliste</h3>
+    <p>Choisissez l’outil nécessaire pour prendre des mesures.</p>
+    <label for="select-43">Outil principal</label>
+    <select id="select-43" aria-label="Outil pour 📏 Styliste">
+      <option value="">-- Choisir --</option>
+      <option value="Mètre ruban">Mètre ruban</option>
+      <option value="Tasse">Tasse</option>
+      <option value="Imprimante 3D">Imprimante 3D</option>
+      <option value="Bêche">Bêche</option>
+    </select>
+    <div class="match-feedback" aria-live="polite"></div>
+  </article>
+
+  <article class="match-card" data-answer="Shaker inox">
+    <h3>🍸 Barman</h3>
+    <p>Sélectionnez l’outil utilisé pour mélanger les cocktails.</p>
+    <label for="select-44">Outil principal</label>
+    <select id="select-44" aria-label="Outil pour 🍸 Barman">
+      <option value="">-- Choisir --</option>
+      <option value="Shaker inox">Shaker inox</option>
+      <option value="Tablette graphique">Tablette graphique</option>
+      <option value="Perceuse">Perceuse</option>
+      <option value="Lampe de chantier">Lampe de chantier</option>
+    </select>
+    <div class="match-feedback" aria-live="polite"></div>
+  </article>
+
+  <article class="match-card" data-answer="Aspirateur industriel">
+    <h3>🧹 Agent d’entretien</h3>
+    <p>Quel outil permet de nettoyer de grandes surfaces ?</p>
+    <label for="select-45">Outil principal</label>
+    <select id="select-45" aria-label="Outil pour 🧹 Agent d’entretien">
+      <option value="">-- Choisir --</option>
+      <option value="Aspirateur industriel">Aspirateur industriel</option>
+      <option value="Perforatrice">Perforatrice</option>
+      <option value="Rabot">Rabot</option>
+      <option value="Couvercle">Couvercle</option>
+    </select>
+    <div class="match-feedback" aria-live="polite"></div>
+  </article>
+
+  <article class="match-card" data-answer="Pipette graduée">
+    <h3>🧪 Laborantin</h3>
+    <p>Associez l’outil qui mesure les liquides avec précision.</p>
+    <label for="select-46">Outil principal</label>
+    <select id="select-46" aria-label="Outil pour 🧪 Laborantin">
+      <option value="">-- Choisir --</option>
+      <option value="Pipette graduée">Pipette graduée</option>
+      <option value="Garniture">Garniture</option>
+      <option value="Clé plate">Clé plate</option>
+      <option value="Spatule en bois">Spatule en bois</option>
+    </select>
+    <div class="match-feedback" aria-live="polite"></div>
+  </article>
+
+  <article class="match-card" data-answer="Tournevis de précision">
+    <h3>⌚ Horloger</h3>
+    <p>Quel outil sert à régler les mécanismes délicats ?</p>
+    <label for="select-47">Outil principal</label>
+    <select id="select-47" aria-label="Outil pour ⌚ Horloger">
+      <option value="">-- Choisir --</option>
+      <option value="Tournevis de précision">Tournevis de précision</option>
+      <option value="Chaise pliante">Chaise pliante</option>
+      <option value="Chiffon">Chiffon</option>
+      <option value="Paire de bottes">Paire de bottes</option>
+    </select>
+    <div class="match-feedback" aria-live="polite"></div>
+  </article>
+
+  <article class="match-card" data-answer="Tronçonneuse">
+    <h3>🌲 Bûcheron</h3>
+    <p>Sélectionnez l’outil utilisé pour abattre les arbres.</p>
+    <label for="select-48">Outil principal</label>
+    <select id="select-48" aria-label="Outil pour 🌲 Bûcheron">
+      <option value="">-- Choisir --</option>
+      <option value="Tronçonneuse">Tronçonneuse</option>
+      <option value="Clavier mécanique">Clavier mécanique</option>
+      <option value="Pipette graduée">Pipette graduée</option>
+      <option value="Sécateur">Sécateur</option>
+    </select>
+    <div class="match-feedback" aria-live="polite"></div>
+  </article>
+
+  <article class="match-card" data-answer="Table de mixage">
+    <h3>🎧 Ingénieur du son</h3>
+    <p>L’outil permet de régler pistes et volumes.</p>
+    <label for="select-49">Outil principal</label>
+    <select id="select-49" aria-label="Outil pour 🎧 Ingénieur du son">
+      <option value="">-- Choisir --</option>
+      <option value="Table de mixage">Table de mixage</option>
+      <option value="Râteau">Râteau</option>
+      <option value="Sacoche postale">Sacoche postale</option>
+      <option value="Louche">Louche</option>
+    </select>
+    <div class="match-feedback" aria-live="polite"></div>
+  </article>
+
+  <article class="match-card" data-answer="Routeur professionnel">
+    <h3>🛰️ Technicien réseau</h3>
+    <p>Associez l’équipement utilisé pour distribuer internet.</p>
+    <label for="select-50">Outil principal</label>
+    <select id="select-50" aria-label="Outil pour 🛰️ Technicien réseau">
+      <option value="">-- Choisir --</option>
+      <option value="Routeur professionnel">Routeur professionnel</option>
+      <option value="Cloche de table">Cloche de table</option>
+      <option value="Marteau de forge">Marteau de forge</option>
+      <option value="Tablier anti-taches">Tablier anti-taches</option>
     </select>
     <div class="match-feedback" aria-live="polite"></div>
   </article>
