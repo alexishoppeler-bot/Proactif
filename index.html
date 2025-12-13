@@ -240,6 +240,11 @@
     } catch (e) {
       progression = {};
     }
+    if (!progression || typeof progression !== 'object') progression = {};
+    Object.keys(progression).forEach(key => {
+      if (progression[key] === true) progression[key] = 'done';
+      else if (progression[key] !== 'done' && progression[key] !== 'in_progress') delete progression[key];
+    });
 
     document.querySelectorAll('.exercise-btn').forEach(btn => {
 
@@ -264,29 +269,45 @@
 
       // Applique l'état visuel et ARIA
       function sync() {
-        const done = !!progression[url];
-        statusBtn.textContent = done ? '✔ Terminé' : 'À faire';
-        statusBtn.style.background = done ? '#18c96e' : '#f0f0f0';
-        statusBtn.style.color = done ? 'white' : '#444';
-        statusBtn.setAttribute('aria-pressed', done ? 'true' : 'false');
-        statusBtn.setAttribute('aria-label', done ? 'Exercice terminé' : 'Exercice à faire');
-        statusBtn.setAttribute('title', done ? 'Marqué automatiquement comme terminé' : 'En attente');
+        const state = progression[url];
+        const done = state === 'done';
+        const inProgress = state === 'in_progress';
+        let label = 'Exercice à faire';
 
         if (done) {
+          statusBtn.textContent = '✔ Terminé';
+          statusBtn.style.background = '#18c96e';
+          statusBtn.style.color = '#fff';
+          label = 'Exercice terminé';
           btn.style.background = '#d6ffe8';
           btn.style.borderColor = '#9ee7c3';
           btn.style.boxShadow = '0 4px 12px rgba(0,150,80,0.25)';
+        } else if (inProgress) {
+          statusBtn.textContent = 'En cours';
+          statusBtn.style.background = '#ffe4b5';
+          statusBtn.style.color = '#8a4b00';
+          label = 'Exercice en cours';
+          btn.style.background = '#fff9ef';
+          btn.style.borderColor = '#ffd9a5';
+          btn.style.boxShadow = '0 4px 12px rgba(255,196,120,0.2)';
         } else {
+          statusBtn.textContent = 'À faire';
+          statusBtn.style.background = '#f0f0f0';
+          statusBtn.style.color = '#444';
           btn.style.background = 'linear-gradient(120deg, #e7f8f1, #d7f2ff)';
           btn.style.borderColor = '#cfdff0';
           btn.style.boxShadow = 'none';
         }
+
+        statusBtn.setAttribute('aria-pressed', done ? 'true' : 'false');
+        statusBtn.setAttribute('aria-label', label);
+        statusBtn.setAttribute('title', label);
       }
 
       sync(); // initialisation
 
       btn.addEventListener('click', () => {
-        progression[url] = true;
+        progression[url] = 'in_progress';
         try { localStorage.setItem(STORAGE_KEY, JSON.stringify(progression)); } catch (err) { }
         sync();
         if (window.updateProgress) window.updateProgress();
@@ -399,7 +420,7 @@
     window.updateProgress = function () {
       try {
         const all = document.querySelectorAll('.exercise-btn').length || 0;
-        const done = Object.values(progression || {}).filter(v => !!v).length || 0;
+        const done = Object.values(progression || {}).filter(v => v === 'done').length || 0;
         const pct = all === 0 ? 0 : Math.round((done / all) * 100);
         const el = document.getElementById('progress-percent');
         const bar = document.getElementById('progress-bar');

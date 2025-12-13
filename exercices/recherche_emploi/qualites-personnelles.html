@@ -41,15 +41,46 @@ button:hover{background:#2f5fe0}
 </div>
 <script>
   (function () {
+    var STORAGE_KEY = 'proactif_progress_v1';
+
+    function getExerciseKey() {
+      try {
+        var path = window.location.pathname || '';
+        var marker = '/exercices/';
+        var idx = path.indexOf(marker);
+        if (idx !== -1) return path.slice(idx + 1);
+        path = path.replace(/^\/+/, '');
+        var inner = path.indexOf('exercices/');
+        if (inner !== -1) return path.slice(inner);
+      } catch (e) { }
+      return null;
+    }
+
+    function updateState(state) {
+      var key = getExerciseKey();
+      if (!key) return;
+      try {
+        var data = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}');
+        data[key] = state;
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+      } catch (e) { }
+    }
+
+    updateState('in_progress');
+
     var link = document.querySelector('.back-home__link');
-    if (!link) return;
-    var href = String(window.location.href || '');
-    var marker = '/exercices/';
-    var idx = href.indexOf(marker);
-    if (idx !== -1) {
-      link.href = href.slice(0, idx) + '/index.html';
-    } else {
-      link.href = href.replace(/[^/]*$/, 'index.html');
+    if (link) {
+      var href = String(window.location.href || '');
+      var marker = '/exercices/';
+      var idx = href.indexOf(marker);
+      if (idx !== -1) {
+        link.href = href.slice(0, idx) + '/index.html';
+      } else {
+        link.href = href.replace(/[^/]*$/, 'index.html');
+      }
+      link.addEventListener('click', function () {
+        updateState('done');
+      });
     }
   })();
 </script>
