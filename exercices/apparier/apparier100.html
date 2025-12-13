@@ -530,6 +530,7 @@ let globalErrors = 0;
 let errors = 0;
 let recap = [];
 let pendingAdvance = false;
+let completedBySeries = {};
 
 initializePersistentState();
 
@@ -544,10 +545,16 @@ function initializePersistentState(){
     globalErrors = Number(saved.globalErrors) || 0;
     recap = Array.isArray(saved.recap) ? saved.recap : [];
     pendingAdvance = !!saved.pendingAdvance;
+    completedBySeries = normalizeCompletedMap(saved.completedBySeries);
   } else {
     deck = generateDeck();
+    completedBySeries = {};
   }
   pairs = getSeriesPairs(series);
+  const completedCount = getCompletedList(series).length;
+  if(completedCount > score){
+    score = clampScore(completedCount);
+  }
 }
 
 function clampSeries(value){
@@ -584,7 +591,8 @@ function saveState(){
       globalScore,
       globalErrors,
       recap,
-      pendingAdvance
+      pendingAdvance,
+      completedBySeries
     }));
   }catch(e){}
 }
@@ -608,6 +616,43 @@ function shuffle(arr){
     [arr[i],arr[j]]=[arr[j],arr[i]];
   }
   return arr;
+}
+
+function normalizeCompletedMap(source){
+  if(!source || typeof source !== 'object') return {};
+  const normalized = {};
+  Object.keys(source).forEach(key => {
+    const value = source[key];
+    if(Array.isArray(value)){
+      normalized[key] = value.filter(v => typeof v === 'string');
+    }
+  });
+  return normalized;
+}
+
+function seriesKey(idx){
+  return String(idx);
+}
+
+function getCompletedList(idx){
+  const key = seriesKey(idx);
+  if(!Array.isArray(completedBySeries[key])){
+    completedBySeries[key] = [];
+  }
+  return completedBySeries[key];
+}
+
+function recordCompletion(leftWord){
+  const list = getCompletedList(series);
+  if(!list.includes(leftWord)){
+    list.push(leftWord);
+    saveState();
+  }
+}
+
+function clearCompletedForSeries(idx){
+  completedBySeries[seriesKey(idx)] = [];
+  saveState();
 }
 
 //---------------------------------------------------
@@ -715,6 +760,11 @@ function updateSeriesProgress(){
 function render(){
   leftItems = shuffle([...pairs.map(p=>p[0])]);
   rightItems = shuffle([...pairs.map(p=>p[1])]);
+  const completedSet = new Set(getCompletedList(series));
+  const pairMap = new Map(pairs.map(p=>[p[0], p[1]]));
+  const completedRight = new Set(
+    [...completedSet].map(left => pairMap.get(left)).filter(Boolean)
+  );
 
   const L=document.getElementById("leftCol");
   const R=document.getElementById("rightCol");
@@ -726,6 +776,10 @@ function render(){
     d.className="item";
     d.innerHTML = `${txt}`;
     d.onclick=()=>selectLeft(d,txt);
+    if(completedSet.has(txt)){
+      d.classList.add("correct");
+      d.style.pointerEvents = "none";
+    }
     L.appendChild(d);
   });
 
@@ -734,6 +788,10 @@ function render(){
     d.className="item";
     d.innerHTML = `${txt}`;
     d.onclick=()=>checkPair(d,txt);
+    if(completedRight.has(txt)){
+      d.classList.add("correct");
+      d.style.pointerEvents = "none";
+    }
     R.appendChild(d);
   });
 
@@ -775,6 +833,7 @@ function markCorrect(leftWord,rightWord){
   score++;
   globalScore++;
   updateScoreAndProgress();
+  recordCompletion(leftWord);
 
   document.querySelectorAll(".item").forEach(i=>{
     if(i.textContent === leftWord || i.textContent === rightWord){
@@ -794,6 +853,7 @@ function resetGame(){
   score = 0;
   errors = 0;
   selectedLeft = null;
+  clearCompletedForSeries(series);
   pairs = getSeriesPairs(series); // reprend la même série
   pendingAdvance = false;
   saveState();
@@ -812,6 +872,7 @@ function restartAll(){
   globalErrors = 0;
   recap = [];
   pendingAdvance = false;
+  completedBySeries = {};
   pairs = getSeriesPairs(series);
 
   document.getElementById('summaryScreen').style.display = 'none';
