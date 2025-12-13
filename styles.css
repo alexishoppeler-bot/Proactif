@@ -204,12 +204,76 @@ header p {
 }
 
 .exercise-btn span.icon {
-    font-size: 1.3rem;
+    width: 44px;
+    height: 44px;
+    border-radius: 14px;
+    background: linear-gradient(135deg, #edf6ff, #dfefff);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: #004c6d;
+    flex-shrink: 0;
+    box-shadow: 0 4px 10px rgba(0, 76, 109, 0.1);
+    border: 1px solid rgba(0, 76, 109, 0.08);
 }
 
-.icon-svg {
-    display: block;
-    vertical-align: middle;
+.exercise-btn .icon .icon-img {
+    width: 22px;
+    height: 22px;
+}
+
+.exercise-btn[data-icon="doc"] .icon {
+    background: linear-gradient(135deg, #f8edff, #e0d7ff);
+    border-color: rgba(124, 92, 204, 0.25);
+    color: #6c3fd1;
+}
+
+.exercise-btn[data-icon="email"] .icon {
+    background: linear-gradient(135deg, #e3f3ff, #cfe6ff);
+    border-color: rgba(0, 76, 109, 0.25);
+    color: #0067a8;
+}
+
+.exercise-btn[data-icon="folder"] .icon {
+    background: linear-gradient(135deg, #fff2da, #ffe2b5);
+    border-color: rgba(214, 154, 72, 0.3);
+    color: #a55b05;
+}
+
+.exercise-btn[data-icon="audio"] .icon {
+    background: linear-gradient(135deg, #e6f7ff, #cef0ff);
+    border-color: rgba(0, 136, 170, 0.25);
+    color: #007590;
+}
+
+.exercise-btn[data-icon="quiz"] .icon {
+    background: linear-gradient(135deg, #ffe8ec, #ffd1da);
+    border-color: rgba(190, 70, 92, 0.25);
+    color: #b41f45;
+}
+
+.exercise-btn[data-icon="match"] .icon {
+    background: linear-gradient(135deg, #e7ffe8, #c9f3cb);
+    border-color: rgba(37, 138, 59, 0.25);
+    color: #2b9643;
+}
+
+.exercise-btn[data-icon="keyboard"] .icon {
+    background: linear-gradient(135deg, #e5f0ff, #cfdffc);
+    border-color: rgba(23, 89, 185, 0.25);
+    color: #165ed0;
+}
+
+.exercise-btn[data-icon="search"] .icon {
+    background: linear-gradient(135deg, #fff0de, #ffe0bd);
+    border-color: rgba(201, 137, 36, 0.25);
+    color: #c57a07;
+}
+
+.exercise-btn[data-icon="game"] .icon {
+    background: linear-gradient(135deg, #edf9ff, #d0f3ff);
+    border-color: rgba(13, 122, 145, 0.25);
+    color: #0b7d91;
 }
 
 /* Reset button */
@@ -293,8 +357,8 @@ header p {
 
 /* icon img fallback if used */
 .icon-img {
-    width: 20px;
-    height: 20px;
+    width: 22px;
+    height: 22px;
     display: inline-block;
-    vertical-align: middle
+    vertical-align: middle;
 }

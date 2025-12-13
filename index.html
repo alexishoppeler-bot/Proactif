@@ -361,6 +361,7 @@
             else kind = 'default';
           }
 
+          link.setAttribute('data-icon', kind);
           // use inlined sprite via <use> referencing the symbol id
           const ns = 'http://www.w3.org/2000/svg';
           const svg = document.createElementNS(ns, 'svg');
