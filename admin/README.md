@@ -31,3 +31,8 @@ npm install --save-dev
   - `npm run icons:build` : exécute les deux étapes ci‑dessus.
 
 Remarque: le sprite est déjà inliné dans `index.html` pour la production; le script sert pour maintenance et CI.
+
+CI / GitHub Actions
+- Un workflow `Icons build` (filé dans `.github/workflows/icons-build.yml`) s'exécute sur `push` et `pull_request` vers `main`.
+- Il installe les dépendances, lance `npm run icons:build` et publie `icons/sprite.min.svg` comme artifact (téléchargeable depuis l'exécution CI).
+
