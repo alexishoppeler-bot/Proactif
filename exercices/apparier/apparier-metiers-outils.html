@@ -82,9 +82,70 @@
 }
 
 .match-card select:focus-visible {
-  outline: none;
-  border-color: var(--match-accent);
-  box-shadow: 0 0 0 3px rgba(11, 107, 255, 0.15);
+    outline: none;
+    border-color: var(--match-accent);
+    box-shadow: 0 0 0 3px rgba(11, 107, 255, 0.15);
+}
+
+.match-feedback {
+  font-weight: 600;
+  min-height: 1.2em;
+}
+
+.match-feedback.is-success {
+  color: #0a9b58;
+}
+
+.match-feedback.is-error {
+  color: #b4002f;
+}
+
+.match-feedback.is-warn {
+  color: #c27602;
+}
+
+.match-card.is-correct {
+  border-color: rgba(10, 155, 88, 0.4);
+  box-shadow: 0 15px 30px rgba(10, 155, 88, 0.15);
+}
+
+.match-card.is-error {
+  border-color: rgba(168, 37, 77, 0.35);
+  box-shadow: 0 15px 30px rgba(168, 37, 77, 0.15);
+}
+
+.match-actions {
+  margin-top: 26px;
+  display: flex;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+
+.match-actions button {
+  border: none;
+  border-radius: 999px;
+  padding: 12px 22px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  font-family: 'Open Sans', Arial, sans-serif;
+}
+
+.match-actions button:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 10px 20px rgba(12, 32, 63, 0.15);
+}
+
+#check-btn {
+  background: var(--match-accent);
+  color: #fff;
+}
+
+#reset-btn {
+  background: transparent;
+  color: #0b2a4a;
+  border: 1px solid rgba(12, 32, 63, 0.2);
 }
 
 .match-note {
@@ -205,48 +266,127 @@
   <li>Vérifier que chaque métier possède un outil différent.</li>
 </ol>
 
-<div class="match-grid">
-  <article class="match-card">
+<div class="match-grid" id="match-grid">
+  <article class="match-card" data-answer="Casserole">
     <h3>👨‍🍳 Cuisinier</h3>
-    <label>Outil principal
-      <select aria-label="Outil pour le métier de cuisinier">
-        <option value="">-- Choisir --</option>
-        <option>Casserole</option>
-        <option>Ordinateur</option>
-        <option>Balai</option>
-      </select>
-    </label>
+    <p>Sélectionnez l’outil le plus cohérent pour préparer des repas.</p>
+    <label for="select-cuisinier">Outil principal</label>
+    <select id="select-cuisinier" aria-label="Outil pour le métier de cuisinier">
+      <option value="">-- Choisir --</option>
+      <option value="Balai">Balai</option>
+      <option value="Ordinateur">Ordinateur</option>
+      <option value="Casserole">Casserole</option>
+    </select>
+    <div class="match-feedback" aria-live="polite"></div>
   </article>
 
-  <article class="match-card">
+  <article class="match-card" data-answer="Clé à molette">
     <h3>🔧 Mécanicien</h3>
-    <label>Outil principal
-      <select aria-label="Outil pour le métier de mécanicien">
-        <option value="">-- Choisir --</option>
-        <option>Clé à molette</option>
-        <option>Marmite</option>
-        <option>Stylo</option>
-      </select>
-    </label>
+    <p>Choisissez l’outil indispensable pour réparer des machines.</p>
+    <label for="select-mecanicien">Outil principal</label>
+    <select id="select-mecanicien" aria-label="Outil pour le métier de mécanicien">
+      <option value="">-- Choisir --</option>
+      <option value="Marmite">Marmite</option>
+      <option value="Stylo">Stylo</option>
+      <option value="Clé à molette">Clé à molette</option>
+    </select>
+    <div class="match-feedback" aria-live="polite"></div>
   </article>
 
-  <article class="match-card">
+  <article class="match-card" data-answer="Aspirateur">
     <h3>🧹 Nettoyeur</h3>
-    <label>Outil principal
-      <select aria-label="Outil pour le métier de nettoyeur">
-        <option value="">-- Choisir --</option>
-        <option>Aspirateur</option>
-        <option>Tournevis</option>
-        <option>Cravate</option>
-      </select>
-    </label>
+    <p>Quel outil permet de garder les locaux propres ?</p>
+    <label for="select-nettoyeur">Outil principal</label>
+    <select id="select-nettoyeur" aria-label="Outil pour le métier de nettoyeur">
+      <option value="">-- Choisir --</option>
+      <option value="Cravate">Cravate</option>
+      <option value="Tournevis">Tournevis</option>
+      <option value="Aspirateur">Aspirateur</option>
+    </select>
+    <div class="match-feedback" aria-live="polite"></div>
   </article>
 </div>
 
-<p class="match-note">Astuce : pensez aux actions concrètes du métier (préparer, réparer, nettoyer…) pour identifier l’outil adapté.</p>
+<div class="match-actions">
+  <button type="button" id="check-btn">Vérifier mes choix</button>
+  <button type="button" id="reset-btn" class="ghost">Réinitialiser</button>
+</div>
+
+<p class="match-note" id="match-note" aria-live="polite">Astuce : pensez aux actions concrètes du métier (préparer, réparer, nettoyer…) pour identifier l’outil adapté.</p>
 
   </main>
 </div>
+
+<script>
+  (function () {
+    const grid = document.getElementById('match-grid');
+    if (!grid) return;
+    const cards = Array.from(grid.querySelectorAll('.match-card'));
+    const note = document.getElementById('match-note');
+
+    function resetCard(card) {
+      const select = card.querySelector('select');
+      const feedback = card.querySelector('.match-feedback');
+      if (select) select.value = '';
+      if (feedback) {
+        feedback.textContent = '';
+        feedback.className = 'match-feedback';
+      }
+      card.classList.remove('is-correct', 'is-error');
+    }
+
+    function resetAll() {
+      cards.forEach(resetCard);
+      if (note) {
+        note.textContent = 'Astuce : pensez aux actions concrètes du métier (préparer, réparer, nettoyer…) pour identifier l’outil adapté.';
+      }
+    }
+
+    function checkAnswers() {
+      let correct = 0;
+      cards.forEach(card => {
+        const answer = card.dataset.answer || '';
+        const select = card.querySelector('select');
+        const feedback = card.querySelector('.match-feedback');
+        if (!select || !feedback) return;
+        if (!select.value) {
+          feedback.textContent = 'Sélectionnez une réponse.';
+          feedback.classList.add('is-warn');
+          card.classList.remove('is-correct', 'is-error');
+          return;
+        }
+        if (select.value === answer) {
+          feedback.textContent = '✔ Correct';
+          feedback.classList.remove('is-warn');
+          feedback.classList.add('is-success');
+          card.classList.add('is-correct');
+          card.classList.remove('is-error');
+          correct++;
+        } else {
+          feedback.textContent = '❌ À revoir';
+          feedback.classList.remove('is-warn');
+          feedback.classList.add('is-error');
+          card.classList.add('is-error');
+          card.classList.remove('is-correct');
+        }
+      });
+
+      if (note) {
+        if (correct === cards.length) {
+          note.textContent = 'Bravo ! Tous les métiers sont associés aux bons outils.';
+          if (window.proactifMarkExerciseDone) {
+            try { window.proactifMarkExerciseDone(); } catch (e) { }
+          }
+        } else {
+          note.textContent = `Résultat : ${correct} / ${cards.length}. Réfléchissez à l’activité principale de chaque métier pour ajuster vos choix.`;
+        }
+      }
+    }
+
+    document.getElementById('check-btn')?.addEventListener('click', checkAnswers);
+    document.getElementById('reset-btn')?.addEventListener('click', resetAll);
+  })();
+</script>
 
 </body>
 </html>
