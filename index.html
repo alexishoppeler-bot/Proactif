@@ -102,23 +102,6 @@
       </div>
     </div>
 
-    <div class="search-box">
-      <label for="exercise-search">Rechercher un exercice</label>
-      <input id="exercise-search" type="search" name="exercise-search" placeholder="Mot-clé, catégorie…" aria-describedby="search-help search-feedback">
-      <p id="search-help" class="search-helper">Astuce : tapez un mot-clé (ex. « CV », « quiz ») ou appuyez sur M pour changer de mode.</p>
-      <div class="filter-toolbar" role="toolbar" aria-label="Filtrer par catégorie">
-        <button class="filter-btn is-active" type="button" data-filter="all" aria-pressed="true">Tout</button>
-        <button class="filter-btn" type="button" data-filter="bureautique" aria-pressed="false">Bureautique</button>
-        <button class="filter-btn" type="button" data-filter="quiz" aria-pressed="false">Quiz</button>
-        <button class="filter-btn" type="button" data-filter="reecriture" aria-pressed="false">Réécriture</button>
-        <button class="filter-btn" type="button" data-filter="expression" aria-pressed="false">Expression écrite</button>
-        <button class="filter-btn" type="button" data-filter="emploi" aria-pressed="false">Recherche d’emploi</button>
-        <button class="filter-btn" type="button" data-filter="audio" aria-pressed="false">Audio</button>
-        <button class="filter-btn" type="button" data-filter="apparier" aria-pressed="false">Apparier</button>
-        <button class="filter-btn" type="button" data-filter="jeux" aria-pressed="false">Jeux</button>
-      </div>
-      <p id="search-feedback" class="search-feedback" aria-live="polite">Chargement…</p>
-    </div>
   </header>
 
   <main class="grid" aria-label="Liste des exercices" id="exercise-grid">
@@ -230,9 +213,6 @@
     </section>
 
   </main>
-
-  <p id="empty-state" class="empty-state" hidden>Aucun exercice ne correspond à votre recherche.</p>
-
 
   <!-- SCRIPTS -->
   <script>
@@ -402,112 +382,6 @@
     }
 
     enhanceIcons();
-
-    /* RECHERCHE D'EXERCICES */
-    const searchInput = document.getElementById('exercise-search');
-    const searchFeedback = document.getElementById('search-feedback');
-    const emptyState = document.getElementById('empty-state');
-    const grid = document.getElementById('exercise-grid');
-    const filterButtons = document.querySelectorAll('.filter-btn');
-    const filterLabels = {
-      all: 'toutes les catégories',
-      bureautique: 'Bureautique',
-      quiz: 'Quiz',
-      reecriture: 'Réécriture',
-      expression: 'Expression écrite',
-      emploi: 'Recherche d’emploi',
-      audio: 'Audio',
-      apparier: 'Apparier',
-      jeux: 'Jeux'
-    };
-    let activeFilter = 'all';
-
-    function filterExercises(term, category = activeFilter) {
-      if (!grid) return;
-      const raw = (term || '').trim();
-      const query = raw.toLowerCase();
-      const categoryFilter = (category || 'all').toLowerCase();
-      activeFilter = categoryFilter;
-      let visibleSections = 0;
-
-      grid.querySelectorAll('.card').forEach(card => {
-        const heading = (card.querySelector('h2')?.textContent || '').toLowerCase();
-        const tag = (card.querySelector('.tag')?.textContent || '').toLowerCase();
-        const rows = card.querySelectorAll('.exercise-row');
-        const cardCategory = (card.dataset.category || '').toLowerCase();
-        const categoryMatch = categoryFilter === 'all' || !cardCategory || cardCategory === categoryFilter;
-        let cardMatch = false;
-
-        if (!categoryMatch) {
-          card.hidden = true;
-          card.setAttribute('aria-hidden', 'true');
-          rows.forEach(row => {
-            row.hidden = true;
-            row.setAttribute('aria-hidden', 'true');
-          });
-          return;
-        }
-
-        rows.forEach(row => {
-          const text = (row.querySelector('.exercise-btn')?.textContent || '').toLowerCase();
-          const matches = !query || text.includes(query) || heading.includes(query) || tag.includes(query);
-          row.hidden = !matches;
-          row.setAttribute('aria-hidden', matches ? 'false' : 'true');
-          if (matches) cardMatch = true;
-        });
-
-        if (!rows.length) {
-          cardMatch = !query || heading.includes(query) || tag.includes(query);
-        }
-
-        card.hidden = !cardMatch;
-        card.setAttribute('aria-hidden', cardMatch ? 'false' : 'true');
-        if (cardMatch) visibleSections++;
-      });
-
-      if (searchFeedback) {
-        if (query) {
-          const suffix = visibleSections > 1 ? 'sections' : 'section';
-          const filterInfo = categoryFilter !== 'all' ? ` (filtre : ${filterLabels[categoryFilter] || categoryFilter})` : '';
-          searchFeedback.textContent = `${visibleSections} ${suffix} correspond à « ${raw} »${filterInfo}.`;
-        } else if (categoryFilter !== 'all') {
-          const suffix = visibleSections > 1 ? 'sections' : 'section';
-          searchFeedback.textContent = `${visibleSections} ${suffix} affichée pour ${filterLabels[categoryFilter] || categoryFilter}.`;
-        } else {
-          searchFeedback.textContent = 'Tous les exercices sont affichés.';
-        }
-      }
-
-      if (emptyState) {
-        emptyState.hidden = visibleSections > 0;
-      }
-    }
-
-    function updateFilterButtons(target) {
-      filterButtons.forEach(btn => {
-        const isActive = btn === target;
-        btn.classList.toggle('is-active', isActive);
-        btn.setAttribute('aria-pressed', isActive ? 'true' : 'false');
-      });
-    }
-
-    if (filterButtons.length) {
-      filterButtons.forEach(btn => {
-        btn.addEventListener('click', () => {
-          const value = btn.getAttribute('data-filter') || 'all';
-          if (value === activeFilter) return;
-          updateFilterButtons(btn);
-          filterExercises(searchInput ? searchInput.value : '', value);
-        });
-      });
-    }
-
-    if (searchInput) {
-      searchInput.addEventListener('input', () => filterExercises(searchInput.value));
-      filterExercises(searchInput.value || '', activeFilter);
-    } else {
-      filterExercises('', activeFilter);
-    }
 
     /* BOUTON RÉINITIALISER */
     const resetBtn = document.getElementById('reset-prog');
