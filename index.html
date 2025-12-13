@@ -307,10 +307,12 @@
       sync(); // initialisation
 
       btn.addEventListener('click', () => {
-        progression[url] = 'in_progress';
-        try { localStorage.setItem(STORAGE_KEY, JSON.stringify(progression)); } catch (err) { }
-        sync();
-        if (window.updateProgress) window.updateProgress();
+        if (progression[url] !== 'done') {
+          progression[url] = 'in_progress';
+          try { localStorage.setItem(STORAGE_KEY, JSON.stringify(progression)); } catch (err) { }
+          sync();
+          if (window.updateProgress) window.updateProgress();
+        }
       }, { once: false });
 
     });

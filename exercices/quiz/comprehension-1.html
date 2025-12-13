@@ -74,6 +74,21 @@
 <script>
   (function () {
     var STORAGE_KEY = 'proactif_progress_v1';
+    var SCORE_REQUIRED = {
+      'exercices/quiz/100quiz_html.html': true,
+      'exercices/quiz/comprehension-1.html': true,
+      'exercices/quiz/comprehension-2.html': true,
+      'exercices/quiz/communication-3.html': true,
+      'exercices/apparier/apparier100.html': true,
+      'exercices/jeux/jeu-directions.html': true,
+      'exercices/jeux/jeu-clics.html': true,
+      'exercices/jeux/mot-image-metiers.html': true,
+      'exercices/recherche_emploi/qualites-personnelles.html': true,
+      'exercices/recherche_emploi/annonces.html': true,
+      'exercices/reponses_ouvertes/ecrire-en-francais-situations-professionnelle.html': true,
+      'exercices/reponses_ouvertes/ecrire-en-français-situations-professionnelle.html': true,
+      'exercices/reponses_ouvertes/simulation-de-situations-professionnelles.html': true
+    };
 
     function getExerciseKey() {
       try {
@@ -88,17 +103,50 @@
       return null;
     }
 
+    var exerciseKey = getExerciseKey();
+    var requiresScore = !!(exerciseKey && SCORE_REQUIRED[exerciseKey]);
+
     function updateState(state) {
-      var key = getExerciseKey();
-      if (!key) return;
+      if (!exerciseKey) return;
       try {
         var data = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}');
-        data[key] = state;
+        data[exerciseKey] = state;
         localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
       } catch (e) { }
     }
 
-    updateState('in_progress');
+    function getState() {
+      if (!exerciseKey) return null;
+      try {
+        var data = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}');
+        return data[exerciseKey] || null;
+      } catch (e) { return null; }
+    }
+
+    function markInProgress() {
+      if (getState() === 'done') return;
+      updateState('in_progress');
+    }
+
+    function markDone() {
+      updateState('done');
+    }
+
+    markInProgress();
+    window.proactifMarkExerciseDone = markDone;
+
+    window.addEventListener('message', function (event) {
+      try {
+        var data = event.data;
+        if (typeof data === 'string' && data === 'proactif:score-final') {
+          markDone();
+        } else if (data && data.type === 'proactif:score-final') {
+          markDone();
+        }
+      } catch (e) { }
+    });
+
+    document.addEventListener('proactif:exercise-finished', markDone);
 
     var link = document.querySelector('.back-home__link');
     if (link) {
@@ -110,9 +158,9 @@
       } else {
         link.href = href.replace(/[^/]*$/, 'index.html');
       }
-      link.addEventListener('click', function () {
-        updateState('done');
-      });
+      if (!requiresScore) {
+        link.addEventListener('click', markDone);
+      }
     }
   })();
 </script>
@@ -239,6 +287,9 @@ function loadQuestion(){
     document.getElementById('options').innerHTML = "";
     document.getElementById('feedback').innerHTML = "Votre score final : " + score + "/" + questions.length;
     document.getElementById('resetBtn').style.display = "block";
+    if (window.proactifMarkExerciseDone) {
+      try { window.proactifMarkExerciseDone(); } catch (e) { }
+    }
     return;
   }
 
