@@ -15,6 +15,7 @@
       --border:#dadde1;
     }
     html,body{height:100%;margin:0;font-family:'Open Sans', Arial, sans-serif;background:linear-gradient(180deg,#f3f6fb 0%,#ffffff 45%);color:var(--ink);}
+    body.print-mode{background:#fff;}
     .exercise-card{padding:32px clamp(16px,5vw,48px);}
     .back-home{position:fixed;bottom:24px;right:clamp(12px,4vw,40px);margin:0;padding:0;z-index:90;}
     .back-home__link{display:inline-flex;align-items:center;gap:6px;text-decoration:none;color:#004c6d;font-weight:700;border:1px solid #cfdff0;padding:10px 18px;border-radius:999px;background:#fff;box-shadow:0 10px 25px rgba(0,0,0,0.15);backdrop-filter:blur(4px);}
@@ -79,13 +80,29 @@
       .toolbar--secondary{justify-content:center;}
       .doc-meta{justify-content:center;}
     }
+
+    body.print-mode .print-hide{display:none!important;}
+    body.print-mode .editor-container{padding:0;border:none;box-shadow:none;}
+    body.print-mode .editor{width:auto!important;min-height:auto!important;height:auto!important;box-shadow:none!important;border:none!important;margin:0 auto!important;padding:25.4mm!important;}
+
+    @media print{
+      body{background:#fff;}
+      .print-hide{display:none!important;}
+      .editor-container{padding:0!important;border:none!important;box-shadow:none!important;}
+      .editor{width:auto!important;min-height:auto!important;height:auto!important;box-shadow:none!important;border:none!important;margin:0 auto!important;padding:25.4mm!important;}
+    }
+
+    @page{
+      size:A4;
+      margin:0;
+    }
   </style>
   <link rel="stylesheet" href="/exercise-layout.css">
   <script defer src="/exercise-layout.js"></script>
 </head>
 <body>
 
-<div class="back-home">
+<div class="back-home print-hide">
   <a class="back-home__link" href="#">← Menu</a>
 </div>
 <script>
@@ -186,7 +203,7 @@
 
 
   <div class="wrap">
-    <section class="editor-hero">
+    <section class="editor-hero print-hide">
       <div class="hero-text">
         <span class="hero-badge">Bureautique • Mode A4</span>
         <h1>Composez votre document professionnel</h1>
@@ -206,7 +223,7 @@
       </div>
     </section>
 
-    <div class="info-grid">
+    <div class="info-grid print-hide">
       <article class="info-card">
         <h3>1. Rédiger</h3>
         <p>Sélectionnez une police, tapez vos paragraphes et utilisez les styles pour hiérarchiser vos idées.</p>
@@ -225,7 +242,7 @@
       </article>
     </div>
 
-    <div class="toolbar-block">
+    <div class="toolbar-block print-hide">
       <div class="toolbar">
         <div class="tool-group">
           <span class="tool-label">Historique</span>
@@ -313,7 +330,7 @@
       <div class="toolbar toolbar--secondary">
         <button class="btn btn--ghost" id="btn-template" type="button" title="Insérer un modèle prêt à remplir">📄 Modèle rapide</button>
         <button class="btn btn--ghost btn--danger" id="btn-clear" type="button" title="Vider le document">🗑️ Réinitialiser</button>
-        <button class="btn" id="btn-pdf" type="button" title="Télécharger en PDF haute résolution">⬇️ Exporter en PDF</button>
+        <button class="btn" id="btn-pdf" type="button" title="Imprimer ou enregistrer en PDF">🖨️ Imprimer / PDF</button>
       </div>
     </div>
 
@@ -345,13 +362,6 @@
     const AUTOSAVE_DELAY = 600;
     const PLACEHOLDER_TEXT = 'Tapez ici...';
     const alignCommandMap = {left:'justifyLeft', center:'justifyCenter', right:'justifyRight', justify:'justifyFull'};
-    const PAGE_MM = {width:210, height:297, margin:25.4};
-    const mmToPx = mm => (mm * 96) / 25.4;
-    const PAGE_PX = {
-      width:mmToPx(PAGE_MM.width),
-      height:mmToPx(PAGE_MM.height),
-      margin:mmToPx(PAGE_MM.margin)
-    };
 
     let history = [];
     let position = 0;
@@ -744,33 +754,17 @@
       }
     });
 
-    function createExportNode(){
-      const wrapper = document.createElement('div');
-      wrapper.style.position='fixed';
-      wrapper.style.top='-9999px';
-      wrapper.style.left='-9999px';
-      wrapper.style.zIndex='-1';
-      wrapper.style.background='#fff';
-      wrapper.style.width=`${PAGE_PX.width}px`;
-      wrapper.style.minHeight=`${PAGE_PX.height}px`;
-      wrapper.style.padding='0';
-
-      const clone = editor.cloneNode(true);
-      clone.removeAttribute('contenteditable');
-      clone.style.width=`${PAGE_PX.width}px`;
-      clone.style.minHeight=`${PAGE_PX.height}px`;
-      clone.style.maxWidth=`${PAGE_PX.width}px`;
-      clone.style.boxShadow='none';
-      clone.style.border='none';
-      clone.style.margin='0';
-      clone.style.padding=`${PAGE_PX.margin}px`;
-      clone.style.height='auto';
-      clone.style.overflow='visible';
-      clone.style.boxSizing='border-box';
-
-      wrapper.appendChild(clone);
-      document.body.appendChild(wrapper);
-      return {wrapper, node:clone};
+    function triggerPrint(){
+      document.body.classList.add('print-mode');
+      let fallback;
+      const cleanup = ()=>{
+        document.body.classList.remove('print-mode');
+        clearTimeout(fallback);
+        window.removeEventListener('afterprint', cleanup);
+      };
+      window.addEventListener('afterprint', cleanup);
+      fallback = setTimeout(cleanup, 1500);
+      setTimeout(()=>{ window.print(); }, 50);
     }
 
     pdfBtn.addEventListener('click',()=>{
@@ -780,33 +774,7 @@
         return;
       }
       persistContent(true);
-      import('https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js').then(()=>{
-        const exportNode = createExportNode();
-        const contentHeight = exportNode.node.scrollHeight;
-        const opt={
-          margin:[0,0,0,0],
-          filename:'document.pdf',
-          image:{type:'jpeg',quality:0.98},
-          html2canvas:{
-            scale:2,
-            backgroundColor:'#ffffff',
-            useCORS:true,
-            scrollX:0,
-            scrollY:0,
-            width:PAGE_PX.width,
-            height:contentHeight,
-            windowWidth:PAGE_PX.width,
-            windowHeight:contentHeight
-          },
-          jsPDF:{
-            unit:'mm',
-            format:[PAGE_MM.width,PAGE_MM.height],
-            orientation:'portrait'
-          },
-          pagebreak:{mode:['css','legacy']}
-        };
-        return html2pdf().set(opt).from(exportNode.node).save().finally(()=>{ exportNode.wrapper.remove(); });
-      });
+      triggerPrint();
     });
 
     window.addEventListener('beforeunload', ()=>{ persistContent(true); });
