@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="utf-8">
+    <title>Administration – Progressions</title>
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <link rel="stylesheet" href="/styles.css">
+    <style>
+        body {
+            padding: 20px;
+            font-family: Open Sans, sans-serif
+        }
+
+        .box {
+            background: #fff;
+            padding: 18px;
+            border-radius: 12px;
+            max-width: 720px;
+            margin: 18px auto;
+            box-shadow: 0 6px 18px rgba(0, 0, 0, .06)
+        }
+    </style>
+</head>
+
+<body>
+    <div class="box">
+        <h1>Administration — Progressions</h1>
+        <p>Exporter, importer ou réinitialiser les progressions stockées localement.</p>
+
+        <div style="margin-top:12px;display:flex;gap:8px;align-items:center">
+            <button id="export-btn" type="button">Exporter JSON</button>
+            <input id="import-file" type="file" accept="application/json">
+            <button id="import-btn" type="button">Importer</button>
+            <button id="reset-btn" type="button">Réinitialiser</button>
+        </div>
+
+        <pre id="preview"
+            style="margin-top:12px;max-height:320px;overflow:auto;background:#f7fbff;padding:12px;border-radius:8px"></pre>
+        <p style="margin-top:10px"><a href="/index.html">Retour à l'accueil</a></p>
+    </div>
+
+    <script>
+        const KEY = 'proactif_progress_v1';
+        function load() { try { return JSON.parse(localStorage.getItem(KEY) || '{}'); } catch (e) { return {} } }
+
+        function show() { document.getElementById('preview').textContent = JSON.stringify(load(), null, 2); }
+        show();
+
+        document.getElementById('export-btn').addEventListener('click', () => {
+            const data = JSON.stringify(load());
+            const blob = new Blob([data], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a'); a.href = url; a.download = 'progression.json'; a.click(); URL.revokeObjectURL(url);
+        });
+
+        document.getElementById('import-btn').addEventListener('click', async () => {
+            const f = document.getElementById('import-file').files[0];
+            if (!f) return alert('Choisir un fichier JSON');
+            try {
+                const txt = await f.text(); const obj = JSON.parse(txt); localStorage.setItem(KEY, JSON.stringify(obj)); show(); alert('Importé.');
+            } catch (e) { alert('Fichier invalide'); }
+        });
+
+        document.getElementById('reset-btn').addEventListener('click', () => {
+            if (!confirm('Supprimer toutes les progressions localement ?')) return; localStorage.removeItem(KEY); show(); alert('Réinitialisé.');
+        });
+    </script>
+</body>
+
+</html>

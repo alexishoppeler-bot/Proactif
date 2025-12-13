@@ -200,12 +200,14 @@ header p {
     overflow: hidden;
     margin-top: 6px;
 }
+
 .progress-bar {
     height: 100%;
     background: linear-gradient(90deg, #2ea8ff, #18c96e);
     width: 0%;
     transition: width 0.3s ease;
 }
+
 .progress-text {
     font-size: 0.95rem;
     text-align: center;
@@ -215,4 +217,17 @@ header p {
     #progress-indicator {
         display: none;
     }
+}
+
+/* small admin link style (in-header) */
+#admin-link {
+    display: inline-block
+}
+
+/* icon img fallback if used */
+.icon-img {
+    width: 20px;
+    height: 20px;
+    display: inline-block;
+    vertical-align: middle
 }
