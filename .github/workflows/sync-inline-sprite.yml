@@ -1,0 +1,56 @@
+name: Sync inline sprite
+
+on:
+  workflow_dispatch: {}
+  schedule:
+    - cron: '0 3 * * *' # daily at 03:00 UTC
+
+jobs:
+  build-and-pr:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+
+      - name: Install deps
+        run: npm ci
+
+      - name: Build icons
+        run: npm run icons:build
+
+      - name: Replace inline sprite in index.html
+        run: |
+          python3 - <<'PY'
+import re
+from pathlib import Path
+sprite = Path('icons/sprite.min.svg').read_text(encoding='utf-8')
+html_path = Path('index.html')
+html = html_path.read_text(encoding='utf-8')
+start = '<!-- sprite start -->'
+end = '<!-- sprite end -->'
+if start in html and end in html:
+    before, rest = html.split(start,1)
+    _, after = rest.split(end,1)
+    new = before + start + '\n' + sprite + '\n' + end + after
+    if new != html:
+        html_path.write_text(new, encoding='utf-8')
+        print('UPDATED')
+    else:
+        print('NOCHANGE')
+else:
+    print('MARKERS NOT FOUND')
+PY
+
+      - name: Create PR if changed
+        uses: peter-evans/create-pull-request@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          commit-message: "chore(icons): update inline sprite"
+          title: "chore(icons): update inline sprite"
+          body: "Automated update of the inlined SVG sprite generated from icons/"
+          branch: "update/inline-sprite-${{ github.run_id }}"
