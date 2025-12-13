@@ -4,9 +4,6 @@
 <meta charset="UTF-8">
 <title>Réécriture – 100 phrases</title>
 
-<!-- jsPDF -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-
 <style>
 
 /* MODE CLAIR */
@@ -142,6 +139,7 @@ button {
 #exercice { display:none; }
 
 </style>
+  <link rel="stylesheet" href="/exercise-layout.css">
 </head>
 
 <body>
@@ -242,6 +240,9 @@ button {
     }
   })();
 </script>
+<div class="exercise-shell">
+  <main class="exercise-card">
+
 
 
 <button id="darkToggle" onclick="toggleDark()">🌙 Mode sombre</button>
@@ -252,8 +253,8 @@ button {
 <div id="accueil">
     <h1>Réécriture de 100 phrases</h1>
     <p style="font-size:19px;line-height:1.5;">
-        Exercice d’écriture avec sauvegarde automatique,<br>
-        validation tolérante et certificat final PDF.
+        Exercice d’écriture avec sauvegarde automatique<br>
+        et validation tolérante pour accompagner votre progression.
     </p>
 
     <label style="font-size:18px;">Votre nom :</label><br>
@@ -282,7 +283,6 @@ button {
     <div id="message" style="margin-top:15px;"></div>
 
     <br>
-    <button class="btn-orange" onclick="genererPDF()">📄 Télécharger PDF réponses</button>
     <button class="btn-red" onclick="resetData()">🔄 Réinitialiser</button>
 
 </div>
@@ -524,84 +524,16 @@ function suivant() {
 function fin() {
 
     const dureeMin = Math.max(1, Math.floor((Date.now() - startTime) / 60000));
-    const phraseMotivante = "Votre travail est remarquable. Continuez comme ça !";
-
-    const { jsPDF } = window.jspdf;
-    const doc = new jsPDF({ unit:"pt", format:"a4" });
-
-    doc.setFont("Helvetica", "bold");
-    doc.setFontSize(30);
-    doc.text("Certificat de Réussite", 150, 80);
-
-    doc.setFontSize(16);
-    doc.setFont("Helvetica", "normal");
-    doc.text("Ce certificat est remis à :", 60, 150);
-
-    doc.setFontSize(22);
-    doc.setFont("Helvetica", "bold");
-    doc.text(participant, 60, 185);
-
-    doc.setFontSize(16);
-    doc.setFont("Helvetica", "normal");
-    doc.text("Pour avoir terminé avec succès les 100 exercices de réécriture.", 60, 230);
-
-    doc.text(`Durée estimée : ${dureeMin} minutes`, 60, 270);
-
-    doc.text("Message de motivation :", 60, 330);
-    doc.setFont("Helvetica", "italic");
-    doc.text(phraseMotivante, 60, 360);
-
-    const date = new Date().toLocaleDateString("fr-CH");
-    doc.setFont("Helvetica", "normal");
-    doc.text(`Date : ${date}`, 60, 420);
-
-    doc.save("certificat.pdf");
 
     document.getElementById("exercice").innerHTML = `
         <h1>Bravo ${participant} 🎉</h1>
         <p style="font-size:22px;">Vous avez terminé les 100 exercices.</p>
-        <p>Votre certificat PDF est téléchargé.</p>
+        <p style="font-size:18px;margin-top:10px;">Durée estimée : ${dureeMin} minutes.</p>
     `;
-}
 
-/* ===========================================================
-   PDF DES RÉPONSES
-=========================================================== */
-
-function genererPDF() {
-
-    const { jsPDF } = window.jspdf;
-    const doc = new jsPDF({ unit:"pt", format:"a4" });
-
-    let y = 40;
-
-    doc.setFontSize(18);
-    doc.setFont("Helvetica", "bold");
-    doc.text(`Réponses de : ${participant}`, 40, y);
-    y += 30;
-
-    doc.setFont("Helvetica", "normal");
-    doc.setFontSize(12);
-
-    for (let i = 0; i < phrases.length; i++) {
-
-        if (y > 770) {
-            doc.addPage();
-            y = 40;
-        }
-
-        doc.text(`Phrase ${i+1} :`, 40, y);
-        y += 12;
-        doc.text(phrases[i], 60, y, { maxWidth: 480 });
-        y += 28;
-
-        doc.text("Réponse :", 40, y);
-        y += 12;
-        doc.text(reponses[i] || "(vide)", 60, y, { maxWidth: 480 });
-        y += 30;
+    if (window.proactifMarkExerciseDone) {
+        try { window.proactifMarkExerciseDone(); } catch (e) { }
     }
-
-    doc.save("reponses.pdf");
 }
 
 /* ===========================================================
@@ -647,5 +579,8 @@ function resetData() {
 </script>
 
 </div>
+  </main>
+</div>
+
 </body>
 </html>

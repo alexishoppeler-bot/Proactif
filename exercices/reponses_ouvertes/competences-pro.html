@@ -28,6 +28,7 @@ button{border:none;border-radius:10px;padding:12px 16px;font-size:15px;cursor:po
 .footer{text-align:center;color:#666;font-size:13px;margin-top:16px}
 .notice{background:#eef3ff;border-left:6px solid var(--blue);padding:10px 14px;border-radius:10px;color:#003366;margin-bottom:16px}
 </style>
+  <link rel="stylesheet" href="/exercise-layout.css">
 </head>
 <body>
 
@@ -127,6 +128,9 @@ button{border:none;border-radius:10px;padding:12px 16px;font-size:15px;cursor:po
     }
   })();
 </script>
+<div class="exercise-shell">
+  <main class="exercise-card">
+
 
 <div class="container">
   <h1>Questions ouvertes – Savoir‑faire professionnels</h1>
@@ -207,5 +211,8 @@ function resetAll(){
   areas.forEach(a=>{a.value='';localStorage.removeItem('autosave_'+a.dataset.id);});
 }
 </script>
+  </main>
+</div>
+
 </body>
 </html>

@@ -5,9 +5,6 @@
 <title>Examen écrit </title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<!-- PDF -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
-
 <style>
 body{
   font-family:Arial, sans-serif;
@@ -57,10 +54,10 @@ button{
   cursor:pointer;
   font-size:15px;
 }
-.pdf{background:#2ecc71;color:white}
 .reset{background:#ff7675;color:white}
 .info{text-align:center;color:#555;font-size:14px;margin-top:15px}
 </style>
+  <link rel="stylesheet" href="/exercise-layout.css">
 </head>
 <body>
 
@@ -160,6 +157,9 @@ button{
     }
   })();
 </script>
+<div class="exercise-shell">
+  <main class="exercise-card">
+
 
 <div class="app" id="exam">
 
@@ -223,7 +223,6 @@ Entreprise cherche une personne sérieuse pour le nettoyage de bureaux. Horaires
 </div>
 
 <div class="buttons">
-<button class="pdf" onclick="downloadPDF()">📄 Télécharger PDF</button>
 <button class="reset" onclick="resetAll()">🔄 Réinitialiser</button>
 </div>
 
@@ -255,17 +254,9 @@ function resetAll(){
   location.reload();
 }
 
-function downloadPDF(){
-  const name = prompt('Nom du fichier PDF :','Examen_FIDE_B1');
-  if(!name) return;
-  html2pdf().from(document.getElementById('exam')).set({
-    margin:10,
-    filename:name+'.pdf',
-    image:{type:'jpeg',quality:0.98},
-    html2canvas:{scale:2},
-    jsPDF:{unit:'mm',format:'a4',orientation:'portrait'}
-  }).save();
-}
 </script>
+  </main>
+</div>
+
 </body>
 </html>

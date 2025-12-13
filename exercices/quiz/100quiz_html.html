@@ -107,6 +107,7 @@
     filter: brightness(1.05);
   }
 </style>
+  <link rel="stylesheet" href="/exercise-layout.css">
 </head>
 <body>
 
@@ -206,6 +207,9 @@
     }
   })();
 </script>
+<div class="exercise-shell">
+  <main class="exercise-card">
+
 
 <div class="app">
   <h1>📝 Quiz</h1>
@@ -243,7 +247,6 @@
 
   <input id="prenomInput" type="text" placeholder="Votre prénom" style="width:100%;padding:10px;margin-top:15px;border-radius:8px;border:1px solid #ccc;font-size:1rem;">
 
-  <button id="certif">📄 Télécharger certificat PDF</button>
 </div>
 
 <script>
@@ -599,6 +602,9 @@ document.getElementById("certif").onclick = async () => {
   doc.save(fileName);
 };
 </script>
+
+  </main>
+</div>
 
 </body>
 </html>

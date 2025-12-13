@@ -5,9 +5,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Parler de mon dernier travail – Exercice interactif</title>
 
-<!-- jsPDF pour le PDF des réponses -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-
 <style>
  body{
    font-family:Arial, sans-serif;
@@ -61,10 +58,6 @@
    background:#d9534f;
    color:white;
  }
- .pdfBtn{
-   background:#28a745;
-   color:white;
- }
  .progress{
    font-size:18px;
    font-weight:bold;
@@ -78,6 +71,7 @@
    font-size:18px;
  }
 </style>
+  <link rel="stylesheet" href="/exercise-layout.css">
 </head>
 <body>
 
@@ -177,6 +171,9 @@
     }
   })();
 </script>
+<div class="exercise-shell">
+  <main class="exercise-card">
+
 
 <div id="app">
   <h1>🗣️ Parler de mon dernier travail</h1>
@@ -247,7 +244,6 @@ function suivant(){
       <p style='font-size:18px;'>Vous progressez très bien. Continuez ainsi : c’est un excellent entraînement pour vous exprimer clairement avec un conseiller ORP ou un employeur.</p>
       <div style='margin-top:25px; text-align:center;'>
         <button class='resetBtn' onclick='resetAll()'>Réinitialiser</button>
-        <button class='pdfBtn' onclick='genererPDF()'>📄 Télécharger le PDF de vos réponses</button>
       </div>
     `;
     localStorage.setItem("job_index", (questions.length - 1).toString());
@@ -269,52 +265,10 @@ function resetAll(){
   document.getElementById("feedback").innerHTML = "";
 }
 
-function genererPDF(){
-  // Vérifier que jsPDF est bien chargé
-  if(!window.jspdf || !window.jspdf.jsPDF){
-    alert("Le PDF ne peut pas être généré pour le moment. Veuillez vérifier la connexion internet ou réessayer.");
-    return;
-  }
-
-  const { jsPDF } = window.jspdf;
-  const doc = new jsPDF();
-
-  doc.setFontSize(18);
-  doc.text("Parler de mon dernier travail", 20, 20);
-
-  const date = new Date().toLocaleDateString("fr-CH");
-  doc.setFontSize(11);
-  doc.text("Date : " + date, 20, 30);
-
-  doc.setFontSize(12);
-  let y = 45;
-
-  for(let i=0; i<questions.length; i++){
-    doc.text((i+1)+". "+questions[i], 20, y);
-    y += 8;
-    let r = reponses[i] ? reponses[i] : "(pas de réponse)";
-
-    // découper la réponse sur plusieurs lignes si elle est longue
-    const lignes = doc.splitTextToSize("Réponse : " + r, 170);
-    lignes.forEach(l => {
-      if(y > 280){
-        doc.addPage();
-        y = 20;
-      }
-      doc.text(l, 20, y);
-      y += 7;
-    });
-
-    y += 3;
-    if(y > 280){
-      doc.addPage();
-      y = 20;
-    }
-  }
-
-  doc.save("dernier_travail.pdf");
-}
 </script>
+
+  </main>
+</div>
 
 </body>
 </html>
