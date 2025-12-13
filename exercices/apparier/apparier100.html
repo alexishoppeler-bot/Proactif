@@ -155,6 +155,115 @@
     transform:translateY(-2px);
   }
 
+  .pair-guide{
+    display:flex;
+    gap:18px;
+    flex-wrap:wrap;
+    margin:0 auto 26px;
+    max-width:960px;
+  }
+
+  .pair-guide__card{
+    flex:1 1 260px;
+    background:rgba(255,255,255,0.85);
+    border-radius:18px;
+    padding:20px 24px;
+    box-shadow:var(--shadow);
+    border:1px solid rgba(0,58,82,0.08);
+  }
+
+  .pair-guide__card h3{
+    margin-top:0;
+    font-size:1.1rem;
+    color:#003a52;
+  }
+
+  .pair-guide__card ol{
+    padding-left:18px;
+    margin:12px 0 0;
+    line-height:1.5;
+  }
+
+  .pair-guide__card--accent{
+    background:linear-gradient(135deg,#eaf5ff,#fffaf0);
+  }
+
+  .pair-guide__card--accent p{
+    margin:0;
+    line-height:1.5;
+  }
+
+  .pair-guide__tips{
+    margin:12px 0 0;
+    padding:0;
+    list-style:none;
+  }
+
+  .pair-guide__tips li{
+    margin:6px 0;
+    display:flex;
+    gap:6px;
+    align-items:flex-start;
+  }
+
+  .pair-pill-row{
+    display:flex;
+    gap:8px;
+    flex-wrap:wrap;
+    justify-content:center;
+    margin-top:14px;
+  }
+
+  .pair-pill{
+    background:#003a52;
+    color:#fff;
+    padding:6px 14px;
+    border-radius:999px;
+    font-size:0.9rem;
+    font-weight:600;
+    box-shadow:var(--shadow);
+  }
+
+  .col-title{
+    margin:0 0 6px 0;
+    font-size:1.1rem;
+    font-weight:700;
+    color:#003a52;
+    display:flex;
+    align-items:center;
+    gap:8px;
+  }
+
+  .col-subtitle{
+    margin:0 0 14px 0;
+    font-size:0.95rem;
+    color:rgba(0,58,82,0.75);
+  }
+
+  .col-items{
+    display:flex;
+    flex-direction:column;
+  }
+
+  .pair-legend{
+    max-width:760px;
+    margin:18px auto 0;
+    display:flex;
+    flex-wrap:wrap;
+    gap:10px;
+    justify-content:center;
+  }
+
+  .pair-legend span{
+    background:rgba(255,255,255,0.85);
+    border-radius:12px;
+    padding:8px 14px;
+    font-weight:600;
+    color:#003a52;
+    box-shadow:var(--shadow);
+    border:1px solid rgba(0,58,82,0.08);
+  }
+
   #summaryScreen table th{
     background:#2980ff;
     color:white;
@@ -283,11 +392,36 @@
       🎯 Complétez les <b>10 paires</b> pour réussir l’exercice.
     </p>
   </div>
-  <div id="scoreBox">Série : 1 / 10 | Score : 0 / 10 | Erreurs : 0 | Total : 0✔ / 0✖</div>
+  <div id="scoreBox" aria-live="polite" role="status">Série : 1 / 10 | Score : 0 / 10 | Erreurs : 0 | Total : 0✔ / 0✖</div>
+  <div class="pair-pill-row">
+    <span class="pair-pill">🎯 10 séries à compléter</span>
+    <span class="pair-pill">✅ 10 paires par série</span>
+    <span class="pair-pill">🧠 Mémoire & vocabulaire</span>
+  </div>
   <div style="width:100%;max-width:600px;margin:15px auto 0 auto;height:14px;background:#cfe2ff;border-radius:10px;">
     <div id="progressBar" style="height:100%;width:0%;background:#1a8c6d;border-radius:10px;transition:0.3s;"></div>
   </div>
 </header>
+
+<section class="pair-guide">
+  <article class="pair-guide__card">
+    <h3>Étapes rapides</h3>
+    <ol>
+      <li>Sélectionnez un mot dans la colonne de gauche.</li>
+      <li>Cherchez l’action correspondante à droite puis cliquez.</li>
+      <li>Poursuivez jusqu’à valider les 10 paires de la série.</li>
+    </ol>
+  </article>
+  <article class="pair-guide__card pair-guide__card--accent">
+    <h3>Conseils pour réussir</h3>
+    <p>Restez attentif aux familles de mots (maison, travail, ville…). Une stratégie visuelle aide à retenir les liens.</p>
+    <ul class="pair-guide__tips">
+      <li>💡 Survolez les mots : les indices apparaissent dans leur contexte.</li>
+      <li>🔁 Utilisez “Recommencer la série” pour consolider un thème.</li>
+      <li>📋 Observez le récapitulatif final pour cibler les axes à revoir.</li>
+    </ul>
+  </article>
+</section>
 
 <div id="seriesProgressContainer" style="width:100%;max-width:600px;margin:10px auto;height:12px;background:#e6e6e6;border-radius:10px;display:block;">
   <div id="seriesProgressBar" style="height:100%;width:0%;background:#2980ff;border-radius:10px;transition:0.4s;"></div>
@@ -303,8 +437,22 @@
 </div>
 
 <div class="container">
-  <div class="col" id="leftCol"></div>
-  <div class="col" id="rightCol"></div>
+  <div class="col">
+    <h3 class="col-title">🅰️ Mots à associer</h3>
+    <p class="col-subtitle">Choisissez un mot ici pour initier une correspondance.</p>
+    <div class="col-items" id="leftCol"></div>
+  </div>
+  <div class="col">
+    <h3 class="col-title">🅱️ Actions correspondantes</h3>
+    <p class="col-subtitle">Cliquez ensuite sur l’action qui complète correctement la paire.</p>
+    <div class="col-items" id="rightCol"></div>
+  </div>
+</div>
+
+<div class="pair-legend">
+  <span>🟢 Vert = paire validée</span>
+  <span>🔴 Rouge = à revoir</span>
+  <span>📊 Objectif : 10 séries x 10 paires</span>
 </div>
 
 <button onclick="resetGame()">🔄 Recommencer la série</button>
