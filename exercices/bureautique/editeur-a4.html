@@ -6,35 +6,87 @@
   <title>Éditeur PDF A4</title>
   <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;700&display=swap" rel="stylesheet">
   <style>
-    html,body{height:100%;margin:0;font-family:'Open Sans', Arial, sans-serif;background:#fff;color:#111;}
-    .wrap{display:flex;flex-direction:column;align-items:center;gap:12px;margin:24px auto;}
-    .toolbar{display:flex;gap:8px;flex-wrap:wrap;background:#fff;border:1px solid #dadde1;border-radius:12px;padding:8px;box-shadow:0 1px 2px rgba(0,0,0,.04)}
-    .btn,select,input[type="color"]{display:inline-flex;align-items:center;justify-content:center;height:36px;border:1px solid #dadde1;background:#fff;border-radius:10px;cursor:pointer;font-weight:bold;font-size:14px;color:#111;transition:all .15s ease;padding:0 8px;}
-    .btn:hover,select:hover,input[type="color"]:hover{border-color:#2d6cdf;background:#f0f6ff}
-    .btn.active,[aria-pressed="true"]{background:#cce0ff;border-color:#2d6cdf;}
+    :root {
+      --ink:#111;
+      --ink-soft:#4a5b6b;
+      --panel:#fff;
+      --accent:#1e6bd6;
+      --accent-soft:#e8f0ff;
+      --border:#dadde1;
+    }
+    html,body{height:100%;margin:0;font-family:'Open Sans', Arial, sans-serif;background:linear-gradient(180deg,#f3f6fb 0%,#ffffff 45%);color:var(--ink);}
+    .exercise-card{padding:32px clamp(16px,5vw,48px);}
+    .back-home{position:fixed;bottom:24px;right:clamp(12px,4vw,40px);margin:0;padding:0;z-index:90;}
+    .back-home__link{display:inline-flex;align-items:center;gap:6px;text-decoration:none;color:#004c6d;font-weight:700;border:1px solid #cfdff0;padding:10px 18px;border-radius:999px;background:#fff;box-shadow:0 10px 25px rgba(0,0,0,0.15);backdrop-filter:blur(4px);}
+    .wrap{display:flex;flex-direction:column;gap:16px;margin:0 auto;max-width:1160px;}
+    .editor-hero{display:flex;flex-wrap:wrap;gap:18px;background:var(--panel);border-radius:24px;border:1px solid rgba(30,107,214,0.15);padding:24px;box-shadow:0 20px 60px rgba(17,23,33,0.12);}
+    .hero-badge{display:inline-flex;background:#f4f8ff;color:#2d6cdf;padding:4px 12px;border-radius:999px;font-weight:700;font-size:0.85rem;margin-bottom:10px;}
+    .hero-text{flex:1 1 360px;}
+    .hero-text h1{margin:0 0 4px;font-size:1.7rem;color:var(--ink);}
+    .hero-text p{margin:4px 0;color:var(--ink-soft);line-height:1.5;}
+    .hero-pill-row{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px;}
+    .hero-pill{background:var(--accent-soft);color:var(--accent);padding:6px 14px;border-radius:999px;font-weight:600;font-size:.9rem;}
+    .hero-meta{flex:1 1 220px;display:flex;flex-direction:column;gap:12px;align-items:flex-start;}
+    .save-indicator{font-weight:700;font-size:1rem;padding:10px 16px;border-radius:14px;border:1px dashed rgba(30,107,214,0.4);color:var(--accent);}
+    .save-indicator.is-pending{color:#b45f06;border-color:#f0bc7b;background:#fff8ed;}
+    .save-indicator.is-done{color:#1a8c6d;border-color:#7bd1a7;background:#f1fff8;}
+    .doc-meta{display:flex;gap:12px;flex-wrap:wrap;}
+    .doc-meta span{background:var(--accent-soft);color:var(--ink);padding:6px 12px;border-radius:10px;font-weight:600;}
+
+    .info-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:14px;}
+    .info-card{background:var(--panel);border-radius:18px;padding:18px 20px;border:1px solid var(--border);box-shadow:0 8px 24px rgba(17,23,33,0.08);}
+    .info-card h3{margin:0 0 6px;font-size:1.05rem;color:var(--ink);}
+    .info-card p,.info-card ul{margin:0;color:var(--ink-soft);font-size:0.95rem;line-height:1.45;padding-left:18px;}
+
+    .toolbar-block{display:flex;flex-direction:column;gap:10px;}
+    .toolbar{display:flex;gap:8px;flex-wrap:wrap;background:var(--panel);border:1px solid var(--border);border-radius:14px;padding:10px;box-shadow:0 4px 15px rgba(17,23,33,0.08);}
+    .toolbar--secondary{justify-content:flex-end;background:rgba(255,255,255,0.85);}
+    .tool-group{display:flex;gap:6px;flex-wrap:wrap;align-items:center;}
+    .tool-label{font-size:0.85rem;font-weight:700;color:var(--ink-soft);margin-right:4px;}
+
+    .btn,select{display:inline-flex;align-items:center;justify-content:center;height:38px;border:1px solid var(--border);background:var(--panel);border-radius:10px;cursor:pointer;font-weight:600;font-size:0.95rem;color:var(--ink);transition:all .15s ease;padding:0 10px;}
+    .btn:hover,select:hover{border-color:var(--accent);background:#f0f6ff}
+    .btn.active,[aria-pressed="true"]{background:#cce0ff;border-color:var(--accent);}
     .btn img{width:22px;height:22px;}
     .btn:disabled{opacity:.5;cursor:not-allowed;}
-    .editor-container{background:#fff;padding:20px;display:flex;justify-content:center;align-items:center;}
-    .editor{background:#fff;width:210mm;height:297mm;padding:25.4mm;box-sizing:border-box;line-height:1.5;font-size:16px;overflow:auto;color:#777;}
-    .editor ol,.editor ul{font:inherit;color:inherit}
-    .editor li{font:inherit;color:inherit}
-    .editor ol li::marker,.editor ul li::marker{color:inherit;font:inherit}
-    .color-split{display:inline-flex;align-items:center;position:relative}
-    .color-main{position:relative;padding:0 10px 0 10px}
-    .color-main .A{font-weight:800;font-size:18px;line-height:1}
-    .color-main .swatch{position:absolute;left:8px;right:8px;bottom:5px;height:3px;border-radius:2px;background:#111}
+    .btn--ghost{background:transparent;border-style:dashed;}
+    .btn--danger{border-color:#ffb0b0;color:#b4002f;}
+
+    .editor-container{background:linear-gradient(135deg,#f5f7fb,#fafafa);padding:24px;border-radius:24px;border:1px solid rgba(17,23,33,0.05);box-shadow:0 25px 45px rgba(17,23,33,0.12);display:flex;justify-content:center;align-items:center;}
+    .editor{background:#fff;width:210mm;height:297mm;padding:25.4mm;box-sizing:border-box;line-height:1.55;font-size:16px;overflow:auto;color:#777;border-radius:12px;box-shadow:0 35px 60px rgba(0,0,0,0.12);border:1px solid #f0f0f0;}
+    .editor[data-placeholder="true"]{color:#9da7b3;}
+    .editor:focus{outline:3px solid rgba(30,107,214,0.25);}
+    .editor ol,.editor ul{font:inherit;color:inherit;margin-left:1.2rem;}
+    .editor li{font:inherit;color:inherit;margin-bottom:4px;}
+    .editor ol li::marker,.editor ul li::marker{color:inherit;font:inherit;}
+
+    .color-split{display:inline-flex;align-items:center;position:relative;}
+    .color-main{position:relative;padding:0 10px;}
+    .color-main .A{font-weight:800;font-size:18px;line-height:1;}
+    .color-main .swatch{position:absolute;left:8px;right:8px;bottom:5px;height:3px;border-radius:2px;background:#111;}
     .color-palette{display:none;position:absolute;top:42px;left:0;background:#fff;border:1px solid #dadde1;border-radius:10px;box-shadow:0 6px 18px rgba(0,0,0,.12);padding:8px;z-index:30}
     .color-grid{display:grid;grid-template-columns:repeat(10,20px);gap:6px}
     .color-cell{width:20px;height:20px;border:1px solid #cfd3d8;border-radius:4px;cursor:pointer}
     .color-cell:hover{outline:2px solid #2d6cdf;outline-offset:1px}
+
+    @media (max-width:900px){
+      .editor{width:100%;height:calc(100vh - 220px);}
+      .editor-container{padding:16px;}
+    }
+    @media (max-width:640px){
+      .hero-meta{align-items:stretch;}
+      .toolbar{justify-content:center;}
+      .toolbar--secondary{justify-content:center;}
+      .doc-meta{justify-content:center;}
+    }
   </style>
   <link rel="stylesheet" href="/exercise-layout.css">
   <script defer src="/exercise-layout.js"></script>
 </head>
 <body>
 
-<div class="back-home" style="max-width:1100px;margin:10px auto 0;padding:0 20px;">
-  <a class="back-home__link" href="#" style="display:inline-flex;align-items:center;gap:6px;text-decoration:none;color:#004c6d;font-weight:700;border:1px solid #cfdff0;padding:6px 14px;border-radius:999px;background:#fff;box-shadow:0 2px 4px rgba(0,0,0,0.08);">← Retour à l’index</a>
+<div class="back-home">
+  <a class="back-home__link" href="#">← Menu</a>
 </div>
 <script>
   (function () {
@@ -134,126 +186,250 @@
 
 
   <div class="wrap">
-    <div class="toolbar">
-      <button class="btn" id="undo">↶</button>
+    <section class="editor-hero">
+      <div class="hero-text">
+        <span class="hero-badge">Bureautique • Mode A4</span>
+        <h1>Composez votre document professionnel</h1>
+        <p>Créez des comptes rendus, lettres ou fiches pédagogiques directement au format A4. Tous vos textes sont enregistrés automatiquement dans ce navigateur.</p>
+        <div class="hero-pill-row">
+          <span class="hero-pill">Format A4 imprimable</span>
+          <span class="hero-pill">Sauvegarde locale</span>
+          <span class="hero-pill">Export PDF haute résolution</span>
+        </div>
+      </div>
+      <div class="hero-meta">
+        <div class="save-indicator" id="saveIndicator">Sauvegarde locale active</div>
+        <div class="doc-meta">
+          <span id="wordCount">0 mot</span>
+          <span id="charCount">0 caractère</span>
+        </div>
+      </div>
+    </section>
 
-      <select id="fontSelect" title="Police">
-        <option value="Open Sans" selected>Open Sans</option>
-        <option value="Arial">Arial</option>
-        <option value="Times New Roman">Times New Roman</option>
-        <option value="Calibri">Calibri</option>
-        <option value="Verdana">Verdana</option>
-      </select>
+    <div class="info-grid">
+      <article class="info-card">
+        <h3>1. Rédiger</h3>
+        <p>Sélectionnez une police, tapez vos paragraphes et utilisez les styles pour hiérarchiser vos idées.</p>
+      </article>
+      <article class="info-card">
+        <h3>2. Structurer</h3>
+        <ul>
+          <li>Appliquez les listes et retraits.</li>
+          <li>Choisissez l’alignement adapté.</li>
+          <li>Ajoutez un modèle prêt à remplir.</li>
+        </ul>
+      </article>
+      <article class="info-card">
+        <h3>3. Finaliser</h3>
+        <p>Contrôlez le compteur de mots, sauvegardez automatiquement puis exportez votre PDF professionnel.</p>
+      </article>
+    </div>
 
-      <select id="fontSizeSelect" title="Taille">
-        <option value="12px">12</option>
-        <option value="14px" selected>14</option>
-        <option value="16px">16</option>
-        <option value="18px">18</option>
-        <option value="20px">20</option>
-        <option value="24px">24</option>
-      </select>
+    <div class="toolbar-block">
+      <div class="toolbar">
+        <div class="tool-group">
+          <span class="tool-label">Historique</span>
+          <button class="btn" id="undo" title="Annuler (Ctrl+Z)">↶</button>
+        </div>
 
-      <div class="color-split" id="fontColorControl" title="Couleur du texte">
-        <button class="btn color-main" id="fontColorApply" type="button" aria-label="Couleur du texte">
-          <span class="A">A</span>
-          <span class="swatch" id="fontColorSwatch"></span>
-        </button>
-        <div class="color-palette" id="fontColorPalette" role="menu" aria-label="Palette de couleurs"></div>
+        <div class="tool-group">
+          <span class="tool-label">Police</span>
+          <select id="fontSelect" title="Police">
+            <option value="Open Sans" selected>Open Sans</option>
+            <option value="Arial">Arial</option>
+            <option value="Times New Roman">Times New Roman</option>
+            <option value="Calibri">Calibri</option>
+            <option value="Verdana">Verdana</option>
+          </select>
+
+          <select id="fontSizeSelect" title="Taille">
+            <option value="12px">12</option>
+            <option value="14px" selected>14</option>
+            <option value="16px">16</option>
+            <option value="18px">18</option>
+            <option value="20px">20</option>
+            <option value="24px">24</option>
+          </select>
+        </div>
+
+        <div class="tool-group">
+          <span class="tool-label">Couleur</span>
+          <div class="color-split" id="fontColorControl" title="Couleur du texte">
+            <button class="btn color-main" id="fontColorApply" type="button" aria-label="Couleur du texte">
+              <span class="A">A</span>
+              <span class="swatch" id="fontColorSwatch"></span>
+            </button>
+            <div class="color-palette" id="fontColorPalette" role="menu" aria-label="Palette de couleurs"></div>
+          </div>
+        </div>
+
+        <div class="tool-group">
+          <span class="tool-label">Style</span>
+          <button class="btn" data-cmd="bold" title="Gras (Ctrl+B)"><b>G</b></button>
+          <button class="btn" data-cmd="italic" title="Italique (Ctrl+I)"><i>I</i></button>
+          <button class="btn" data-cmd="underline" title="Souligné (Ctrl+U)"><u>S</u></button>
+        </div>
+
+        <div class="tool-group">
+          <span class="tool-label">Listes</span>
+          <button class="btn" id="btn-ul" title="Liste à puces">
+            <img src="https://img.icons8.com/ios-filled/50/000000/bulleted-list.png" alt="Liste à puces">
+          </button>
+          <button class="btn" id="btn-ol" title="Liste numérotée">
+            <img src="https://img.icons8.com/ios-filled/50/000000/numbered-list.png" alt="Liste numérotée">
+          </button>
+        </div>
+
+        <div class="tool-group">
+          <span class="tool-label">Alignement</span>
+          <button class="btn align" title="Aligner à gauche" data-align="left">
+            <img src="https://img.icons8.com/ios-filled/50/000000/align-left.png" alt="Aligner à gauche">
+          </button>
+          <button class="btn align" title="Centrer" data-align="center">
+            <img src="https://img.icons8.com/ios-filled/50/000000/align-center.png" alt="Centrer">
+          </button>
+          <button class="btn align" title="Aligner à droite" data-align="right">
+            <img src="https://img.icons8.com/ios-filled/50/000000/align-right.png" alt="Aligner à droite">
+          </button>
+          <button class="btn align" title="Justifier" data-align="justify">
+            <img src="https://img.icons8.com/ios-filled/50/000000/align-justify.png" alt="Justifier">
+          </button>
+        </div>
+
+        <div class="tool-group">
+          <span class="tool-label">Retrait</span>
+          <button class="btn" id="btn-indent10" title="Retrait gauche 10 cm (activer/désactiver)">
+            <svg width="22" height="22" viewBox="0 0 22 22" aria-hidden="true">
+              <line x1="12" y1="6" x2="20" y2="6" stroke="#333" stroke-width="2" stroke-linecap="round"/>
+              <line x1="12" y1="11" x2="20" y2="11" stroke="#333" stroke-width="2" stroke-linecap="round"/>
+              <line x1="12" y1="16" x2="20" y2="16" stroke="#333" stroke-width="2" stroke-linecap="round"/>
+              <line x1="4" y1="11" x2="10" y2="11" stroke="#1e6bd6" stroke-width="2" stroke-linecap="round"/>
+              <polygon points="10,11 7,8 7,14" fill="#1e6bd6"/>
+            </svg>
+          </button>
+        </div>
       </div>
 
-      <button class="btn" data-cmd="bold"><b>G</b></button>
-      <button class="btn" data-cmd="italic"><i>I</i></button>
-      <button class="btn" data-cmd="underline"><u>S</u></button>
-      <button class="btn" id="btn-ul" title="Puces (liste à puces)">
-        <img src="https://img.icons8.com/ios-filled/50/000000/bulleted-list.png" alt="Liste à puces">
-      </button>
-      <button class="btn" id="btn-ol" title="Numéros (liste numérotée)">
-        <img src="https://img.icons8.com/ios-filled/50/000000/numbered-list.png" alt="Liste numérotée">
-      </button>
-      <button class="btn align" title="Aligner à gauche" data-align="left">
-        <img src="https://img.icons8.com/ios-filled/50/000000/align-left.png" alt="Aligner à gauche">
-      </button>
-      <button class="btn align" title="Centrer" data-align="center">
-        <img src="https://img.icons8.com/ios-filled/50/000000/align-center.png" alt="Centrer">
-      </button>
-      <button class="btn align" title="Aligner à droite" data-align="right">
-        <img src="https://img.icons8.com/ios-filled/50/000000/align-right.png" alt="Aligner à droite">
-      </button>
-      <button class="btn align" title="Justifier" data-align="justify">
-        <img src="https://img.icons8.com/ios-filled/50/000000/align-justify.png" alt="Justifier">
-      </button>
-      <button class="btn" id="btn-indent10" title="Retrait gauche 10 cm (activer/désactiver)">
-        <svg width="22" height="22" viewBox="0 0 22 22" aria-hidden="true">
-          <line x1="12" y1="6" x2="20" y2="6" stroke="#333" stroke-width="2" stroke-linecap="round"/>
-          <line x1="12" y1="11" x2="20" y2="11" stroke="#333" stroke-width="2" stroke-linecap="round"/>
-          <line x1="12" y1="16" x2="20" y2="16" stroke="#333" stroke-width="2" stroke-linecap="round"/>
-          <line x1="4" y1="11" x2="10" y2="11" stroke="#1e6bd6" stroke-width="2" stroke-linecap="round"/>
-          <polygon points="10,11 7,8 7,14" fill="#1e6bd6"/>
-        </svg>
-      </button>
-      <button class="btn" id="btn-pdf" type="button" title="Télécharger en PDF">📄</button>
+      <div class="toolbar toolbar--secondary">
+        <button class="btn btn--ghost" id="btn-template" type="button" title="Insérer un modèle prêt à remplir">📄 Modèle rapide</button>
+        <button class="btn btn--ghost btn--danger" id="btn-clear" type="button" title="Vider le document">🗑️ Réinitialiser</button>
+        <button class="btn" id="btn-pdf" type="button" title="Télécharger en PDF haute résolution">⬇️ Exporter en PDF</button>
+      </div>
     </div>
+
     <div class="editor-container">
-      <div id="editor" class="editor" contenteditable="true">Tapez ici...</div>
+      <div id="editor" class="editor" data-placeholder="true" contenteditable="true">Tapez ici...</div>
     </div>
   </div>
   <script>
-    const editor=document.getElementById('editor');
-    const undoBtn=document.getElementById('undo');
-    const formatBtns=document.querySelectorAll('.btn[data-cmd]');
-    const alignBtns=document.querySelectorAll('.btn.align');
-    const ulBtn=document.getElementById('btn-ul');
-    const olBtn=document.getElementById('btn-ol');
-    const indentBtn=document.getElementById('btn-indent10');
-    const pdfBtn=document.getElementById('btn-pdf');
-    const fontSelect=document.getElementById('fontSelect');
-    const fontSizeSelect=document.getElementById('fontSizeSelect');
-    const colorApply=document.getElementById('fontColorApply');
-    const colorPalette=document.getElementById('fontColorPalette');
-    const colorSwatch=document.getElementById('fontColorSwatch');
+    const editor = document.getElementById('editor');
+    const undoBtn = document.getElementById('undo');
+    const formatBtns = document.querySelectorAll('.btn[data-cmd]');
+    const alignBtns = document.querySelectorAll('.btn.align');
+    const ulBtn = document.getElementById('btn-ul');
+    const olBtn = document.getElementById('btn-ol');
+    const indentBtn = document.getElementById('btn-indent10');
+    const pdfBtn = document.getElementById('btn-pdf');
+    const fontSelect = document.getElementById('fontSelect');
+    const fontSizeSelect = document.getElementById('fontSizeSelect');
+    const colorApply = document.getElementById('fontColorApply');
+    const colorPalette = document.getElementById('fontColorPalette');
+    const colorSwatch = document.getElementById('fontColorSwatch');
+    const templateBtn = document.getElementById('btn-template');
+    const clearBtn = document.getElementById('btn-clear');
+    const saveIndicator = document.getElementById('saveIndicator');
+    const wordCountEl = document.getElementById('wordCount');
+    const charCountEl = document.getElementById('charCount');
 
-    let history=[editor.innerHTML];
-    let position=0;
+    const STORAGE_CONTENT_KEY = 'editeur_a4_content_v1';
+    const AUTOSAVE_DELAY = 600;
+    const PLACEHOLDER_TEXT = 'Tapez ici...';
+    const alignCommandMap = {left:'justifyLeft', center:'justifyCenter', right:'justifyRight', justify:'justifyFull'};
 
-    let savedRange=null;
+    let history = [];
+    let position = 0;
+    let savedRange = null;
+    let saveTimer = null;
+    let saveMessageTimer = null;
+
     function selectionInsideEditor(sel){
       if(!sel || sel.rangeCount===0) return false;
       const n = sel.getRangeAt(0).commonAncestorContainer;
       return editor.contains(n.nodeType===1? n : n.parentNode);
     }
     function saveSelection(){
-      const sel=window.getSelection();
-      if(selectionInsideEditor(sel)) savedRange=sel.getRangeAt(0).cloneRange();
+      const sel = window.getSelection();
+      if(selectionInsideEditor(sel)) savedRange = sel.getRangeAt(0).cloneRange();
     }
     function restoreSelection(){
       if(!savedRange) return false;
-      const sel=window.getSelection();
+      const sel = window.getSelection();
       sel.removeAllRanges();
       sel.addRange(savedRange);
       return true;
     }
 
+    function isPlaceholderActive(){
+      return editor.dataset.placeholder === 'true';
+    }
+    function setPlaceholder(){
+      editor.textContent = PLACEHOLDER_TEXT;
+      editor.dataset.placeholder = 'true';
+      editor.style.color = '#777';
+    }
+    function removePlaceholder(){
+      if(isPlaceholderActive()){
+        editor.textContent = '';
+      }
+      editor.dataset.placeholder = 'false';
+      editor.style.color = '#111';
+    }
+
+    function loadInitialContent(){
+      const saved = localStorage.getItem(STORAGE_CONTENT_KEY);
+      if(saved){
+        editor.innerHTML = saved;
+        editor.dataset.placeholder = 'false';
+        editor.style.color = '#111';
+      }else{
+        setPlaceholder();
+      }
+      history = [editor.innerHTML];
+      position = 0;
+      updateCounts();
+      updateButtons();
+      showSaved('Sauvegarde locale active', true);
+    }
+
     function record(){
-      const html=editor.innerHTML;
-      if(history[position]!==html){
-        history=history.slice(0,position+1);
+      const html = editor.innerHTML;
+      if(history[position] !== html){
+        history = history.slice(0, position + 1);
         history.push(html);
-        position=history.length-1;
+        position = history.length - 1;
       }
       updateButtons();
     }
 
     function updateButtons(){
-      undoBtn.disabled=position===0;
+      undoBtn.disabled = position === 0;
       updateIndentState();
+      updateAlignState();
     }
 
     function undo(){
       if(position>0){
         position--;
-        editor.innerHTML=history[position];
+        editor.innerHTML = history[position];
+        if(!editor.textContent.trim()){
+          setPlaceholder();
+        }else{
+          editor.dataset.placeholder='false';
+          editor.style.color='#111';
+        }
+        updateCounts();
         updateButtons();
+        scheduleSave();
       }
     }
 
@@ -309,15 +485,113 @@
       indentBtn.classList.toggle('active', active);
     }
 
-    editor.addEventListener('input',()=>{ record(); updateIndentState(); });
-    editor.addEventListener('mouseup', updateIndentState);
-    editor.addEventListener('keyup', updateIndentState);
-    document.addEventListener('selectionchange', ()=>{ if(selectionInsideEditor(window.getSelection())) updateIndentState(); });
+    function updateAlignState(){
+      const sel = window.getSelection();
+      alignBtns.forEach(btn=>{
+        const cmd = alignCommandMap[btn.dataset.align];
+        if(!cmd) return;
+        let state = false;
+        if(selectionInsideEditor(sel) && document.queryCommandState){
+          try{ state = document.queryCommandState(cmd); }catch(e){ state = false; }
+        }
+        btn.classList.toggle('active', !!state);
+      });
+    }
+
+    function scheduleSave(){
+      showSaving();
+      clearTimeout(saveTimer);
+      saveTimer = setTimeout(()=>persistContent(false), AUTOSAVE_DELAY);
+    }
+
+    function showSaving(){
+      if(!saveIndicator) return;
+      saveIndicator.textContent = 'Enregistrement…';
+      saveIndicator.classList.add('is-pending');
+      saveIndicator.classList.remove('is-done');
+    }
+
+    function showSaved(message, sticky){
+      if(!saveIndicator) return;
+      saveIndicator.textContent = message || 'Sauvegardé ✓';
+      saveIndicator.classList.remove('is-pending');
+      saveIndicator.classList.add('is-done');
+      clearTimeout(saveMessageTimer);
+      if(!sticky){
+        saveMessageTimer = setTimeout(()=>{
+          saveIndicator.textContent = 'Sauvegarde locale active';
+          saveIndicator.classList.remove('is-done');
+        }, 2400);
+      }
+    }
+
+    function persistContent(immediate){
+      clearTimeout(saveTimer);
+      if(isPlaceholderActive() || !editor.textContent.trim()){
+        localStorage.removeItem(STORAGE_CONTENT_KEY);
+        showSaved('Prêt', immediate);
+        return;
+      }
+      localStorage.setItem(STORAGE_CONTENT_KEY, editor.innerHTML);
+      showSaved('Sauvegardé ✓', immediate);
+    }
+
+    function updateCounts(){
+      if(!wordCountEl || !charCountEl) return;
+      if(isPlaceholderActive()){
+        wordCountEl.textContent = '0 mot';
+        charCountEl.textContent = '0 caractère';
+        return;
+      }
+      const raw = (editor.innerText || '').replace(/\u00a0/g,' ').replace(/\r/g,'');
+      const cleaned = raw.trim();
+      const words = cleaned ? cleaned.split(/\s+/).length : 0;
+      const chars = raw.replace(/\n/g,'').length;
+      wordCountEl.textContent = `${words} mot${words>1?'s':''}`;
+      charCountEl.textContent = `${chars} caractère${chars>1?'s':''}`;
+    }
+
+    function placeCursorAtEnd(){
+      const range = document.createRange();
+      range.selectNodeContents(editor);
+      range.collapse(false);
+      const sel = window.getSelection();
+      sel.removeAllRanges();
+      sel.addRange(range);
+    }
+
+    editor.addEventListener('input',()=>{
+      if(isPlaceholderActive()){
+        removePlaceholder();
+      }
+      record();
+      updateIndentState();
+      updateCounts();
+      scheduleSave();
+    });
+    editor.addEventListener('mouseup', ()=>{ updateIndentState(); updateAlignState(); });
+    editor.addEventListener('keyup', ()=>{ updateIndentState(); updateAlignState(); updateCounts(); });
+    document.addEventListener('selectionchange', ()=>{
+      if(selectionInsideEditor(window.getSelection())){
+        updateIndentState();
+        updateAlignState();
+      }
+    });
+
+    editor.addEventListener('focus', removePlaceholder);
+    editor.addEventListener('blur', ()=>{
+      if(!editor.textContent.trim()){
+        setPlaceholder();
+        updateCounts();
+        scheduleSave();
+      }
+    });
 
     undoBtn.addEventListener('click',undo);
 
     document.addEventListener('keydown',e=>{
-      if((e.ctrlKey||e.metaKey)&&e.key==='z'){e.preventDefault();undo();}
+      if((e.ctrlKey||e.metaKey) && e.key.toLowerCase()==='z'){e.preventDefault();undo();}
+      if((e.ctrlKey||e.metaKey) && e.key.toLowerCase()==='s'){e.preventDefault();persistContent(true);}
     });
 
     formatBtns.forEach(btn=>{
@@ -325,6 +599,8 @@
         document.execCommand(btn.dataset.cmd,false,null);
         editor.focus();
         record();
+        updateCounts();
+        scheduleSave();
       });
     });
 
@@ -332,6 +608,7 @@
       document.execCommand('fontName',false,fontSelect.value);
       editor.focus();
       record();
+      scheduleSave();
     });
 
     fontSizeSelect.addEventListener('change',()=>{
@@ -342,6 +619,7 @@
       });
       editor.focus();
       record();
+      scheduleSave();
     });
 
     const WORD_COLORS = [
@@ -369,21 +647,16 @@
       colorPalette.appendChild(grid);
     }
 
-    function openPalette(){
-      colorPalette.style.display='block';
-    }
-    function closePalette(){
-      colorPalette.style.display='none';
-    }
+    function openPalette(){ colorPalette.style.display='block'; }
+    function closePalette(){ colorPalette.style.display='none'; }
     function applyColor(c, fromPalette=false){
       currentColor = c || currentColor;
       colorSwatch.style.background = currentColor;
       restoreSelection();
       document.execCommand('foreColor', false, currentColor);
-      const blks = blocksInSelection();
-      blks.forEach(b=>{ const li = b.closest && b.closest('li'); if(li) li.style.color = currentColor; });
       editor.focus();
       record();
+      scheduleSave();
       if(fromPalette) closePalette();
     }
 
@@ -401,17 +674,18 @@
 
     alignBtns.forEach(btn=>{
       btn.addEventListener('click',()=>{
-        const align=btn.getAttribute('data-align');
-        const active=btn.classList.contains('active');
-        editor.style.textAlign=active?"":align;
-        alignBtns.forEach(b=>b.classList.remove('active'));
-        if(!active)btn.classList.add('active');
+        const cmd = alignCommandMap[btn.dataset.align];
+        if(!cmd) return;
+        document.execCommand(cmd,false,null);
+        editor.focus();
         record();
+        updateAlignState();
+        scheduleSave();
       });
     });
 
-    ulBtn.addEventListener('click',()=>{ document.execCommand('insertUnorderedList'); editor.focus(); record(); });
-    olBtn.addEventListener('click',()=>{ document.execCommand('insertOrderedList'); editor.focus(); record(); });
+    ulBtn.addEventListener('click',()=>{ document.execCommand('insertUnorderedList'); editor.focus(); record(); updateCounts(); scheduleSave(); });
+    olBtn.addEventListener('click',()=>{ document.execCommand('insertOrderedList'); editor.focus(); record(); updateCounts(); scheduleSave(); });
 
     indentBtn.addEventListener('click',()=>{
       const blocks = ensureBlocks();
@@ -421,30 +695,65 @@
       blocks.forEach(b=>{ b.style.marginLeft = next; });
       updateIndentState();
       record();
+      scheduleSave();
+    });
+
+    const TEMPLATE_HTML = `
+      <h2>Compte rendu de réunion</h2>
+      <p><strong>Date :</strong> ____ / ____ / ____</p>
+      <p><strong>Participants :</strong></p>
+      <ul>
+        <li>Nom 1</li>
+        <li>Nom 2</li>
+        <li>Nom 3</li>
+      </ul>
+      <h3>Objectifs</h3>
+      <p>Rappeler brièvement le but de la rencontre.</p>
+      <h3>Décisions</h3>
+      <ol>
+        <li>Décision importante n°1</li>
+        <li>Décision importante n°2</li>
+      </ol>
+      <p><strong>Actions à suivre :</strong> Responsable – Échéance.</p>
+    `;
+
+    templateBtn?.addEventListener('click',()=>{
+      removePlaceholder();
+      editor.innerHTML = TEMPLATE_HTML;
+      editor.focus();
+      placeCursorAtEnd();
+      record();
+      updateCounts();
+      scheduleSave();
+    });
+
+    clearBtn?.addEventListener('click',()=>{
+      if(confirm('Vider complètement le document ?')){
+        setPlaceholder();
+        editor.focus();
+        record();
+        updateCounts();
+        scheduleSave();
+      }
     });
 
     pdfBtn.addEventListener('click',()=>{
+      if(isPlaceholderActive() || !editor.textContent.trim()){
+        alert('Ajoutez du contenu avant d’exporter en PDF.');
+        editor.focus();
+        return;
+      }
+      persistContent(true);
       import('https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js').then(()=>{
         const opt={margin:0,filename:'document.pdf',image:{type:'jpeg',quality:1},html2canvas:{scale:2,backgroundColor:'#ffffff'},jsPDF:{unit:'mm',format:'a4',orientation:'portrait'}};
         html2pdf().set(opt).from(editor).save();
       });
     });
 
-    // Placeholder "Tapez ici..."
-    editor.addEventListener('focus',()=>{
-      if(editor.textContent.trim()==='Tapez ici...'){
-        editor.textContent='';
-        editor.style.color='#111';
-      }
-    });
-    editor.addEventListener('blur',()=>{
-      if(editor.textContent.trim()===''){
-        editor.textContent='Tapez ici...';
-        editor.style.color='#777';
-      }
-    });
+    window.addEventListener('beforeunload', ()=>{ persistContent(true); });
+    document.addEventListener('visibilitychange', ()=>{ if(document.visibilityState==='hidden') persistContent(true); });
 
-    updateButtons();
+    loadInitialContent();
   </script>
   </main>
 </div>
