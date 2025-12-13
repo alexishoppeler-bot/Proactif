@@ -190,3 +190,29 @@ header p {
         font-size: 13px;
     }
 }
+
+/* Progress indicator */
+.progress-wrap {
+    width: 160px;
+    height: 8px;
+    background: #e6eef8;
+    border-radius: 999px;
+    overflow: hidden;
+    margin-top: 6px;
+}
+.progress-bar {
+    height: 100%;
+    background: linear-gradient(90deg, #2ea8ff, #18c96e);
+    width: 0%;
+    transition: width 0.3s ease;
+}
+.progress-text {
+    font-size: 0.95rem;
+    text-align: center;
+}
+
+@media (max-width: 520px) {
+    #progress-indicator {
+        display: none;
+    }
+}

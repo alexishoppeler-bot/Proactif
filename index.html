@@ -24,8 +24,16 @@
   <header>
     <h1>📚 Plateforme autonomie</h1>
     <p>Exercices de bureautique, français, emploi, compréhension, jeux…</p>
-    <div style="margin-top:12px">
-      <button id="reset-prog" type="button">Réinitialiser la progression</button>
+    <div style="margin-top:12px; display:flex; gap:12px; align-items:center; justify-content:center;">
+      <div id="progress-indicator" aria-hidden="false">
+        <div class="progress-text">Progression : <strong id="progress-percent">0%</strong></div>
+        <div class="progress-wrap" aria-hidden="true">
+          <div class="progress-bar" id="progress-bar" style="width:0%"></div>
+        </div>
+      </div>
+      <div>
+        <button id="reset-prog" type="button">Réinitialiser la progression</button>
+      </div>
     </div>
   </header>
 
@@ -215,6 +223,7 @@
         progression[url] = !progression[url];
         try { localStorage.setItem(STORAGE_KEY, JSON.stringify(progression)); } catch (err) { }
         sync();
+        if (window.updateProgress) window.updateProgress();
       });
 
     });
@@ -225,11 +234,22 @@
         const iconSpan = link.querySelector('.icon');
         if (!iconSpan) return;
 
-        // garder texte de remplacement pour accessibilité
+        const href = (link.getAttribute('href') || '').toLowerCase();
         const label = link.textContent.replace(iconSpan.textContent, '').trim();
-        const initial = (label[0] || '').toUpperCase();
 
-        // créer SVG simple : cercle + lettre
+        // heuristique simple pour déterminer l'icône souhaitée
+        let kind = 'default';
+        if (/email|mail/.test(href) || /emails-/.test(href)) kind = 'email';
+        else if (/lettre|motivation|editeur|doc|texte/.test(href)) kind = 'doc';
+        else if (/organiser|dossier|documents/.test(href)) kind = 'folder';
+        else if (/audio|entretien|ecoute|compréhension/.test(href)) kind = 'audio';
+        else if (/quiz|question|examen/.test(href)) kind = 'quiz';
+        else if (/jeu|heure|clics|directions|mot-image/.test(href)) kind = 'game';
+        else if (/apparier/.test(href)) kind = 'match';
+        else if (/recherche_emploi|annonces|parler|qualites|entretien/.test(href)) kind = 'search';
+        else if (/retaper|clavier/.test(href)) kind = 'keyboard';
+
+        // fabrique SVG selon kind
         const ns = 'http://www.w3.org/2000/svg';
         const svg = document.createElementNS(ns, 'svg');
         svg.setAttribute('viewBox', '0 0 24 24');
@@ -239,24 +259,47 @@
         svg.setAttribute('aria-label', label + ' icône');
         svg.classList.add('icon-svg');
 
-        const circle = document.createElementNS(ns, 'circle');
-        circle.setAttribute('cx', '12');
-        circle.setAttribute('cy', '12');
-        circle.setAttribute('r', '10');
-        circle.setAttribute('fill', '#e9f6ff');
-        svg.appendChild(circle);
+        function makePath(d, fill = '#004c6d') {
+          const p = document.createElementNS(ns, 'path'); p.setAttribute('d', d); p.setAttribute('fill', fill); return p;
+        }
 
-        const text = document.createElementNS(ns, 'text');
-        text.setAttribute('x', '12');
-        text.setAttribute('y', '16');
-        text.setAttribute('text-anchor', 'middle');
-        text.setAttribute('font-size', '10');
-        text.setAttribute('fill', '#004c6d');
-        text.setAttribute('font-family', 'Open Sans, system-ui, sans-serif');
-        text.textContent = initial;
-        svg.appendChild(text);
+        if (kind === 'email') {
+          svg.appendChild(makePath('M2 6.5v11A2.5 2.5 0 004.5 20h15a2.5 2.5 0 002.5-2.5v-11A2.5 2.5 0 0019.5 4h-15A2.5 2.5 0 002 6.5z', '#e9f6ff'));
+          svg.appendChild(makePath('M4 7l8 6 8-6', 'none'));
+          const stroke = document.createElementNS(ns, 'path'); stroke.setAttribute('d', 'M4 7l8 6 8-6'); stroke.setAttribute('fill', 'none'); stroke.setAttribute('stroke', '#004c6d'); stroke.setAttribute('stroke-width', '1.2'); svg.appendChild(stroke);
+        } else if (kind === 'doc') {
+          svg.appendChild(makePath('M6 2h7l5 5v11a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2z', '#e9f6ff'));
+          svg.appendChild(makePath('M14 2v6h6', '#9dd7ff'));
+          svg.appendChild(makePath('M8 12h8M8 15h8M8 18h6', 'none'));
+          const s = document.createElementNS(ns, 'path'); s.setAttribute('d', 'M8 12h8M8 15h8M8 18h6'); s.setAttribute('stroke', '#004c6d'); s.setAttribute('stroke-width', '1'); s.setAttribute('fill', 'none'); svg.appendChild(s);
+        } else if (kind === 'folder') {
+          svg.appendChild(makePath('M3 7a1 1 0 0 1 1-1h4l2 2h8a1 1 0 0 1 1 1v7a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V7z', '#e9f6ff'));
+          svg.appendChild(makePath('M3 7h18', 'none'));
+        } else if (kind === 'audio') {
+          svg.appendChild(makePath('M3 9v6h3l4 3V6L6 9H3z', '#e9f6ff'));
+          svg.appendChild(makePath('M16 8a4 4 0 010 8', 'none'));
+          const s2 = document.createElementNS(ns, 'path'); s2.setAttribute('d', 'M16 8a4 4 0 010 8'); s2.setAttribute('stroke', '#004c6d'); s2.setAttribute('stroke-width', '1.2'); s2.setAttribute('fill', 'none'); svg.appendChild(s2);
+        } else if (kind === 'quiz') {
+          svg.appendChild(makePath('M12 2a10 10 0 100 20 10 10 0 000-20z', '#e9f6ff'));
+          const q = document.createElementNS(ns, 'text'); q.setAttribute('x', '12'); q.setAttribute('y', '16'); q.setAttribute('text-anchor', 'middle'); q.setAttribute('font-size', '10'); q.setAttribute('fill', '#004c6d'); q.setAttribute('font-family', 'Open Sans, system-ui, sans-serif'); q.textContent = '?'; svg.appendChild(q);
+        } else if (kind === 'game') {
+          svg.appendChild(makePath('M7 7h10v4H7z', '#e9f6ff'));
+          svg.appendChild(makePath('M10 14h4v4h-4z', 'none'));
+        } else if (kind === 'match') {
+          svg.appendChild(makePath('M10 14l-4 4a4 4 0 01-5-5l4-4', 'none'));
+          svg.appendChild(makePath('M14 10l4-4a4 4 0 015 5l-4 4', 'none'));
+          const s3 = document.createElementNS(ns, 'path'); s3.setAttribute('d', 'M10 14l-4 4a4 4 0 01-5-5l4-4'); s3.setAttribute('stroke', '#004c6d'); s3.setAttribute('stroke-width', '1.2'); s3.setAttribute('fill', 'none'); svg.appendChild(s3);
+        } else if (kind === 'keyboard') {
+          svg.appendChild(makePath('M3 7h18v10H3z', '#e9f6ff'));
+          svg.appendChild(makePath('M6 10h2M10 10h8M6 14h12', 'none'));
+          const s4 = document.createElementNS(ns, 'path'); s4.setAttribute('d', 'M6 10h2M10 10h8M6 14h12'); s4.setAttribute('stroke', '#004c6d'); s4.setAttribute('stroke-width', '1'); s4.setAttribute('fill', 'none'); svg.appendChild(s4);
+        } else { // default: initial letter
+          const circle = document.createElementNS(ns, 'circle');
+          circle.setAttribute('cx', '12'); circle.setAttribute('cy', '12'); circle.setAttribute('r', '10'); circle.setAttribute('fill', '#e9f6ff'); svg.appendChild(circle);
+          const ch = (label[0] || '').toUpperCase();
+          const text = document.createElementNS(ns, 'text'); text.setAttribute('x', '12'); text.setAttribute('y', '16'); text.setAttribute('text-anchor', 'middle'); text.setAttribute('font-size', '10'); text.setAttribute('fill', '#004c6d'); text.setAttribute('font-family', 'Open Sans, system-ui, sans-serif'); text.textContent = ch; svg.appendChild(text);
+        }
 
-        // remplacer le contenu du span.icon par le SVG
         iconSpan.innerHTML = '';
         iconSpan.appendChild(svg);
       });
@@ -274,6 +317,22 @@
         location.reload();
       });
     }
+
+    /* INDICATEUR DE PROGRESSION */
+    window.updateProgress = function () {
+      try {
+        const all = document.querySelectorAll('.exercise-btn').length || 0;
+        const done = Object.values(progression || {}).filter(v => !!v).length || 0;
+        const pct = all === 0 ? 0 : Math.round((done / all) * 100);
+        const el = document.getElementById('progress-percent');
+        const bar = document.getElementById('progress-bar');
+        if (el) el.textContent = pct + '%';
+        if (bar) bar.style.width = pct + '%';
+      } catch (e) { }
+    };
+
+    // initial update
+    if (window.updateProgress) window.updateProgress();
   </script>
 
 </body>
