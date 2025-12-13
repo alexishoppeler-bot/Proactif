@@ -737,6 +737,32 @@
       }
     });
 
+    function createExportNode(){
+      const wrapper = document.createElement('div');
+      wrapper.style.position='fixed';
+      wrapper.style.top='-9999px';
+      wrapper.style.left='-9999px';
+      wrapper.style.zIndex='-1';
+      wrapper.style.background='#fff';
+      wrapper.style.width='210mm';
+      wrapper.style.minHeight='297mm';
+
+      const clone = editor.cloneNode(true);
+      clone.removeAttribute('contenteditable');
+      clone.style.width='210mm';
+      clone.style.minHeight='297mm';
+      clone.style.boxShadow='none';
+      clone.style.border='none';
+      clone.style.margin='0';
+      clone.style.padding='25.4mm';
+      clone.style.height='auto';
+      clone.style.overflow='visible';
+
+      wrapper.appendChild(clone);
+      document.body.appendChild(wrapper);
+      return {wrapper, node:clone};
+    }
+
     pdfBtn.addEventListener('click',()=>{
       if(isPlaceholderActive() || !editor.textContent.trim()){
         alert('Ajoutez du contenu avant d’exporter en PDF.');
@@ -745,8 +771,9 @@
       }
       persistContent(true);
       import('https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js').then(()=>{
+        const exportNode = createExportNode();
         const opt={margin:0,filename:'document.pdf',image:{type:'jpeg',quality:1},html2canvas:{scale:2,backgroundColor:'#ffffff'},jsPDF:{unit:'mm',format:'a4',orientation:'portrait'}};
-        html2pdf().set(opt).from(editor).save();
+        return html2pdf().set(opt).from(exportNode.node).save().finally(()=>{ exportNode.wrapper.remove(); });
       });
     });
 
