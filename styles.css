@@ -23,11 +23,12 @@ body {
     color: var(--text);
     transition: 0.25s ease;
     padding: 20px;
+    line-height: 1.5;
 }
 
 /* HEADER */
 header {
-    text-align: center;
+    text-align: left;
     padding: 30px;
     background: var(--card);
     border-radius: 20px;
@@ -35,6 +36,35 @@ header {
     max-width: 1000px;
     margin: 0 auto 30px auto;
     animation: fadeIn 0.5s ease;
+}
+
+.hero-top {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+}
+
+.hero-intro {
+    text-align: center;
+}
+
+.hero-intro h1 {
+    margin-bottom: 6px;
+}
+
+.hero-intro p {
+    margin: 0;
+    opacity: 0.75;
+}
+
+.header-actions {
+    align-self: center;
+    flex-direction: column;
+    text-align: center;
+}
+
+.header-buttons {
+    justify-content: center;
 }
 
 @keyframes fadeIn {
@@ -62,8 +92,8 @@ header p {
 .header-actions {
     margin-top: 12px;
     display: flex;
-    gap: 12px;
-    align-items: center;
+    gap: 18px;
+    align-items: stretch;
     justify-content: center;
     flex-wrap: wrap;
 }
@@ -77,6 +107,10 @@ header p {
 .search-box {
     margin-top: 18px;
     text-align: left;
+    border: 1px solid #dfe8f5;
+    border-radius: 16px;
+    padding: 16px;
+    background: rgba(247, 250, 255, 0.6);
 }
 
 .search-box label {
@@ -132,6 +166,37 @@ header p {
 .filter-btn:focus-visible {
     outline: 3px solid rgba(41, 128, 255, 0.25);
     outline-offset: 2px;
+}
+
+@media (min-width: 768px) {
+    header {
+        padding: 40px 50px;
+    }
+
+    .hero-top {
+        flex-direction: row;
+        align-items: center;
+        justify-content: space-between;
+    }
+
+    .hero-intro {
+        text-align: left;
+        max-width: 55%;
+    }
+
+    .header-actions {
+        flex-direction: column;
+        align-items: flex-end;
+        text-align: right;
+    }
+
+    .header-buttons {
+        justify-content: flex-end;
+    }
+
+    .search-box {
+        padding: 20px;
+    }
 }
 
 /* GRID */
