@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cartes Flash – Outillage essentiel</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+<style>
+
+/* ---------- GLOBAL ---------- */
+body{
+    font-family: 'Open Sans', sans-serif;
+    background: linear-gradient(135deg,#dff3ff,#c9f7e7);
+    margin:0;
+    padding:25px;
+    color:#003b7d;
+}
+
+h1{
+    text-align:center;
+    font-size:2.2rem;
+    margin-bottom:15px;
+    color:#004c97;
+}
+
+h2{
+    text-align:center;
+    margin-top:40px;
+    color:#0060b1;
+    font-size:1.6rem;
+}
+
+/* ---------- GRID ---------- */
+.grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fill,minmax(230px,1fr));
+    gap:25px;
+    margin-top:20px;
+}
+
+/* ---------- CARD ---------- */
+.card{
+    background:white;
+    border-radius:18px;
+    padding:18px;
+    box-shadow:0 4px 18px rgba(0,0,0,0.12);
+    cursor:pointer;
+    transition:transform .15s, box-shadow .15s;
+}
+.card:hover{
+    transform:translateY(-5px);
+    box-shadow:0 6px 22px rgba(0,0,0,0.18);
+}
+
+.word{
+    font-size:20px;
+    font-weight:700;
+    margin-bottom:12px;
+    text-align:center;
+    color:#003b7d;
+}
+
+/* ---------- IMAGE BOX ---------- */
+.img-box{
+    width:100%;
+    height:180px;
+    border:2px dashed #99a8b8;
+    border-radius:12px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    color:#7a8a9a;
+    font-size:14px;
+    background:#f7fbff;
+    overflow:hidden;
+}
+.img-box img{
+    width:100%;
+    height:100%;
+    object-fit:cover;
+}
+
+/* ---------- RESET ---------- */
+button.reset{
+    display:block;
+    margin:25px auto;
+    padding:14px 24px;
+    background:#c62828;
+    color:white;
+    border:none;
+    border-radius:10px;
+    cursor:pointer;
+    font-size:18px;
+    font-weight:600;
+}
+button.reset:hover{
+    background:#a91414;
+}
+
+/* ---------- MODE QUIZ BUTTON ---------- */
+.quizBtn{
+    display:block;
+    margin:10px auto 25px;
+    padding:14px 24px;
+    background:#1a8c6d;
+    color:white;
+    border:none;
+    border-radius:12px;
+    font-size:18px;
+    font-weight:600;
+    cursor:pointer;
+    box-shadow:0 4px 12px rgba(0,0,0,.15);
+}
+.quizBtn:hover{
+    background:#146b52;
+}
+
+/* ---------- POPUP ---------- */
+#popup{
+    display:none;
+    position:fixed;
+    top:0;left:0;
+    width:100%;height:100%;
+    background:rgba(0,0,0,.55);
+    justify-content:center;
+    align-items:center;
+    backdrop-filter:blur(3px);
+}
+#popup-content{
+    background:white;
+    width:340px;
+    padding:25px;
+    border-radius:18px;
+    text-align:center;
+}
+#popup-content input{
+    width:100%;
+    padding:10px;
+    margin-top:12px;
+    border-radius:8px;
+    border:1px solid #ccc;
+}
+
+/* ---------- MODE QUIZ ---------- */
+#quizMode{
+    display:none;
+    position:fixed;
+    top:0;left:0;
+    width:100%;height:100%;
+    background:rgba(0,0,0,.75);
+    backdrop-filter:blur(4px);
+    justify-content:center;
+    align-items:center;
+    padding:20px;
+}
+
+.quiz-box{
+    background:white;
+    max-width:420px;
+    width:100%;
+    padding:25px;
+    border-radius:18px;
+    text-align:center;
+}
+
+.quiz-img{
+    width:100%;
+    height:220px;
+    border-radius:12px;
+    object-fit:cover;
+    margin-bottom:20px;
+}
+
+.quiz-options button{
+    width:100%;
+    padding:12px;
+    margin:6px 0;
+    font-size:17px;
+    border:none;
+    border-radius:10px;
+    background:#eef3f9;
+    cursor:pointer;
+}
+.quiz-options button.correct{
+    background:#1a8c6d !important;
+    color:white;
+}
+.quiz-options button.wrong{
+    background:#d9534f !important;
+    color:white;
+}
+
+#quizScore{
+    margin-top:15px;
+    font-size:18px;
+    font-weight:bold;
+}
+
+.btn{
+    margin-top:12px;
+    padding:10px 12px;
+    border:none;
+    border-radius:8px;
+    background:#004c97;
+    color:white;
+    cursor:pointer;
+}
+
+</style>
+  <link rel="stylesheet" href="../../exercise-layout.css">
+  <script defer src="../../exercise-layout.js"></script>
+</head>
+
+<body>
+
+<div class="back-home" style="max-width:1100px;margin:10px auto 0;padding:0 20px;">
+  <a class="back-home__link" href="../../index.html" style="display:inline-flex;align-items:center;gap:6px;text-decoration:none;color:#004c6d;font-weight:700;border:1px solid #cfdff0;padding:6px 14px;border-radius:999px;background:#fff;box-shadow:0 2px 4px rgba(0,0,0,0.08);">← Retour à l’index</a>
+</div>
+<script src="../shared/proactif-exercise.js"></script>
+<div class="exercise-shell">
+  <main class="exercise-card">
+
+
+
+<h1>🧰 Outillage essentiel</h1>
+
+<button class="quizBtn" onclick="startQuiz()">🎮 Mode Quiz</button>
+<button class="reset" onclick="resetAllImages()">🔄 Réinitialiser toutes les images</button>
+
+<!-- SECTIONS ET CARTES -->
+<h2>🧹 Nettoyage</h2>
+<div class="grid">
+<div class="card" onclick="openPopup('img1','Balai')"><div class="word">Balai</div><div class="img-box" id="img1">Image</div></div>
+<div class="card" onclick="openPopup('img2','Serpillère')"><div class="word">Serpillère</div><div class="img-box" id="img2">Image</div></div>
+<div class="card" onclick="openPopup('img3','Seau')"><div class="word">Seau</div><div class="img-box" id="img3">Image</div></div>
+<div class="card" onclick="openPopup('img4','Chiffon microfibre')"><div class="word">Microfibre</div><div class="img-box" id="img4">Image</div></div>
+<div class="card" onclick="openPopup('img5','Aspirateur')"><div class="word">Aspirateur</div><div class="img-box" id="img5">Image</div></div>
+<div class="card" onclick="openPopup('img6','Spray nettoyant')"><div class="word">Spray nettoyant</div><div class="img-box" id="img6">Image</div></div>
+<div class="card" onclick="openPopup('img7','Gants')"><div class="word">Gants</div><div class="img-box" id="img7">Image</div></div>
+</div>
+
+<h2>🍳 Cuisine</h2>
+<div class="grid">
+<div class="card" onclick="openPopup('img8','Couteau')"><div class="word">Couteau</div><div class="img-box" id="img8">Image</div></div>
+<div class="card" onclick="openPopup('img9','Planche à découper')"><div class="word">Planche</div><div class="img-box" id="img9">Image</div></div>
+<div class="card" onclick="openPopup('img10','Poêle')"><div class="word">Poêle</div><div class="img-box" id="img10">Image</div></div>
+<div class="card" onclick="openPopup('img11','Casserole')"><div class="word">Casserole</div><div class="img-box" id="img11">Image</div></div>
+<div class="card" onclick="openPopup('img12','Fouet cuisine')"><div class="word">Fouet</div><div class="img-box" id="img12">Image</div></div>
+<div class="card" onclick="openPopup('img13','Spatule')"><div class="word">Spatule</div><div class="img-box" id="img13">Image</div></div>
+</div>
+
+<h2>🏗️ Bâtiment</h2>
+<div class="grid">
+<div class="card" onclick="openPopup('img14','Marteau')"><div class="word">Marteau</div><div class="img-box" id="img14">Image</div></div>
+<div class="card" onclick="openPopup('img15','Tournevis')"><div class="word">Tournevis</div><div class="img-box" id="img15">Image</div></div>
+<div class="card" onclick="openPopup('img16','Perceuse')"><div class="word">Perceuse</div><div class="img-box" id="img16">Image</div></div>
+<div class="card" onclick="openPopup('img17','Mètre ruban')"><div class="word">Mètre</div><div class="img-box" id="img17">Image</div></div>
+<div class="card" onclick="openPopup('img18','Échelle')"><div class="word">Échelle</div><div class="img-box" id="img18">Image</div></div>
+</div>
+
+<h2>📦 Logistique / Bureau</h2>
+<div class="grid">
+<div class="card" onclick="openPopup('img19','Carton')"><div class="word">Carton</div><div class="img-box" id="img19">Image</div></div>
+<div class="card" onclick="openPopup('img20','Chariot')"><div class="word">Chariot</div><div class="img-box" id="img20">Image</div></div>
+<div class="card" onclick="openPopup('img21','Ordinateur')"><div class="word">Ordinateur</div><div class="img-box" id="img21">Image</div></div>
+<div class="card" onclick="openPopup('img22','Clé USB')"><div class="word">Clé USB</div><div class="img-box" id="img22">Image</div></div>
+<div class="card" onclick="openPopup('img23','Imprimante')"><div class="word">Imprimante</div><div class="img-box" id="img23">Image</div></div>
+</div>
+
+<!-- POPUP INSERT IMAGE -->
+<div id="popup">
+<div id="popup-content">
+<h3 id="popup-title"></h3>
+<a id="googleLink" target="_blank" style="display:inline-block;background:#004c97;color:white;padding:8px 12px;border-radius:8px;text-decoration:none;margin-bottom:10px;">🔎 Google Images</a>
+<input type="url" id="imgUrl" placeholder="Coller le lien de l’image">
+<button class="btn" onclick="insertImage()">Insérer</button>
+<button class="btn" style="background:#999" onclick="closePopup()">Annuler</button>
+</div>
+</div>
+
+<!-- MODE QUIZ -->
+<div id="quizMode">
+    <div class="quiz-box">
+        <img id="quizImage" class="quiz-img">
+        <div id="quizOptions" class="quiz-options"></div>
+        <p id="quizScore"></p>
+        <button class="btn" onclick="closeQuiz()">Quitter</button>
+    </div>
+</div>
+
+<script>
+let currentBox="";
+
+/* ---------- POPUP ---------- */
+function openPopup(id,word){
+    currentBox=id;
+    document.getElementById("popup").style.display="flex";
+    document.getElementById("popup-title").textContent=word;
+    document.getElementById("googleLink").href="https://www.google.com/search?tbm=isch&q="+encodeURIComponent(word);
+}
+function closePopup(){
+    document.getElementById("popup").style.display="none";
+}
+
+/* ---------- INSERTION AVEC COMPRESSION ---------- */
+function insertImage(){
+    const url = document.getElementById("imgUrl").value.trim();
+
+    // 🔹 Cas 1 : lien base64 (data:image...)
+    if(url.startsWith("data:image")){
+        // On utilise directement l'image telle quelle
+        document.getElementById(currentBox).innerHTML = `<img src="${url}">`;
+        localStorage.setItem(currentBox, url);
+        document.getElementById("imgUrl").value = "";
+        closePopup();
+        return;
+    }
+
+    // 🔹 Cas 2 : lien classique http / https
+    if(!url.startsWith("http")){
+        alert("Lien incorrect");
+        return;
+    }
+
+    fetch(url)
+        .then(res => res.blob())
+        .then(blob => createImageBitmap(blob))
+        .then(bitmap => {
+
+            // ---- REDIMENSIONNEMENT ----
+            const maxSize = 600;
+            let w = bitmap.width;
+            let h = bitmap.height;
+
+            if (w > h && w > maxSize) {
+                h = Math.round(h * (maxSize / w));
+                w = maxSize;
+            } else if (h > w && h > maxSize) {
+                w = Math.round(w * (maxSize / h));
+                h = maxSize;
+            }
+
+            // ----- CANVAS -----
+            const canvas = document.createElement("canvas");
+            canvas.width = w;
+            canvas.height = h;
+            const ctx = canvas.getContext("2d");
+            ctx.drawImage(bitmap, 0, 0, w, h);
+
+            // ----- COMPRESSION JPEG QUALITÉ 0.7 -----
+            const compressedBase64 = canvas.toDataURL("image/jpeg", 0.7);
+
+            // ----- INSERTION -----
+            document.getElementById(currentBox).innerHTML = `<img src="${compressedBase64}">`;
+
+            // ----- SAUVEGARDE -----
+            localStorage.setItem(currentBox, compressedBase64);
+
+            document.getElementById("imgUrl").value = "";
+            closePopup();
+        })
+        .catch(err=>{
+            alert("Impossible de charger l’image. Essaie une autre source.");
+            console.error(err);
+        });
+}
+
+
+/* ---------- CHARGEMENT DES IMAGES SAUVEGARDÉES ---------- */
+window.onload=()=>{
+    for(let i=1;i<=23;i++){
+        const id="img"+i;
+        const saved=localStorage.getItem(id);
+        if(saved){
+            document.getElementById(id).innerHTML=`<img src="${saved}">`;
+        }
+    }
+}
+
+/* ---------- RESET ---------- */
+function resetAllImages(){
+    if(confirm("Tout effacer ?")){
+        for(let i=1;i<=23;i++) localStorage.removeItem("img"+i);
+        location.reload();
+    }
+}
+
+/* ---------- MODE QUIZ ---------- */
+let quizList = [];
+let quizIndex = 0;
+let score = 0;
+
+const words = [
+"Balai","Serpillère","Seau","Microfibre","Aspirateur","Spray nettoyant","Gants",
+"Couteau","Planche","Poêle","Casserole","Fouet","Spatule",
+"Marteau","Tournevis","Perceuse","Mètre","Échelle",
+"Carton","Chariot","Ordinateur","Clé USB","Imprimante"
+];
+
+function buildQuiz(){
+    quizList = [];
+    for(let i=1;i<=23;i++){
+        const img = localStorage.getItem("img"+i);
+        if(img){
+            quizList.push({
+                word: words[i-1],
+                img: img
+            });
+        }
+    }
+}
+
+function startQuiz(){
+    buildQuiz();
+    if(quizList.length < 2){
+        alert("Ajoutez au moins 2 images avant de lancer le quiz.");
+        return;
+    }
+
+    quizList = quizList.sort(() => Math.random() - 0.5);
+    quizIndex = 0;
+    score = 0;
+
+    document.getElementById("quizMode").style.display="flex";
+    loadQuizQuestion();
+}
+
+function loadQuizQuestion(){
+    const q = quizList[quizIndex];
+
+    document.getElementById("quizImage").src = q.img;
+    document.getElementById("quizScore").textContent = `Score : ${score} / ${quizList.length}`;
+
+    let options = [q.word];
+
+    while(options.length < 4){
+        const r = quizList[Math.floor(Math.random() * quizList.length)].word;
+        if(!options.includes(r)) options.push(r);
+    }
+
+    options.sort(() => Math.random() - 0.5);
+
+    const box = document.getElementById("quizOptions");
+    box.innerHTML = "";
+
+    options.forEach(opt=>{
+        const btn = document.createElement("button");
+        btn.textContent = opt;
+        btn.onclick = ()=>checkAnswer(btn,opt,q.word);
+        box.appendChild(btn);
+    });
+}
+
+function checkAnswer(btn,opt,correct){
+    if(opt === correct){
+        btn.classList.add("correct");
+        score++;
+        setTimeout(nextQuestion,600);
+    } else {
+        btn.classList.add("wrong");
+    }
+}
+
+function nextQuestion(){
+    quizIndex++;
+    if(quizIndex >= quizList.length){
+        alert("Quiz terminé ! Score : " + score + "/" + quizList.length);
+        if (window.proactifMarkExerciseDone) {
+            try { window.proactifMarkExerciseDone(); } catch (e) { }
+        }
+        closeQuiz();
+    } else {
+        loadQuizQuestion();
+    }
+}
+
+function closeQuiz(){
+    document.getElementById("quizMode").style.display="none";
+}
+
+</script>
+
+  </main>
+</div>
+
+</body>
+</html>

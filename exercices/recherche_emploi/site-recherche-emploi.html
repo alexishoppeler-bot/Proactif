@@ -1,0 +1,1994 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Site – Recherche d’emploi (simulation)</title>
+  <style>
+    :root{
+      --bg:#eef3f9;
+      --card:#ffffff;
+      --text:#0f172a;
+      --muted:#475569;
+      --border:rgba(2,6,23,.10);
+      --shadow:0 18px 55px rgba(15,23,42,.14);
+      --blue:#2563eb;
+      --blue2:#1d4ed8;
+      --green:#16a34a;
+      --amber:#f59e0b;
+      --red:#dc2626;
+      --focus:rgba(37, 99, 235, 0.35);
+    }
+
+    body{
+      margin:0;
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      color:var(--text);
+      background:
+        radial-gradient(1100px 650px at 10% 0%, #dfeaff, transparent 60%),
+        radial-gradient(900px 520px at 90% 10%, #dff7ed, transparent 55%),
+        linear-gradient(180deg, var(--bg), #ffffff);
+      padding: 28px 14px 40px;
+    }
+
+    .app{
+      max-width: 1100px;
+      margin: 0 auto;
+      background: rgba(255,255,255,0.78);
+      border: 1px solid rgba(2, 6, 23, 0.08);
+      border-radius: 22px;
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      overflow: hidden;
+      animation: in .35s ease-out;
+    }
+
+    @keyframes in{ from{opacity:0; transform: translateY(10px);} to{opacity:1; transform: translateY(0);} }
+
+    .top{
+      padding: 18px 18px 14px;
+      border-bottom: 1px solid rgba(2, 6, 23, 0.08);
+      background: linear-gradient(120deg, rgba(37,99,235,0.10), rgba(22,163,74,0.08));
+    }
+
+    .topRow{
+      display:flex;
+      gap:12px;
+      align-items:center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+    }
+
+    h1{
+      margin:0;
+      font-size: 22px;
+      letter-spacing: -0.02em;
+      display:flex;
+      gap:10px;
+      align-items:center;
+    }
+
+    .tabs{
+      display:flex;
+      gap:8px;
+      flex-wrap: wrap;
+      align-items:center;
+    }
+    .tab{
+      border: 1px solid rgba(2, 6, 23, 0.12);
+      background: rgba(255,255,255,0.86);
+      border-radius: 999px;
+      padding: 8px 10px;
+      cursor:pointer;
+      font-weight: 850;
+      color: #0f172a;
+      transition: transform .12s ease, box-shadow .12s ease, background .12s ease;
+    }
+    .tab:hover{ transform: translateY(-1px); box-shadow: 0 14px 30px rgba(2, 6, 23, 0.10); }
+    .tab[aria-selected="true"]{
+      background: linear-gradient(180deg, rgba(37,99,235,0.12), rgba(255,255,255,0.9));
+      border-color: rgba(37, 99, 235, 0.35);
+    }
+    .tab:focus-visible{ outline: 3px solid var(--focus); outline-offset: 3px; }
+
+    .meta{
+      display:flex;
+      gap:10px;
+      flex-wrap: wrap;
+      align-items:center;
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 700;
+    }
+    .pill{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      padding: 7px 10px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.86);
+      border: 1px solid rgba(2, 6, 23, 0.10);
+      box-shadow: 0 8px 20px rgba(2, 6, 23, 0.06);
+    }
+
+    .progressWrap{
+      margin-top: 12px;
+      border-radius: 16px;
+      border: 1px solid rgba(2, 6, 23, 0.10);
+      background: rgba(255,255,255,0.86);
+      padding: 10px 12px;
+      display:flex;
+      align-items:center;
+      justify-content: space-between;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    .steps{
+      display:flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      align-items:center;
+    }
+    .step{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      padding: 6px 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(2, 6, 23, 0.10);
+      background: rgba(248,250,252,0.9);
+      font-weight: 850;
+      font-size: 12px;
+      color: rgba(2, 6, 23, 0.78);
+    }
+    .step.done{
+      border-color: rgba(22, 163, 74, 0.26);
+      background: rgba(220, 252, 231, 0.75);
+      color: #14532d;
+    }
+
+    .resetBtn{
+      border: 1px solid rgba(220, 38, 38, 0.25);
+      background: rgba(254,242,242,0.9);
+      border-radius: 14px;
+      padding: 9px 10px;
+      font-weight: 900;
+      cursor:pointer;
+    }
+    .resetBtn:hover{ box-shadow: 0 14px 30px rgba(220, 38, 38, 0.12); transform: translateY(-1px); }
+    .resetBtn:focus-visible{ outline: 3px solid rgba(220,38,38,0.25); outline-offset: 3px; }
+
+    .guideWrap{
+      margin-top: 10px;
+      border-radius: 16px;
+      border: 1px solid rgba(2, 6, 23, 0.10);
+      background: rgba(255,255,255,0.86);
+      padding: 10px 12px;
+    }
+    details.guide{ margin:0; }
+    details.guide > summary{
+      cursor:pointer;
+      font-weight: 950;
+      letter-spacing: -0.01em;
+      color: rgba(2, 6, 23, 0.88);
+      list-style: none;
+    }
+    details.guide > summary::-webkit-details-marker{ display:none; }
+    .guideList{
+      margin: 10px 0 0 18px;
+      padding: 0;
+      display:grid;
+      gap: 6px;
+      color: rgba(2, 6, 23, 0.82);
+      font-weight: 750;
+      font-size: 13px;
+      line-height: 1.45;
+    }
+    .helpBox{
+      margin-top: 10px;
+      border-radius: 14px;
+      border: 1px dashed rgba(37, 99, 235, 0.28);
+      background: rgba(219,234,254,0.45);
+      padding: 10px 12px;
+    }
+    details.help > summary{
+      cursor:pointer;
+      font-weight: 950;
+      list-style: none;
+    }
+    details.help > summary::-webkit-details-marker{ display:none; }
+    .template{
+      margin: 10px 0 0;
+      padding: 10px 10px;
+      border-radius: 12px;
+      border: 1px solid rgba(2, 6, 23, 0.10);
+      background: rgba(255,255,255,0.88);
+      font-weight: 650;
+      font-size: 13px;
+      line-height: 1.45;
+      white-space: pre-wrap;
+    }
+    .miniRow{ display:flex; gap:8px; flex-wrap: wrap; align-items:center; margin-top: 10px; }
+    .miniBtn{
+      border: 1px solid rgba(2, 6, 23, 0.12);
+      background: rgba(255,255,255,0.92);
+      border-radius: 999px;
+      padding: 8px 10px;
+      font-weight: 950;
+      cursor:pointer;
+    }
+    .miniBtn:hover{ transform: translateY(-1px); box-shadow: 0 14px 30px rgba(2, 6, 23, 0.10); }
+    .miniBtn:focus-visible{ outline: 3px solid var(--focus); outline-offset: 3px; }
+
+    .content{ padding: 16px 18px 22px; }
+
+    .grid{
+      display:grid;
+      grid-template-columns: 1fr 420px;
+      gap: 14px;
+      align-items:start;
+    }
+    @media (max-width: 980px){
+      .grid{ grid-template-columns: 1fr; }
+    }
+
+    .card{
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 14px;
+      box-shadow: 0 10px 28px rgba(15, 23, 42, 0.08);
+    }
+
+    .searchRow{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+    @media (max-width: 700px){
+      .searchRow{ grid-template-columns: 1fr; }
+    }
+    .field label{
+      display:block;
+      font-weight: 850;
+      font-size: 13px;
+      color: rgba(2, 6, 23, 0.78);
+      margin-bottom: 6px;
+    }
+    .field input, .field select{
+      width:100%;
+      border: 1px solid rgba(2, 6, 23, 0.12);
+      border-radius: 14px;
+      padding: 11px 12px;
+      font-weight: 700;
+      background: rgba(248,250,252,0.9);
+      box-sizing:border-box;
+    }
+    .field input:focus, .field select:focus{ outline: none; border-color: rgba(37, 99, 235, 0.45); box-shadow: 0 0 0 3px var(--focus); }
+
+    .filters{
+      display:flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      align-items:center;
+      margin-bottom: 10px;
+    }
+    .chip{
+      border: 1px solid rgba(2, 6, 23, 0.12);
+      background: rgba(248,250,252,0.9);
+      border-radius: 999px;
+      padding: 8px 10px;
+      font-weight: 850;
+      cursor:pointer;
+      color: rgba(2, 6, 23, 0.78);
+      transition: transform .12s ease, box-shadow .12s ease;
+    }
+    .chip[aria-pressed="true"]{
+      border-color: rgba(37, 99, 235, 0.35);
+      background: rgba(37, 99, 235, 0.10);
+      color: rgba(29, 78, 216, 0.95);
+    }
+    .chip:hover{ transform: translateY(-1px); box-shadow: 0 14px 30px rgba(2, 6, 23, 0.10); }
+    .chip:focus-visible{ outline: 3px solid var(--focus); outline-offset: 3px; }
+
+    .resultsHeader{
+      display:flex;
+      align-items:center;
+      justify-content: space-between;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-bottom: 8px;
+    }
+    .resultsHeader h2{ margin:0; font-size: 15px; color:#0b3b7a; letter-spacing:-0.01em; }
+    .muted{ color: var(--muted); font-weight: 700; font-size: 13px; }
+
+    .list{
+      display:grid;
+      gap: 10px;
+    }
+
+    .job{
+      border: 1px solid rgba(2, 6, 23, 0.10);
+      border-radius: 16px;
+      background: rgba(255,255,255,0.9);
+      padding: 12px;
+      cursor:pointer;
+      transition: transform .12s ease, box-shadow .12s ease, border-color .12s ease;
+      position:relative;
+    }
+    .job:hover{ transform: translateY(-1px); box-shadow: 0 16px 34px rgba(2, 6, 23, 0.12); border-color: rgba(37, 99, 235, 0.22); }
+    .job:focus-visible{ outline: 3px solid var(--focus); outline-offset: 3px; }
+    .job.job--selected{
+      border-color: rgba(37, 99, 235, 0.45);
+      box-shadow: 0 18px 40px rgba(37, 99, 235, 0.14);
+    }
+    .jobTitle{ font-weight: 950; letter-spacing: -0.02em; margin:0; }
+    .jobMeta{ margin-top:6px; display:flex; gap:8px; flex-wrap: wrap; color: var(--muted); font-weight: 750; font-size: 12px; }
+    .badge{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      padding: 6px 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(2, 6, 23, 0.12);
+      background: rgba(248,250,252,0.9);
+      font-weight: 900;
+      font-size: 12px;
+      color: rgba(2, 6, 23, 0.80);
+    }
+    .badge.green{ border-color: rgba(22, 163, 74, 0.22); background: rgba(220,252,231,0.75); color:#14532d; }
+    .badge.blue{ border-color: rgba(37, 99, 235, 0.22); background: rgba(219,234,254,0.75); color:#1e3a8a; }
+    .badge.amber{ border-color: rgba(245, 158, 11, 0.22); background: rgba(254,243,199,0.75); color:#7c2d12; }
+
+    .starBtn{
+      border: 1px solid rgba(2, 6, 23, 0.12);
+      background: rgba(248,250,252,0.92);
+      border-radius: 999px;
+      padding: 6px 10px;
+      font-weight: 950;
+      cursor:pointer;
+      transition: transform .12s ease, box-shadow .12s ease;
+      color: rgba(2, 6, 23, 0.80);
+      line-height: 1;
+    }
+    .starBtn[aria-pressed="true"]{
+      border-color: rgba(245, 158, 11, 0.30);
+      background: rgba(254,243,199,0.85);
+      color: #7c2d12;
+    }
+    .starBtn:hover{ transform: translateY(-1px); box-shadow: 0 14px 30px rgba(2, 6, 23, 0.10); }
+    .starBtn:focus-visible{ outline: 3px solid var(--focus); outline-offset: 3px; }
+
+    .side{
+      position: sticky;
+      top: 18px;
+    }
+    @media (max-width: 980px){ .side{ position: static; } }
+
+    .panelTitle{
+      margin:0;
+      font-size: 16px;
+      font-weight: 950;
+      letter-spacing:-0.02em;
+    }
+    .panelText{ margin: 8px 0 0; color: var(--muted); font-weight: 700; line-height: 1.55; }
+    .panelActions{
+      display:flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-top: 12px;
+    }
+    .btn{
+      border: 1px solid rgba(2, 6, 23, 0.12);
+      background: rgba(255,255,255,0.92);
+      border-radius: 14px;
+      padding: 10px 12px;
+      font-weight: 900;
+      cursor:pointer;
+      transition: transform .12s ease, box-shadow .12s ease, background .12s ease;
+      color: #0f172a;
+    }
+    .btn:hover{ transform: translateY(-1px); box-shadow: 0 14px 30px rgba(2, 6, 23, 0.12); }
+    .btn:focus-visible{ outline: 3px solid var(--focus); outline-offset: 3px; }
+    .btn.primary{ border-color: rgba(37, 99, 235, 0.35); background: linear-gradient(180deg, rgba(37,99,235,0.12), rgba(255,255,255,0.92)); }
+    .btn.success{ border-color: rgba(22, 163, 74, 0.30); background: linear-gradient(180deg, rgba(22,163,74,0.12), rgba(255,255,255,0.92)); }
+    .btn.ghost{ background: rgba(248,250,252,0.9); }
+    .btn[disabled]{ opacity:0.55; cursor:not-allowed; transform:none; box-shadow:none; }
+
+    .form{
+      display:grid;
+      gap: 10px;
+      margin-top: 10px;
+    }
+    textarea{
+      width:100%;
+      min-height: 110px;
+      resize: vertical;
+      border: 1px solid rgba(2, 6, 23, 0.12);
+      border-radius: 14px;
+      padding: 11px 12px;
+      font-weight: 700;
+      background: rgba(248,250,252,0.9);
+      box-sizing:border-box;
+    }
+    textarea:focus{ outline:none; border-color: rgba(37, 99, 235, 0.45); box-shadow: 0 0 0 3px var(--focus); }
+
+    .checkRow{
+      display:flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      align-items:center;
+    }
+    .check{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      padding: 8px 10px;
+      border-radius: 14px;
+      border: 1px solid rgba(2, 6, 23, 0.10);
+      background: rgba(248,250,252,0.9);
+      font-weight: 850;
+      cursor:pointer;
+      user-select:none;
+    }
+    .check input{ transform: scale(1.1); }
+
+    .toastHost{
+      position: fixed;
+      right: 16px;
+      bottom: 16px;
+      display:grid;
+      gap: 10px;
+      z-index: 2147483645;
+    }
+    .toast{
+      max-width: 360px;
+      padding: 12px 12px;
+      border-radius: 16px;
+      color: #fff;
+      background: rgba(15,23,42,0.92);
+      box-shadow: 0 18px 40px rgba(0,0,0,0.22);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border: 1px solid rgba(255,255,255,0.12);
+      animation: toastIn .18s ease-out;
+      font-weight: 750;
+      line-height: 1.35;
+    }
+    .toast.ok{ background: rgba(22,163,74,0.92); }
+    .toast.warn{ background: rgba(245,158,11,0.92); }
+    @keyframes toastIn{ from{opacity:0; transform: translateY(10px);} to{opacity:1; transform: translateY(0);} }
+
+    .sr-only{
+      position:absolute;
+      width:1px;height:1px;
+      padding:0;margin:-1px;
+      overflow:hidden;clip:rect(0,0,0,0);
+      white-space:nowrap;border:0;
+    }
+  </style>
+  <link rel="stylesheet" href="../../exercise-layout.css">
+  <script defer src="../../exercise-layout.js"></script>
+</head>
+<body>
+  <div class="back-home" style="max-width:1100px;margin:10px auto 0;padding:0 20px;">
+    <a class="back-home__link" href="../../index.html" style="display:inline-flex;align-items:center;gap:6px;text-decoration:none;color:#004c6d;font-weight:700;border:1px solid #cfdff0;padding:6px 14px;border-radius:999px;background:#fff;box-shadow:0 2px 4px rgba(0,0,0,0.08);">← Retour à l’index</a>
+  </div>
+  <script src="../shared/proactif-exercise.js"></script>
+  <div class="exercise-shell">
+    <main class="exercise-card">
+
+      <div class="app" id="app">
+        <div class="top">
+          <div class="topRow">
+            <h1>🔎 Site de recherche d’emploi (simulation)</h1>
+	            <div class="tabs" role="tablist" aria-label="Navigation">
+	              <button class="tab" role="tab" id="tab-search" aria-selected="true" aria-controls="view-search" type="button">Rechercher</button>
+	              <button class="tab" role="tab" id="tab-fav" aria-selected="false" aria-controls="view-fav" type="button">Favoris</button>
+	              <button class="tab" role="tab" id="tab-track" aria-selected="false" aria-controls="view-track" type="button">Candidatures</button>
+	              <button class="tab" role="tab" id="tab-proofs" aria-selected="false" aria-controls="view-proofs" type="button">Preuves (mensuel)</button>
+	              <button class="tab" role="tab" id="tab-ipa" aria-selected="false" aria-controls="view-ipa" type="button">IPA ORP (mensuel)</button>
+	            </div>
+		            <div class="meta">
+		              <span class="pill">Favoris : <span id="favCount">0</span>/2</span>
+		              <span class="pill">Candidatures : <span id="applyCount">0</span>/1</span>
+		              <span class="pill">Relances : <span id="followCount">0</span>/1</span>
+		              <span class="pill">IPA ORP : <span id="ipaCount">0</span>/1</span>
+		            </div>
+		          </div>
+
+		          <div class="progressWrap">
+		            <div class="steps" aria-label="Objectifs">
+		              <span class="step" id="step-fav">⭐ Ajouter 2 favoris</span>
+		              <span class="step" id="step-apply">📨 Envoyer 1 candidature</span>
+		              <span class="step" id="step-follow">📩 Envoyer 1 relance</span>
+		              <span class="step" id="step-ipa">🗓️ Remplir IPA ORP (mois)</span>
+		            </div>
+		            <button class="resetBtn" id="resetBtn" type="button">Réinitialiser</button>
+		          </div>
+
+          <div class="guideWrap">
+            <details class="guide" open>
+              <summary>🧭 Consignes (exercice)</summary>
+		              <ol class="guideList">
+		                <li>Choisissez un métier et une ville, puis utilisez au moins 1 filtre (taux/contrat/horaires).</li>
+		                <li>Ouvrez 2 annonces, comparez les exigences, puis ajoutez-les en favoris.</li>
+		                <li>Postulez à 1 annonce: rédigez un message personnalisé (zone vide), ajoutez au moins 1 pièce jointe.</li>
+		                <li>Depuis “Candidatures”, envoyez 1 relance courte et polie après votre candidature.</li>
+		                <li>Dans “IPA ORP (mensuel)”, remplissez et enregistrez le formulaire du mois.</li>
+		                <li>Astuce: utilisez la section “Aide” si vous manquez d’inspiration (conseils seulement, modèle à insérer).</li>
+		              </ol>
+            </details>
+          </div>
+        </div>
+
+        <div class="content">
+          <div id="view-search" role="tabpanel" aria-labelledby="tab-search">
+            <div class="grid">
+              <section class="card">
+                <div class="searchRow">
+                  <div class="field">
+                    <label for="q">Métier / mot-clé</label>
+                    <input id="q" type="text" placeholder="Ex : nettoyage, cuisine, logistique…" autocomplete="off" />
+                  </div>
+                  <div class="field">
+                    <label for="city">Ville</label>
+                    <input id="city" type="text" placeholder="Ex : Lausanne, Renens…" autocomplete="off" />
+                  </div>
+                </div>
+
+                <div class="searchRow">
+                  <div class="field">
+                    <label for="rate">Taux</label>
+                    <select id="rate">
+                      <option value="">Tous</option>
+                      <option value="40-60">40–60%</option>
+                      <option value="60-80">60–80%</option>
+                      <option value="80-100">80–100%</option>
+                    </select>
+                  </div>
+                  <div class="field">
+                    <label for="type">Contrat</label>
+                    <select id="type">
+                      <option value="">Tous</option>
+                      <option value="CDI">CDI</option>
+                      <option value="CDD">CDD</option>
+                      <option value="Temporaire">Temporaire</option>
+                      <option value="Stage">Stage</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div class="filters" aria-label="Filtres rapides">
+                  <button class="chip" type="button" data-filter="morning" aria-pressed="false">☀️ Matin</button>
+                  <button class="chip" type="button" data-filter="evening" aria-pressed="false">🌙 Soir</button>
+                  <button class="chip" type="button" data-filter="no-heavy" aria-pressed="false">🚫 Charges lourdes</button>
+                  <button class="chip" type="button" data-filter="no-experience" aria-pressed="false">🎓 Sans expérience</button>
+                </div>
+
+                <div class="resultsHeader">
+                  <h2>Résultats</h2>
+                  <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;justify-content:flex-end;">
+                    <button class="btn ghost" id="clearFiltersBtn" type="button">Effacer filtres</button>
+                    <div class="muted"><span id="resultCount">0</span> annonce(s)</div>
+                  </div>
+                </div>
+
+                <div class="list" id="results" aria-label="Liste des annonces"></div>
+              </section>
+
+              <aside class="card side" id="panel">
+                <p class="panelTitle" id="panelTitle">Ouvrez une annonce</p>
+                <div class="panelText" id="panelText">Cliquez sur une annonce à gauche pour voir les détails et postuler.</div>
+                <div class="panelActions" id="panelActions" style="display:none"></div>
+                <div class="sr-only" id="panelLive" aria-live="polite"></div>
+              </aside>
+            </div>
+          </div>
+
+          <div id="view-fav" role="tabpanel" aria-labelledby="tab-fav" hidden>
+            <div class="card">
+              <h2 style="margin:0 0 10px;font-size:16px;color:#0b3b7a;">⭐ Vos favoris</h2>
+              <p class="muted" style="margin:0 0 10px;">Objectif : en enregistrer au moins 2.</p>
+              <div class="list" id="favList"></div>
+            </div>
+          </div>
+
+	          <div id="view-track" role="tabpanel" aria-labelledby="tab-track" hidden>
+	            <div class="card">
+	              <h2 style="margin:0 0 10px;font-size:16px;color:#0b3b7a;">📨 Suivi des candidatures</h2>
+	              <p class="muted" style="margin:0 0 10px;">Objectif : envoyer 1 candidature et 1 relance.</p>
+	              <div class="list" id="trackList"></div>
+	            </div>
+	          </div>
+
+	          <div id="view-proofs" role="tabpanel" aria-labelledby="tab-proofs" hidden>
+	            <div class="card">
+	              <h2 style="margin:0 0 10px;font-size:16px;color:#0b3b7a;">🧾 Preuves – feuille de recherche d’emploi (mensuel)</h2>
+	              <p class="muted" style="margin:0 0 10px;">Chaque mois, notez vos démarches (candidatures, appels, visites, entretiens). Les “Aides” sont des conseils seulement.</p>
+
+	              <div class="searchRow">
+	                <div class="field">
+	                  <label for="proofsMonth">Mois</label>
+	                  <input id="proofsMonth" type="month" />
+	                </div>
+	                <div class="field">
+	                  <label>Total démarches (mois)</label>
+	                  <input id="proofsCount" type="text" value="0" readonly />
+	                </div>
+	              </div>
+
+	              <div class="form" style="margin-top:0">
+	                <div class="searchRow">
+	                  <div class="field">
+	                    <label for="proofDate">Date</label>
+	                    <input id="proofDate" type="date" />
+	                  </div>
+	                  <div class="field">
+	                    <label for="proofAction">Type de démarche</label>
+	                    <select id="proofAction">
+	                      <option value="Candidature">Candidature</option>
+	                      <option value="Appel">Appel</option>
+	                      <option value="Email">Email</option>
+	                      <option value="Visite">Visite</option>
+	                      <option value="Entretien">Entretien</option>
+	                      <option value="Autre">Autre</option>
+	                    </select>
+	                  </div>
+	                </div>
+
+	                <div class="searchRow">
+	                  <div class="field">
+	                    <label for="proofCompany">Entreprise / organisme</label>
+	                    <input id="proofCompany" type="text" placeholder="Ex : Marché & Co" />
+	                  </div>
+	                  <div class="field">
+	                    <label for="proofRole">Poste / objet</label>
+	                    <input id="proofRole" type="text" placeholder="Ex : Mise en rayon (80%)" />
+	                  </div>
+	                </div>
+
+	                <div class="searchRow">
+	                  <div class="field">
+	                    <label for="proofResult">Résultat</label>
+	                    <select id="proofResult">
+	                      <option value="En attente">En attente</option>
+	                      <option value="Refus">Refus</option>
+	                      <option value="Positif">Positif</option>
+	                      <option value="Rappel">Rappel / suivi</option>
+	                    </select>
+	                  </div>
+	                  <div class="field">
+	                    <label for="proofEvidence">Preuve (texte)</label>
+	                    <input id="proofEvidence" type="text" placeholder="Ex : capture email, annonce, note appel…" />
+	                  </div>
+	                </div>
+
+	                <div class="field">
+	                  <label for="proofNote">Remarque (optionnel)</label>
+	                  <input id="proofNote" type="text" placeholder="Ex : relancer dans 7 jours" />
+	                </div>
+
+	                <div class="panelActions" style="margin-top:2px">
+	                  <button class="btn primary" type="button" id="addProofBtn">Ajouter à la feuille</button>
+	                  <button class="btn ghost" type="button" id="clearProofsMonthBtn">Effacer ce mois</button>
+	                </div>
+	              </div>
+
+	              <div class="list" id="proofsList" style="margin-top:12px"></div>
+	            </div>
+	          </div>
+
+	          <div id="view-ipa" role="tabpanel" aria-labelledby="tab-ipa" hidden>
+	            <div class="card">
+	              <h2 style="margin:0 0 10px;font-size:16px;color:#0b3b7a;">🗓️ Formulaire IPA ORP (mensuel)</h2>
+	              <p class="muted" style="margin:0 0 10px;">Chaque mois, remplissez votre synthèse (objectifs, actions, difficultés). Les “Aides” sont des conseils seulement.</p>
+
+	              <div class="searchRow">
+	                <div class="field">
+	                  <label for="ipaMonth">Mois</label>
+	                  <input id="ipaMonth" type="month" />
+	                </div>
+	                <div class="field">
+	                  <label>Statut</label>
+	                  <input id="ipaStatus" type="text" value="Non enregistré" readonly />
+	                </div>
+	              </div>
+
+		              <div class="form" style="margin-top:0">
+                    <div class="field">
+                      <label for="ipaFullName">Nom / prénom</label>
+                      <input id="ipaFullName" type="text" placeholder="Ex : Prénom Nom" />
+                    </div>
+
+                    <div class="searchRow">
+                      <div class="field">
+                        <label for="ipaAdvisor">Conseiller·ère ORP (optionnel)</label>
+                        <input id="ipaAdvisor" type="text" placeholder="Ex : Mme Dupont" />
+                      </div>
+                      <div class="field">
+                        <label for="ipaProofsAuto">Démarches enregistrées (Preuves, mois)</label>
+                        <input id="ipaProofsAuto" type="text" value="0" readonly />
+                      </div>
+                    </div>
+
+                    <div class="field">
+                      <label>1) Êtes-vous disponible pour travailler durant ce mois ?</label>
+                      <div class="checkRow">
+                        <label class="check"><input type="radio" name="ipaAvailable" id="ipaAvailableYes" value="Oui"> Oui</label>
+                        <label class="check"><input type="radio" name="ipaAvailable" id="ipaAvailableNo" value="Non"> Non</label>
+                      </div>
+                      <div class="muted" style="margin-top:6px">Si non, expliquez brièvement la raison (maladie, rendez-vous, garde, etc.).</div>
+                      <input id="ipaAvailabilityNote" type="text" placeholder="Raison (si non)" style="margin-top:8px" />
+                    </div>
+
+                    <div class="searchRow">
+                      <div class="field">
+                        <label for="ipaProofsExtra">Démarches ajoutées (hors Preuves)</label>
+                        <input id="ipaProofsExtra" type="number" min="0" step="1" placeholder="0" />
+                      </div>
+                      <div class="field">
+                        <label for="ipaTotalSteps">Total démarches (mois)</label>
+                        <input id="ipaTotalSteps" type="text" value="0" readonly />
+                      </div>
+                    </div>
+
+                    <div class="searchRow">
+                      <div class="field">
+                        <label for="ipaInterviews">2) Entretiens obtenus (nombre)</label>
+                        <input id="ipaInterviews" type="number" min="0" step="1" placeholder="0" />
+                      </div>
+                      <div class="field">
+                        <label for="ipaTraining">3) Atelier / formation (si oui, lequel ?)</label>
+                        <input id="ipaTraining" type="text" placeholder="Ex : atelier CV, cours…" />
+                      </div>
+                    </div>
+
+                    <div class="field">
+                      <label>4) Besoin d’aide (conseils seulement)</label>
+                      <div class="checkRow">
+                        <label class="check"><input type="checkbox" id="ipaNeedCv"> CV</label>
+                        <label class="check"><input type="checkbox" id="ipaNeedLetter"> Lettre</label>
+                        <label class="check"><input type="checkbox" id="ipaNeedInterview"> Entretien</label>
+                        <label class="check"><input type="checkbox" id="ipaNeedTargeting"> Ciblage annonces</label>
+                        <label class="check"><input type="checkbox" id="ipaNeedOther"> Autre</label>
+                      </div>
+                      <input id="ipaNeedsNote" type="text" placeholder="Précisez (si besoin)" style="margin-top:8px" />
+                    </div>
+
+		                <div class="field">
+		                  <label for="ipaGoals">Synthèse – Objectifs du mois</label>
+		                  <textarea id="ipaGoals" placeholder="Ex : envoyer 8 candidatures, relancer 4, améliorer le CV…"></textarea>
+		                </div>
+		                <div class="field">
+		                  <label for="ipaDone">Synthèse – Actions réalisées</label>
+		                  <textarea id="ipaDone" placeholder="Ex : candidatures envoyées, appels, entretiens, ateliers…"></textarea>
+		                </div>
+		                <div class="field">
+		                  <label for="ipaPlanned">Synthèse – Actions prévues (prochain mois)</label>
+		                  <textarea id="ipaPlanned" placeholder="Ex : cibler 2 secteurs, contacter 5 entreprises, suivre une formation…"></textarea>
+		                </div>
+		                <div class="field">
+		                  <label for="ipaDifficulties">Synthèse – Difficultés / besoins</label>
+		                  <textarea id="ipaDifficulties" placeholder="Ex : manque d’offres, horaires, besoin d’aide pour la lettre…"></textarea>
+		                </div>
+
+	                <div class="helpBox">
+	                  <details class="help">
+	                    <summary>💡 Aide (conseils seulement): structure suggérée</summary>
+	                    <div class="muted" style="margin-top:8px">Idée: 3 objectifs clairs + 5 actions réalisées + 3 actions prévues + 1 difficulté + 1 demande d’aide.</div>
+	                    <div class="miniRow">
+	                      <button class="miniBtn" type="button" id="insertIpaTemplate">Insérer un exemple</button>
+	                    </div>
+	                    <pre class="template" id="ipaTemplate"></pre>
+	                  </details>
+	                </div>
+
+	                <div class="field">
+	                  <label for="ipaNotes">Remarques (optionnel)</label>
+	                  <textarea id="ipaNotes" placeholder="Ex : disponibilité, mobilité, contraintes…"></textarea>
+	                </div>
+
+	                <div class="panelActions" style="margin-top:2px">
+	                  <button class="btn success" type="button" id="saveIpaBtn">Enregistrer</button>
+	                  <button class="btn ghost" type="button" id="clearIpaMonthBtn">Effacer ce mois</button>
+	                </div>
+	              </div>
+	            </div>
+	          </div>
+	        </div>
+	      </div>
+
+      <div class="toastHost" id="toastHost" aria-live="polite"></div>
+
+      <script>
+		        const STORAGE_PREFIX = 'proactif_site_recherche_emploi_v1:';
+			        const MIN_FAV = 2;
+			        const MIN_APPLY = 1;
+			        const MIN_FOLLOW = 1;
+              const MIN_IPA = 1;
+			        const MIN_MESSAGE_LEN = 70;
+	            const MIN_FOLLOW_MESSAGE_LEN = 50;
+
+	        const els = {
+	          tabs: {
+	            search: document.getElementById('tab-search'),
+	            fav: document.getElementById('tab-fav'),
+	            track: document.getElementById('tab-track'),
+              proofs: document.getElementById('tab-proofs'),
+              ipa: document.getElementById('tab-ipa')
+	          },
+	          views: {
+	            search: document.getElementById('view-search'),
+	            fav: document.getElementById('view-fav'),
+	            track: document.getElementById('view-track'),
+              proofs: document.getElementById('view-proofs'),
+              ipa: document.getElementById('view-ipa')
+	          },
+	          q: document.getElementById('q'),
+	          city: document.getElementById('city'),
+	          rate: document.getElementById('rate'),
+	          type: document.getElementById('type'),
+          chips: Array.from(document.querySelectorAll('.chip[data-filter]')),
+          results: document.getElementById('results'),
+          resultCount: document.getElementById('resultCount'),
+          panel: document.getElementById('panel'),
+          panelTitle: document.getElementById('panelTitle'),
+          panelText: document.getElementById('panelText'),
+          panelActions: document.getElementById('panelActions'),
+          panelLive: document.getElementById('panelLive'),
+	          favCount: document.getElementById('favCount'),
+	          applyCount: document.getElementById('applyCount'),
+	          followCount: document.getElementById('followCount'),
+	          ipaCount: document.getElementById('ipaCount'),
+	          favList: document.getElementById('favList'),
+	          trackList: document.getElementById('trackList'),
+	          stepFav: document.getElementById('step-fav'),
+	          stepApply: document.getElementById('step-apply'),
+	          stepFollow: document.getElementById('step-follow'),
+	          stepIpa: document.getElementById('step-ipa'),
+	          resetBtn: document.getElementById('resetBtn'),
+	          clearFiltersBtn: document.getElementById('clearFiltersBtn'),
+	          toastHost: document.getElementById('toastHost'),
+
+            // Preuves (mensuel)
+            proofsMonth: document.getElementById('proofsMonth'),
+            proofsCount: document.getElementById('proofsCount'),
+            proofDate: document.getElementById('proofDate'),
+            proofAction: document.getElementById('proofAction'),
+            proofCompany: document.getElementById('proofCompany'),
+            proofRole: document.getElementById('proofRole'),
+            proofResult: document.getElementById('proofResult'),
+            proofEvidence: document.getElementById('proofEvidence'),
+            proofNote: document.getElementById('proofNote'),
+            addProofBtn: document.getElementById('addProofBtn'),
+            clearProofsMonthBtn: document.getElementById('clearProofsMonthBtn'),
+            proofsList: document.getElementById('proofsList'),
+
+            // IPA ORP (mensuel)
+            ipaMonth: document.getElementById('ipaMonth'),
+            ipaStatus: document.getElementById('ipaStatus'),
+            ipaFullName: document.getElementById('ipaFullName'),
+            ipaAdvisor: document.getElementById('ipaAdvisor'),
+            ipaProofsAuto: document.getElementById('ipaProofsAuto'),
+            ipaAvailableYes: document.getElementById('ipaAvailableYes'),
+            ipaAvailableNo: document.getElementById('ipaAvailableNo'),
+            ipaAvailabilityNote: document.getElementById('ipaAvailabilityNote'),
+            ipaProofsExtra: document.getElementById('ipaProofsExtra'),
+            ipaTotalSteps: document.getElementById('ipaTotalSteps'),
+            ipaInterviews: document.getElementById('ipaInterviews'),
+            ipaTraining: document.getElementById('ipaTraining'),
+            ipaNeedCv: document.getElementById('ipaNeedCv'),
+            ipaNeedLetter: document.getElementById('ipaNeedLetter'),
+            ipaNeedInterview: document.getElementById('ipaNeedInterview'),
+            ipaNeedTargeting: document.getElementById('ipaNeedTargeting'),
+            ipaNeedOther: document.getElementById('ipaNeedOther'),
+            ipaNeedsNote: document.getElementById('ipaNeedsNote'),
+            ipaGoals: document.getElementById('ipaGoals'),
+            ipaDone: document.getElementById('ipaDone'),
+            ipaPlanned: document.getElementById('ipaPlanned'),
+            ipaDifficulties: document.getElementById('ipaDifficulties'),
+            ipaNotes: document.getElementById('ipaNotes'),
+            saveIpaBtn: document.getElementById('saveIpaBtn'),
+            clearIpaMonthBtn: document.getElementById('clearIpaMonthBtn'),
+            insertIpaTemplate: document.getElementById('insertIpaTemplate'),
+            ipaTemplate: document.getElementById('ipaTemplate')
+	        };
+
+        function norm(s){
+          return String(s || '')
+            .toLowerCase()
+            .normalize('NFD')
+            .replace(/[\\u0300-\\u036f]/g, '')
+            .trim();
+        }
+
+	        function toast(msg, kind){
+	          const t = document.createElement('div');
+	          t.className = 'toast ' + (kind || '');
+	          t.textContent = String(msg || '');
+	          els.toastHost.appendChild(t);
+	          setTimeout(() => { try { t.remove(); } catch (e) {} }, 2400);
+	        }
+
+          function isPlainObject(x){
+            return !!x && typeof x === 'object' && !Array.isArray(x);
+          }
+
+          function monthKeyNow(){
+            const d = new Date();
+            return String(d.getFullYear()) + '-' + String(d.getMonth() + 1).padStart(2, '0');
+          }
+
+          function safeMonthKey(value){
+            return /^\d{4}-\d{2}$/.test(String(value || '')) ? String(value) : monthKeyNow();
+          }
+
+          function isoDateNow(){
+            const d = new Date();
+            return String(d.getFullYear()) + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+          }
+
+	        const jobs = [
+	          { id:'j1', title:'Agent·e de nettoyage – bureaux', company:'Léman Propre SA', city:'Lausanne', rate:60, type:'CDI', schedule:'Matin', heavy:false, experience:'Sans', tags:['nettoyage','bureaux','sanitaires'], salary:'Dès 22 CHF/h', start:'Dès que possible', place:'Quartier Malley', tasks:['Sols et surfaces', 'Sanitaires', 'Gestion simple du matériel'], desc:'Nettoyage de bureaux (sols, poussière, sanitaires). Travail autonome. Horaires 06h–10h. Formation sur place.', requirements:['Fiabilité', 'Ponctualité', 'Autonomie'], applyHint:'Dites clairement vos disponibilités (jours + heures) et votre expérience même courte.' },
+	          { id:'j2', title:'Aide de cuisine (froid / plonge)', company:'Brasserie du Parc', city:'Renens', rate:70, type:'CDD', schedule:'Matin', heavy:false, experience:'Débutant', tags:['cuisine','plonge','restauration'], salary:'Forfait selon expérience', start:'01.02', place:'Renens centre', tasks:['Préparations froides', 'Plonge', 'Nettoyage poste'], desc:'Préparations simples (salades), plonge, nettoyage du poste. Horaires 09h–15h. Ambiance d’équipe, rythme régulier.', requirements:['Hygiène', 'Rythme régulier', 'Esprit d’équipe'], applyHint:'Expliquez ce que vous savez faire en cuisine (même à la maison) et votre motivation.' },
+	          { id:'j3', title:'Préparateur·trice de commandes (léger)', company:'LogiFast', city:'Prilly', rate:50, type:'Temporaire', schedule:'Matin', heavy:false, experience:'Sans', tags:['logistique','colis','scan'], salary:'Dès 21 CHF/h', start:'Sous 10 jours', place:'Zone industrielle', tasks:['Picking (petits colis)', 'Étiquetage', 'Rangement'], desc:'Préparation de petits colis, étiquetage, rangement. Charges légères. Horaires 08h–12h. Formation 1 jour.', requirements:['Organisation', 'Soin', 'Ponctualité'], applyHint:'Mettez en avant votre rigueur, votre rapidité et votre disponibilité.' },
+	          { id:'j4', title:'Employé·e de vente (mise en rayon)', company:'Marché & Co', city:'Vevey', rate:80, type:'CDI', schedule:'Jour', heavy:false, experience:'Débutant', tags:['vente','rayon','magasin'], salary:'Selon CCT', start:'01.03', place:'Centre-ville', tasks:['Mise en rayon', 'Contrôle dates', 'Aide client'], desc:'Mise en rayon, rangement, contrôle dates. Contact client. Horaires variables (pas de caisse).', requirements:['Politesse', 'Sens du service', 'Flexibilité'], applyHint:'Soulignez votre sens du service et votre flexibilité sur les horaires.' },
+	          { id:'j5', title:'Nettoyage centre commercial', company:'Clean+ Services', city:'Lausanne', rate:80, type:'CDD', schedule:'Soir', heavy:false, experience:'Exp', tags:['nettoyage','centre commercial','entretien'], salary:'Dès 23 CHF/h', start:'Immédiat', place:'Centre commercial', tasks:['Nettoyage zones communes', 'Gestion déchets', 'Contrôle propreté'], desc:'Nettoyage zones fréquentées. Horaires 18h–23h. Rythme soutenu, équipe sur place.', requirements:['Rapidité', 'Endurance', 'Expérience appréciée'], applyHint:'Expliquez comment vous tenez un rythme soutenu et votre expérience du nettoyage.' },
+	          { id:'j6', title:'Manutention (charges lourdes)', company:'TransBox', city:'Bussigny', rate:100, type:'Temporaire', schedule:'Jour', heavy:true, experience:'Exp', tags:['manutention','logistique','déchargement'], salary:'25 CHF/h', start:'Semaine prochaine', place:'Entrepôt', tasks:['Déchargement', 'Tri palettes', 'Mise en zone'], desc:'Déchargement, port de charges 20–30 kg. Horaires 07h–16h. Équipement fourni.', requirements:['Bonne condition physique', 'Respect sécurité'], applyHint:'Mentionnez votre expérience et votre attention aux règles de sécurité.' },
+	          { id:'j7', title:'Serveur·euse – brasserie', company:'Brasserie du Centre', city:'Lausanne', rate:80, type:'CDI', schedule:'Soir', heavy:false, experience:'Exp', tags:['service','restaurant','bar'], salary:'Selon expérience + pourboires', start:'Dès que possible', place:'Centre', tasks:['Service en salle', 'Encaissement occasionnel', 'Mise en place'], desc:'Service en salle, encaissement occasionnel. Horaires 17h–23h. Bonne ambiance, clientèle régulière.', requirements:['Rapidité', 'Présentation', 'Expérience souhaitée'], applyHint:'Mettez en avant votre expérience, votre sens du contact et votre disponibilité.' },
+	          { id:'j8', title:'Aide en buanderie', company:'Clinique des Rives', city:'Morges', rate:60, type:'CDI', schedule:'Matin', heavy:false, experience:'Sans', tags:['buanderie','linge','tri'], salary:'Selon CCT', start:'01.02', place:'Morges', tasks:['Tri linge', 'Pliage', 'Rangement'], desc:'Tri, pliage, rangement du linge. Travail régulier. Horaires 07h–12h. Travail soigné.', requirements:['Soin', 'Régularité', 'Discrétion'], applyHint:'Expliquez votre goût pour les tâches régulières et votre sens du détail.' },
+	          { id:'j9', title:'Aide de production (emballage)', company:'AlimPro', city:'Ecublens', rate:80, type:'CDD', schedule:'Jour', heavy:false, experience:'Débutant', tags:['production','emballage','qualité'], salary:'Dès 22 CHF/h', start:'Immédiat', place:'Zone industrielle', tasks:['Emballage', 'Étiquetage', 'Contrôle visuel'], desc:'Emballage, étiquetage, contrôle visuel. Gestes répétitifs simples. Horaires 08h–16h.', requirements:['Concentration', 'Régularité', 'Hygiène'], applyHint:'Expliquez votre rigueur et votre capacité à répéter une tâche sans perdre en qualité.' },
+	          { id:'j10', title:'Aide cafétéria (service midi)', company:'Campus Café', city:'Lausanne', rate:60, type:'CDI', schedule:'Matin', heavy:false, experience:'Sans', tags:['cafeteria','service','nettoyage'], salary:'Selon CCT', start:'01.03', place:'Campus', tasks:['Service boissons', 'Nettoyage tables', 'Petite préparation'], desc:'Service boissons simples, nettoyage tables, petite préparation. Horaires 08h–14h. Contact client.', requirements:['Politesse', 'Propreté', 'Ponctualité'], applyHint:'Dites que vous aimez le contact, que vous êtes fiable et à l’aise dans un service simple.' },
+	          { id:'j11', title:'Entretien des espaces verts (léger)', company:'Ville de Pully (sous-traitance)', city:'Pully', rate:60, type:'Temporaire', schedule:'Jour', heavy:false, experience:'Débutant', tags:['jardin','entretien','extérieur'], salary:'Dès 21 CHF/h', start:'Selon météo', place:'Pully', tasks:['Ramassage', 'Arrosage', 'Nettoyage zones'], desc:'Ramassage, arrosage, nettoyage des zones. Travail extérieur. Horaires 08h–15h.', requirements:['Ponctualité', 'Autonomie', 'Aimer l’extérieur'], applyHint:'Expliquez que vous aimez travailler dehors et que vous suivez bien les consignes.' },
+	          { id:'j12', title:'Stage – aide administrative', company:'Association Horizon', city:'Lausanne', rate:60, type:'Stage', schedule:'Jour', heavy:false, experience:'Sans', tags:['administratif','accueil','classement'], salary:'Indemnité de stage', start:'01.02', place:'Lausanne', tasks:['Classement', 'Scan', 'Accueil ponctuel'], desc:'Classement simple, scan, mise en ordre de dossiers, accueil ponctuel. Horaires 09h–16h.', requirements:['Organisation', 'Discrétion', 'Sérieux'], applyHint:'Mettez en avant votre motivation à apprendre, votre sérieux et votre sens de l’organisation.' },
+            { id:'j13', title:'Agent·e d’entretien – école', company:'ServiceNet', city:'Lausanne', rate:50, type:'CDD', schedule:'Soir', heavy:false, experience:'Débutant', tags:['nettoyage','école'], salary:'Selon CCT', start:'Immédiat', place:'Lausanne', tasks:['Salles de classe', 'Couloirs', 'Sanitaires'], desc:'Entretien d’une école après les cours. Horaires 17h30–21h30. Formation 2 jours.', requirements:['Fiabilité', 'Autonomie'], applyHint:'Précisez votre disponibilité en soirée et votre sens des responsabilités.' },
+            { id:'j14', title:'Réassortisseur·euse – magasin', company:'MiniMarket', city:'Montreux', rate:40, type:'Temporaire', schedule:'Matin', heavy:false, experience:'Sans', tags:['mise en rayon','stock'], salary:'Dès 21 CHF/h', start:'Sous 1 semaine', place:'Montreux', tasks:['Réassort', 'Rangement réserve', 'Étiquetage'], desc:'Réassort matinal avant ouverture. Horaires 06h–10h. Tâches simples, rythme régulier.', requirements:['Ponctualité', 'Rigueur'], applyHint:'Dites que vous êtes ponctuel(le) et que vous aimez un travail structuré.' },
+            { id:'j15', title:'Aide déménagement (ponctuel)', company:'MoveNow', city:'Nyon', rate:80, type:'Temporaire', schedule:'Jour', heavy:true, experience:'Exp', tags:['déménagement','manutention'], salary:'25 CHF/h', start:'À la mission', place:'Nyon', tasks:['Port de cartons', 'Protection meubles', 'Chargement'], desc:'Missions ponctuelles 1–3 jours. Port de charges. Départs tôt le matin.', requirements:['Bonne condition physique', 'Esprit d’équipe'], applyHint:'Expliquez votre expérience et votre capacité à travailler en équipe.' },
+            { id:'j16', title:'Employé·e d’étage – hôtel', company:'Hôtel du Lac', city:'Vevey', rate:60, type:'CDD', schedule:'Matin', heavy:false, experience:'Débutant', tags:['hôtel','ménage','chambres'], salary:'Selon CCT', start:'01.02', place:'Vevey', tasks:['Chambres', 'Linge', 'Parties communes'], desc:'Nettoyage des chambres, préparation linge, parties communes. Horaires 08h–13h.', requirements:['Soin', 'Discrétion', 'Rapidité'], applyHint:'Soulignez votre sens du détail, votre discrétion et votre rythme de travail.' },
+            { id:'j17', title:'Opérateur·trice – tri léger', company:'RecyTri', city:'Villars-Sainte-Croix', rate:80, type:'CDI', schedule:'Jour', heavy:false, experience:'Sans', tags:['tri','recyclage'], salary:'Dès 22 CHF/h', start:'Dès que possible', place:'Centre de tri', tasks:['Tri sur ligne', 'Contrôle qualité', 'Nettoyage poste'], desc:'Tri léger sur ligne (papier/plastique). Horaires 07h–15h. Travail debout.', requirements:['Concentration', 'Régularité'], applyHint:'Expliquez que vous êtes attentif(ve) et régulier(ère) dans votre travail.' },
+            { id:'j18', title:'Livreur·euse (à pied / léger)', company:'QuickFood', city:'Lausanne', rate:60, type:'Temporaire', schedule:'Soir', heavy:false, experience:'Sans', tags:['livraison','service'], salary:'À l’heure + bonus', start:'Immédiat', place:'Lausanne', tasks:['Livraison légère', 'Contact client', 'Respect délais'], desc:'Livraison de petites commandes en centre-ville. Horaires 18h–22h. Bonne condition de marche.', requirements:['Politesse', 'Ponctualité'], applyHint:'Indiquez votre disponibilité en soirée et votre sens du service.' }
+	        ];
+
+	        let state = {
+	          filters: { morning:false, evening:false, 'no-heavy':false, 'no-experience':false },
+	          selectedJobId: null,
+	          fav: [],
+	          applied: [], // {jobId, dateIso, messageLen, attachments}
+	          followups: [], // {jobId, dateIso, messageLen}
+            proofs: {}, // monthKey -> [{id,date,action,company,role,result,evidence,note}]
+            ipa: {} // monthKey -> {savedIso, fullName, advisor, available, availabilityNote, proofsExtra, interviews, training, needs, needsNote, goals, done, planned, difficulties, notes}
+	        };
+
+        function uniq(arr){
+          const seen = new Set();
+          const out = [];
+          (arr || []).forEach((x) => {
+            if (seen.has(x)) return;
+            seen.add(x);
+            out.push(x);
+          });
+          return out;
+        }
+
+        function dedupeApplied(list){
+          const byId = new Map();
+          (list || []).forEach((a) => {
+            if (!a || !a.jobId) return;
+            const existing = byId.get(a.jobId);
+            if (!existing) byId.set(a.jobId, a);
+            else {
+              const da = Date.parse(a.dateIso || '') || 0;
+              const de = Date.parse(existing.dateIso || '') || 0;
+              if (da >= de) byId.set(a.jobId, a);
+            }
+          });
+          return Array.from(byId.values());
+        }
+
+	        function load(){
+	          try{
+	            const raw = localStorage.getItem(STORAGE_PREFIX + 'state');
+	            if (!raw) return;
+	            const parsed = JSON.parse(raw);
+	            if (!parsed || typeof parsed !== 'object') return;
+
+              const proofs = isPlainObject(parsed.proofs) ? parsed.proofs : {};
+              const ipa = isPlainObject(parsed.ipa) ? parsed.ipa : {};
+
+	            state = {
+	              filters: Object.assign({ morning:false, evening:false, 'no-heavy':false, 'no-experience':false }, parsed.filters || {}),
+	              selectedJobId: parsed.selectedJobId || null,
+	              fav: Array.isArray(parsed.fav) ? parsed.fav : [],
+	              applied: Array.isArray(parsed.applied) ? parsed.applied : [],
+	              followups: Array.isArray(parsed.followups) ? parsed.followups : [],
+                proofs: {},
+                ipa: {}
+	            };
+
+              // proofs: keep only arrays per month
+              Object.keys(proofs).forEach((k) => {
+                const monthKey = safeMonthKey(k);
+                const list = Array.isArray(proofs[k]) ? proofs[k] : [];
+                state.proofs[monthKey] = list
+                  .filter(x => x && typeof x === 'object')
+                  .map((x) => ({
+                    id: String(x.id || ''),
+                    date: String(x.date || ''),
+                    action: String(x.action || ''),
+                    company: String(x.company || ''),
+                    role: String(x.role || ''),
+                    result: String(x.result || ''),
+                    evidence: String(x.evidence || ''),
+                    note: String(x.note || '')
+                  }))
+                  .filter(x => x.date || x.company || x.role || x.action);
+              });
+
+              // ipa: keep only objects per month
+              Object.keys(ipa).forEach((k) => {
+                const monthKey = safeMonthKey(k);
+                const v = isPlainObject(ipa[k]) ? ipa[k] : {};
+                state.ipa[monthKey] = {
+                  fullName: String(v.fullName || ''),
+                  advisor: String(v.advisor || ''),
+                  available: String(v.available || ''),
+                  availabilityNote: String(v.availabilityNote || ''),
+                  proofsExtra: String(v.proofsExtra || ''),
+                  interviews: String(v.interviews || ''),
+                  training: String(v.training || ''),
+                  needs: Array.isArray(v.needs) ? v.needs.map(x => String(x || '')).filter(Boolean) : [],
+                  needsNote: String(v.needsNote || ''),
+                  goals: String(v.goals || ''),
+                  done: String(v.done || ''),
+                  planned: String(v.planned || ''),
+                  difficulties: String(v.difficulties || ''),
+                  notes: String(v.notes || ''),
+                  savedIso: String(v.savedIso || '')
+                };
+              });
+	
+	            const validIds = new Set(jobs.map(j => j.id));
+	            state.fav = uniq(state.fav).filter(id => validIds.has(id));
+	            state.applied = dedupeApplied(state.applied).filter(a => a && validIds.has(a.jobId));
+	            state.followups = dedupeApplied(state.followups).filter(a => a && validIds.has(a.jobId));
+	            if (state.selectedJobId && !validIds.has(state.selectedJobId)) state.selectedJobId = null;
+	          }catch(e){}
+	        }
+
+        function save(){
+          try{ localStorage.setItem(STORAGE_PREFIX + 'state', JSON.stringify(state)); }catch(e){}
+        }
+
+	        function setTab(next){
+	          const tabs = ['search','fav','track','proofs','ipa'];
+	          tabs.forEach((t) => {
+	            const selected = t === next;
+	            els.tabs[t].setAttribute('aria-selected', selected ? 'true' : 'false');
+	            els.views[t].hidden = !selected;
+	          });
+	        }
+
+	        function matchesFilters(job){
+          const q = norm(els.q.value);
+          const city = norm(els.city.value);
+          const rate = els.rate.value;
+          const type = els.type.value;
+          const f = state.filters;
+
+	          if (q) {
+	            const hay = norm(
+                job.title + ' ' +
+                (job.company || '') + ' ' +
+                job.desc + ' ' +
+                (job.tasks || []).join(' ') + ' ' +
+                (job.requirements || []).join(' ') + ' ' +
+                (job.tags || []).join(' ')
+              );
+	            if (!hay.includes(q)) return false;
+	          }
+          if (city) {
+            if (!norm(job.city).includes(city)) return false;
+          }
+          if (type) {
+            if (job.type !== type) return false;
+          }
+          if (rate) {
+            const [a,b] = rate.split('-').map(x => parseInt(x,10));
+            if (!(job.rate >= a && job.rate <= b)) return false;
+          }
+          // Horaires : Matin / Soir. Si les deux sont cochés, on considère que c'est "tous".
+          if (f.morning && !f.evening && job.schedule !== 'Matin') return false;
+          if (f.evening && !f.morning && job.schedule !== 'Soir') return false;
+          if (f['no-heavy'] && job.heavy) return false;
+          if (f['no-experience'] && !(job.experience === 'Sans' || job.experience === 'Débutant')) return false;
+          return true;
+        }
+
+        function tagForJob(job){
+          if (job.type === 'CDI') return { text:'CDI', kind:'green' };
+          if (job.type === 'CDD') return { text:'CDD', kind:'amber' };
+          return { text: job.type, kind:'blue' };
+        }
+
+        function renderResults(){
+          const filtered = jobs.filter(matchesFilters);
+          els.resultCount.textContent = String(filtered.length);
+          els.results.innerHTML = '';
+
+          filtered.forEach((job) => {
+            const el = document.createElement('div');
+            el.className = 'job';
+            el.setAttribute('data-id', job.id);
+            el.setAttribute('role', 'button');
+            el.setAttribute('tabindex', '0');
+            el.setAttribute('aria-label', 'Ouvrir : ' + job.title + ' à ' + job.city);
+
+            const tag = tagForJob(job);
+            const isFav = state.fav.includes(job.id);
+            const isSelected = state.selectedJobId === job.id;
+            el.classList.toggle('job--selected', !!isSelected);
+
+            el.innerHTML =
+              '<div style="display:flex;align-items:flex-start;justify-content:space-between;gap:10px;">' +
+                '<div style="min-width:0">' +
+                  '<p class="jobTitle">' + job.title + '</p>' +
+                  '<div class="jobMeta">' +
+                    '<span>' + job.city + '</span>' +
+                    '<span>·</span>' +
+                    '<span>' + job.rate + '%</span>' +
+                    '<span>·</span>' +
+                    '<span>' + job.schedule + '</span>' +
+                    (job.heavy ? '<span>· charges</span>' : '<span>· léger</span>') +
+                  '</div>' +
+                '</div>' +
+                '<div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;justify-content:flex-end">' +
+                  '<span class="badge ' + tag.kind + '">' + tag.text + '</span>' +
+                  '<button class="starBtn" type="button" aria-label="' + (isFav ? 'Retirer des favoris' : 'Ajouter aux favoris') + '" aria-pressed="' + (isFav ? 'true' : 'false') + '" data-star="' + job.id + '">' + (isFav ? '★' : '☆') + '</button>' +
+                '</div>' +
+              '</div>';
+
+            el.addEventListener('click', () => openJob(job.id));
+            el.addEventListener('keydown', (ev) => {
+              if (ev.key === 'Enter' || ev.key === ' ') {
+                ev.preventDefault();
+                openJob(job.id);
+              }
+            });
+
+            const star = el.querySelector('[data-star]');
+            if (star) {
+              star.addEventListener('click', (ev) => {
+                ev.stopPropagation();
+                toggleFav(job.id);
+              });
+            }
+            els.results.appendChild(el);
+          });
+
+          if (!filtered.length) {
+            const empty = document.createElement('div');
+            empty.className = 'muted';
+            empty.style.padding = '8px 2px';
+            empty.textContent = 'Aucune annonce. Essayez un autre mot-clé ou retirez un filtre.';
+            els.results.appendChild(empty);
+          }
+        }
+
+	        function renderPanel(job){
+	          if (!job) {
+            els.panelTitle.textContent = 'Ouvrez une annonce';
+            els.panelText.textContent = 'Cliquez sur une annonce à gauche pour voir les détails et postuler.';
+            els.panelActions.style.display = 'none';
+            els.panelActions.innerHTML = '';
+            return;
+          }
+
+	          const isFav = state.fav.includes(job.id);
+	          els.panelTitle.textContent = job.title;
+	          els.panelText.innerHTML =
+              (job.company ? '<div class="badge blue" style="display:inline-flex;margin-top:8px">' + job.company + '</div>' : '') +
+	            '<div class="jobMeta" style="margin-top:8px">' +
+	              '<span>' + job.city + '</span><span>·</span><span>' + job.type + '</span><span>·</span><span>' + job.rate + '%</span><span>·</span><span>' + job.schedule + '</span>' +
+	            '</div>' +
+	            (job.salary ? '<div class="panelText"><strong>Rémunération :</strong> ' + job.salary + '</div>' : '') +
+	            (job.start ? '<div class="panelText"><strong>Début :</strong> ' + job.start + '</div>' : '') +
+              (job.place ? '<div class="panelText"><strong>Lieu :</strong> ' + job.place + '</div>' : '') +
+	            '<div class="panelText" style="margin-top:10px">' + job.desc + '</div>' +
+              (job.tasks && job.tasks.length ? '<div class="panelText"><strong>Tâches :</strong> ' + job.tasks.join(', ') + '</div>' : '') +
+	            '<div class="panelText"><strong>Exigences :</strong> ' + (job.requirements || []).join(', ') + '</div>' +
+	            '<div class="panelText"><strong>Conseil candidature :</strong> ' + job.applyHint + '</div>';
+
+          els.panelActions.style.display = 'flex';
+          els.panelActions.innerHTML = '';
+
+          const favBtn = document.createElement('button');
+          favBtn.type = 'button';
+          favBtn.className = 'btn ghost';
+          favBtn.textContent = isFav ? 'Retirer favori' : 'Ajouter favori';
+          favBtn.addEventListener('click', () => toggleFav(job.id));
+
+          const applyBtn = document.createElement('button');
+          applyBtn.type = 'button';
+          applyBtn.className = 'btn primary';
+          applyBtn.textContent = 'Postuler';
+          applyBtn.addEventListener('click', () => openApply(job.id));
+
+          els.panelActions.appendChild(favBtn);
+          els.panelActions.appendChild(applyBtn);
+        }
+
+        function openJob(id){
+          state.selectedJobId = id;
+          save();
+          const job = jobs.find(j => j.id === id);
+          renderPanel(job);
+          renderResults();
+          try { els.panelLive.textContent = 'Annonce ouverte : ' + (job ? job.title : ''); } catch (e) {}
+        }
+
+        function toggleFav(id){
+          const idx = state.fav.indexOf(id);
+          if (idx >= 0) state.fav.splice(idx, 1);
+          else state.fav.push(id);
+          save();
+          syncCounts();
+          renderResults();
+          renderFav();
+          renderPanel(jobs.find(j => j.id === state.selectedJobId));
+          toast(idx >= 0 ? 'Retiré des favoris.' : 'Ajouté aux favoris.', idx >= 0 ? '' : 'ok');
+          checkCompletion();
+        }
+
+	        function openApply(id){
+	          const job = jobs.find(j => j.id === id);
+	          if (!job) return;
+
+          els.panelTitle.textContent = 'Candidature – ' + job.title;
+          els.panelText.textContent = 'Rédigez un message court et choisissez au moins 1 pièce jointe.';
+          els.panelActions.style.display = 'block';
+
+	          const alreadyApplied = state.applied.some(a => a.jobId === id);
+	          const messageTemplate =
+	            'Bonjour,\\n\\nJe me permets de vous envoyer ma candidature pour le poste "' + job.title + '". ' +
+	            'Je suis motivé(e), sérieux(se) et disponible. ' +
+              'Je peux commencer rapidement et je m’adapte aux consignes.\\n\\n' +
+              'Je vous remercie pour votre retour.\\n\\n' +
+	            'Cordialement,\\n[Prénom Nom]\\n[Téléphone]';
+
+	          els.panelActions.innerHTML =
+	            '<div class="form">' +
+	              '<div class="field">' +
+	                '<label for="msg">Message</label>' +
+	                '<textarea id="msg" placeholder="Écrivez votre message..."></textarea>' +
+	                '<div class="muted" style="margin-top:6px">Minimum recommandé : ' + MIN_MESSAGE_LEN + ' caractères.</div>' +
+                  '<div class="helpBox">' +
+                    '<details class="help">' +
+	                      '<summary>💡 Aide (conseils seulement): structure + modèle</summary>' +
+	                      '<div class="muted" style="margin-top:8px">Conseils seulement: bonjour + poste, 2 qualités, disponibilité, formule de politesse.</div>' +
+                      '<div class="miniRow">' +
+                        '<button class="miniBtn" type="button" id="insertApplyTemplate">Insérer le modèle</button>' +
+                      '</div>' +
+                      '<pre class="template" id="applyTemplate"></pre>' +
+                    '</details>' +
+                  '</div>' +
+	              '</div>' +
+	              '<div class="field">' +
+	                '<label>Pièces jointes</label>' +
+	                '<div class="checkRow">' +
+	                  '<label class="check"><input type="checkbox" id="att-cv"> CV</label>' +
+	                  '<label class="check"><input type="checkbox" id="att-lm"> Lettre</label>' +
+	                  '<label class="check"><input type="checkbox" id="att-cert"> Certificats</label>' +
+	                '</div>' +
+	              '</div>' +
+	              '<div class="panelActions" style="margin-top:2px">' +
+	                '<button class="btn ghost" type="button" id="backToOffer">← Retour annonce</button>' +
+	                '<button class="btn success" type="button" id="sendApply">Envoyer</button>' +
+	              '</div>' +
+	              (alreadyApplied ? '<div class="muted" style="margin-top:6px">ℹ️ Vous avez déjà postulé à cette annonce (vous pouvez quand même envoyer à nouveau ici).</div>' : '') +
+	            '</div>';
+
+	          const msgEl = document.getElementById('msg');
+            const tplEl = document.getElementById('applyTemplate');
+            if (tplEl) tplEl.textContent = messageTemplate;
+            const insertTplBtn = document.getElementById('insertApplyTemplate');
+            if (insertTplBtn) {
+              insertTplBtn.addEventListener('click', () => {
+                if (!msgEl) return;
+                const already = (msgEl.value || '').trim().length > 0;
+                if (already && !confirm('Remplacer votre message par le modèle ?')) return;
+                msgEl.value = messageTemplate;
+                try { msgEl.focus(); } catch (e) {}
+              });
+            }
+
+	          const backBtn = document.getElementById('backToOffer');
+	          const sendBtn = document.getElementById('sendApply');
+	          if (backBtn) backBtn.addEventListener('click', () => openJob(id));
+	          if (sendBtn) sendBtn.addEventListener('click', () => sendApplication(id));
+	        }
+
+          function openFollowup(jobId){
+            const job = jobs.find(j => j.id === jobId);
+            if (!job) return;
+
+            els.panelTitle.textContent = 'Relance – ' + job.title;
+            els.panelText.textContent = 'Relancez de manière courte et polie (sans insister).';
+            els.panelActions.style.display = 'block';
+
+            const already = state.followups.some(f => f && f.jobId === jobId);
+            const followTemplate =
+              'Bonjour,\\n\\nJe me permets de revenir vers vous concernant ma candidature pour le poste "' + job.title + '". ' +
+              'Auriez-vous un retour à me partager ?\\n\\n' +
+              'Merci d’avance et belle journée.\\n\\n' +
+              'Cordialement,\\n[Prénom Nom]\\n[Téléphone]';
+
+            els.panelActions.innerHTML =
+              '<div class="form">' +
+                '<div class="field">' +
+                  '<label for="followMsg">Message de relance</label>' +
+                  '<textarea id="followMsg" placeholder="Écrivez votre relance..."></textarea>' +
+                  '<div class="muted" style="margin-top:6px">Minimum recommandé : ' + MIN_FOLLOW_MESSAGE_LEN + ' caractères.</div>' +
+                  '<div class="helpBox">' +
+                    '<details class="help">' +
+	                      '<summary>💡 Aide (conseils seulement): modèle de relance</summary>' +
+	                      '<div class="muted" style="margin-top:8px">Conseils seulement: rappel de la candidature + demande de retour + politesse.</div>' +
+                      '<div class="miniRow">' +
+                        '<button class="miniBtn" type="button" id="insertFollowTemplate">Insérer le modèle</button>' +
+                      '</div>' +
+                      '<pre class="template" id="followTemplate"></pre>' +
+                    '</details>' +
+                  '</div>' +
+                '</div>' +
+                '<div class="panelActions" style="margin-top:2px">' +
+                  '<button class="btn ghost" type="button" id="backToOffer2">← Retour annonce</button>' +
+                  '<button class="btn success" type="button" id="sendFollow">Envoyer la relance</button>' +
+                '</div>' +
+                (already ? '<div class="muted" style="margin-top:6px">ℹ️ Une relance existe déjà pour cette annonce (vous pouvez en envoyer une nouvelle ici).</div>' : '') +
+              '</div>';
+
+            const msgEl = document.getElementById('followMsg');
+            const tplEl = document.getElementById('followTemplate');
+            if (tplEl) tplEl.textContent = followTemplate;
+
+            const insertTplBtn = document.getElementById('insertFollowTemplate');
+            if (insertTplBtn) {
+              insertTplBtn.addEventListener('click', () => {
+                if (!msgEl) return;
+                const alreadyText = (msgEl.value || '').trim().length > 0;
+                if (alreadyText && !confirm('Remplacer votre message par le modèle ?')) return;
+                msgEl.value = followTemplate;
+                try { msgEl.focus(); } catch (e) {}
+              });
+            }
+
+            const backBtn = document.getElementById('backToOffer2');
+            const sendBtn = document.getElementById('sendFollow');
+            if (backBtn) backBtn.addEventListener('click', () => openJob(jobId));
+            if (sendBtn) sendBtn.addEventListener('click', () => sendFollowup(jobId));
+          }
+
+          function sendFollowup(jobId){
+            const msg = (document.getElementById('followMsg') && document.getElementById('followMsg').value) ? document.getElementById('followMsg').value.trim() : '';
+            if (msg.length < MIN_FOLLOW_MESSAGE_LEN) {
+              toast('Relance trop courte : ajoutez une phrase.', 'warn');
+              return;
+            }
+
+            const next = { jobId, dateIso: new Date().toISOString(), messageLen: msg.length };
+            const existingIdx = state.followups.findIndex(a => a && a.jobId === jobId);
+            if (existingIdx >= 0) state.followups[existingIdx] = next;
+            else state.followups.push(next);
+
+            save();
+            syncCounts();
+            renderTrack();
+            toast('Relance envoyée.', 'ok');
+
+            els.panelTitle.textContent = 'Relance envoyée ✅';
+            els.panelText.textContent = 'Bien joué. Vous pouvez suivre vos candidatures et relances dans l’onglet “Candidatures”.';
+            els.panelActions.style.display = 'flex';
+            els.panelActions.innerHTML = '';
+
+            const goTrack = document.createElement('button');
+            goTrack.type = 'button';
+            goTrack.className = 'btn primary';
+            goTrack.textContent = 'Voir candidatures';
+            goTrack.addEventListener('click', () => { setTab('track'); renderTrack(); });
+
+            const backOffer = document.createElement('button');
+            backOffer.type = 'button';
+            backOffer.className = 'btn ghost';
+            backOffer.textContent = 'Revenir à l’annonce';
+            backOffer.addEventListener('click', () => openJob(jobId));
+
+            els.panelActions.appendChild(goTrack);
+            els.panelActions.appendChild(backOffer);
+            checkCompletion();
+          }
+
+	        function sendApplication(jobId){
+          const msg = (document.getElementById('msg') && document.getElementById('msg').value) ? document.getElementById('msg').value.trim() : '';
+          const atts = {
+            cv: !!(document.getElementById('att-cv') && document.getElementById('att-cv').checked),
+            lm: !!(document.getElementById('att-lm') && document.getElementById('att-lm').checked),
+            cert: !!(document.getElementById('att-cert') && document.getElementById('att-cert').checked)
+          };
+          const countAtt = Object.values(atts).filter(Boolean).length;
+
+          if (msg.length < MIN_MESSAGE_LEN) {
+            toast('Message trop court : ajoutez quelques phrases.', 'warn');
+            return;
+          }
+          if (countAtt < 1) {
+            toast('Choisissez au moins 1 pièce jointe.', 'warn');
+            return;
+          }
+
+          const next = {
+            jobId,
+            dateIso: new Date().toISOString(),
+            messageLen: msg.length,
+            attachments: atts
+          };
+          const existingIdx = state.applied.findIndex(a => a && a.jobId === jobId);
+          if (existingIdx >= 0) state.applied[existingIdx] = next;
+          else state.applied.push(next);
+          save();
+          syncCounts();
+          renderTrack();
+          toast('Candidature envoyée.', 'ok');
+
+          els.panelTitle.textContent = 'Candidature envoyée ✅';
+          els.panelText.textContent = 'Bravo ! Vous pouvez ajouter d’autres favoris ou revenir au menu.';
+          els.panelActions.style.display = 'flex';
+          els.panelActions.innerHTML = '';
+
+          const goFav = document.createElement('button');
+          goFav.type = 'button';
+          goFav.className = 'btn primary';
+          goFav.textContent = 'Voir favoris';
+          goFav.addEventListener('click', () => { setTab('fav'); renderFav(); });
+
+          const goTrack = document.createElement('button');
+          goTrack.type = 'button';
+          goTrack.className = 'btn ghost';
+          goTrack.textContent = 'Voir candidatures';
+          goTrack.addEventListener('click', () => { setTab('track'); renderTrack(); });
+
+          els.panelActions.appendChild(goFav);
+          els.panelActions.appendChild(goTrack);
+
+          checkCompletion();
+        }
+
+        function syncCounts(){
+          const favCount = (state.fav || []).length;
+          const applyCount = dedupeApplied(state.applied || []).length;
+          const followCount = dedupeApplied(state.followups || []).length;
+          const monthKey = safeMonthKey(els.ipaMonth && els.ipaMonth.value ? els.ipaMonth.value : monthKeyNow());
+          const ipaSaved = !!(state.ipa && state.ipa[monthKey] && state.ipa[monthKey].savedIso);
+          els.favCount.textContent = String(favCount);
+          els.applyCount.textContent = String(applyCount);
+          els.followCount.textContent = String(followCount);
+          if (els.ipaCount) els.ipaCount.textContent = ipaSaved ? '1' : '0';
+          els.stepFav.classList.toggle('done', favCount >= MIN_FAV);
+          els.stepApply.classList.toggle('done', applyCount >= MIN_APPLY);
+          els.stepFollow.classList.toggle('done', followCount >= MIN_FOLLOW);
+          if (els.stepIpa) {
+            els.stepIpa.classList.toggle('done', ipaSaved);
+            els.stepIpa.textContent = '🗓️ Remplir IPA ORP (' + monthKey + ')';
+          }
+        }
+
+	        function renderFav(){
+          els.favList.innerHTML = '';
+          if (!state.fav.length) {
+            const empty = document.createElement('div');
+            empty.className = 'muted';
+            empty.textContent = 'Aucun favori pour le moment.';
+            els.favList.appendChild(empty);
+            return;
+          }
+	          state.fav.map(id => jobs.find(j => j.id === id)).filter(Boolean).forEach((job) => {
+	            const row = document.createElement('div');
+	            row.className = 'job';
+	            row.style.cursor = 'default';
+	            row.innerHTML =
+	              '<p class="jobTitle">' + job.title + '</p>' +
+	              '<div class="jobMeta"><span>' + job.city + '</span><span>·</span><span>' + (job.company || 'Entreprise') + '</span><span>·</span><span>' + job.type + '</span><span>·</span><span>' + job.rate + '%</span></div>' +
+                '<div class="panelText" style="margin-top:8px">' + job.desc + '</div>' +
+	              '<div class="panelActions" style="margin-top:10px">' +
+	                '<button class="btn ghost" type="button" data-open="' + job.id + '">Ouvrir</button>' +
+                  '<button class="btn primary" type="button" data-apply="' + job.id + '">Postuler</button>' +
+	                '<button class="btn" type="button" data-unfav="' + job.id + '">Retirer</button>' +
+	              '</div>';
+	            row.querySelector('[data-open]').addEventListener('click', () => { setTab('search'); openJob(job.id); });
+              row.querySelector('[data-apply]').addEventListener('click', () => { setTab('search'); openApply(job.id); });
+	            row.querySelector('[data-unfav]').addEventListener('click', () => toggleFav(job.id));
+	            els.favList.appendChild(row);
+	          });
+	        }
+
+	        function renderTrack(){
+          els.trackList.innerHTML = '';
+          const appliedList = dedupeApplied(state.applied || []).slice().sort((a, b) => {
+            const da = Date.parse(a.dateIso || '') || 0;
+            const db = Date.parse(b.dateIso || '') || 0;
+            return db - da;
+          });
+
+          if (!appliedList.length) {
+            const empty = document.createElement('div');
+            empty.className = 'muted';
+            empty.textContent = 'Aucune candidature envoyée pour le moment.';
+            els.trackList.appendChild(empty);
+            return;
+          }
+		          appliedList.forEach((a) => {
+	            const job = jobs.find(j => j.id === a.jobId);
+	            if (!job) return;
+              const follow = dedupeApplied(state.followups || []).find(f => f && f.jobId === job.id);
+	            const atts = [];
+	            if (a.attachments && a.attachments.cv) atts.push('CV');
+	            if (a.attachments && a.attachments.lm) atts.push('Lettre');
+	            if (a.attachments && a.attachments.cert) atts.push('Certificats');
+	            const row = document.createElement('div');
+	            row.className = 'job';
+	            row.style.cursor = 'default';
+	            row.innerHTML =
+	              '<p class="jobTitle">' + job.title + '</p>' +
+	              '<div class="jobMeta"><span>' + job.city + '</span><span>·</span><span>' + (job.company || 'Entreprise') + '</span><span>·</span><span>' + (new Date(a.dateIso)).toLocaleString('fr-CH') + '</span></div>' +
+	              '<div class="jobMeta"><span>Message : ' + a.messageLen + ' caractères</span><span>·</span><span>Pièces jointes : ' + atts.join(', ') + '</span></div>' +
+                '<div class="jobMeta"><span>Relance : ' + (follow ? (follow.messageLen + ' caractères (' + (new Date(follow.dateIso)).toLocaleDateString('fr-CH') + ')') : 'pas encore') + '</span></div>' +
+	              '<div class="panelActions" style="margin-top:10px">' +
+	                '<button class="btn ghost" type="button" data-open="' + job.id + '">Ouvrir annonce</button>' +
+                  '<button class="btn primary" type="button" data-follow="' + job.id + '">Relancer</button>' +
+	              '</div>';
+	            row.querySelector('[data-open]').addEventListener('click', () => { setTab('search'); openJob(job.id); });
+              row.querySelector('[data-follow]').addEventListener('click', () => { setTab('search'); openFollowup(job.id); });
+	            els.trackList.appendChild(row);
+		          });
+	        }
+
+          function renderProofs(){
+            if (!els.proofsMonth || !els.proofsList) return;
+            const monthKey = safeMonthKey(els.proofsMonth.value);
+            if (els.proofsMonth.value !== monthKey) els.proofsMonth.value = monthKey;
+            if (!isPlainObject(state.proofs)) state.proofs = {};
+
+            const list = Array.isArray(state.proofs[monthKey]) ? state.proofs[monthKey] : [];
+            const sorted = list.slice().sort((a, b) => {
+              const da = Date.parse((a && a.date) ? a.date : '') || 0;
+              const db = Date.parse((b && b.date) ? b.date : '') || 0;
+              return db - da;
+            });
+
+            if (els.proofsCount) els.proofsCount.value = String(sorted.length);
+            els.proofsList.innerHTML = '';
+
+            if (!sorted.length) {
+              const empty = document.createElement('div');
+              empty.className = 'muted';
+              empty.textContent = 'Aucune démarche enregistrée pour ce mois.';
+              els.proofsList.appendChild(empty);
+              return;
+            }
+
+            sorted.forEach((p) => {
+              const row = document.createElement('div');
+              row.className = 'job';
+              row.style.cursor = 'default';
+
+              const top = document.createElement('div');
+              top.style.display = 'flex';
+              top.style.alignItems = 'flex-start';
+              top.style.justifyContent = 'space-between';
+              top.style.gap = '10px';
+
+              const left = document.createElement('div');
+              left.style.minWidth = '0';
+
+              const title = document.createElement('p');
+              title.className = 'jobTitle';
+              title.textContent = (p.company ? p.company : 'Entreprise') + (p.role ? ' — ' + p.role : '');
+
+              const meta1 = document.createElement('div');
+              meta1.className = 'jobMeta';
+              meta1.textContent = (p.date || 'Date') + ' · ' + (p.action || 'Démarche') + ' · ' + (p.result || 'Résultat');
+
+              const meta2 = document.createElement('div');
+              meta2.className = 'jobMeta';
+              meta2.textContent = 'Preuve : ' + (p.evidence || '—') + (p.note ? ' · Note : ' + p.note : '');
+
+              left.appendChild(title);
+              left.appendChild(meta1);
+              left.appendChild(meta2);
+
+              const right = document.createElement('div');
+              right.style.display = 'flex';
+              right.style.gap = '8px';
+              right.style.alignItems = 'center';
+              right.style.flexWrap = 'wrap';
+              right.style.justifyContent = 'flex-end';
+
+              const del = document.createElement('button');
+              del.type = 'button';
+              del.className = 'btn ghost';
+              del.textContent = 'Supprimer';
+	              del.addEventListener('click', () => {
+	                const next = (Array.isArray(state.proofs[monthKey]) ? state.proofs[monthKey] : []).filter(x => x && x.id !== p.id);
+	                state.proofs[monthKey] = next;
+	                save();
+	                renderProofs();
+                renderIpa();
+                syncCounts();
+	                toast('Démarche supprimée.', '');
+	              });
+
+              right.appendChild(del);
+              top.appendChild(left);
+              top.appendChild(right);
+              row.appendChild(top);
+              els.proofsList.appendChild(row);
+            });
+          }
+
+          function addProof(){
+            const monthKey = safeMonthKey(els.proofsMonth && els.proofsMonth.value);
+            if (!isPlainObject(state.proofs)) state.proofs = {};
+            if (!Array.isArray(state.proofs[monthKey])) state.proofs[monthKey] = [];
+
+            const date = String((els.proofDate && els.proofDate.value) || '').trim();
+            const action = String((els.proofAction && els.proofAction.value) || '').trim();
+            const company = String((els.proofCompany && els.proofCompany.value) || '').trim();
+            const role = String((els.proofRole && els.proofRole.value) || '').trim();
+            const result = String((els.proofResult && els.proofResult.value) || '').trim();
+            const evidence = String((els.proofEvidence && els.proofEvidence.value) || '').trim();
+            const note = String((els.proofNote && els.proofNote.value) || '').trim();
+
+            if (!date) { toast('Ajoutez une date.', 'warn'); return; }
+            if (!company) { toast('Ajoutez une entreprise.', 'warn'); return; }
+            if (!action) { toast('Choisissez un type de démarche.', 'warn'); return; }
+
+            const entry = {
+              id: 'p_' + String(Date.now()) + '_' + String(Math.random()).slice(2, 8),
+              date, action, company, role, result, evidence, note
+            };
+	            state.proofs[monthKey].push(entry);
+	            save();
+	            renderProofs();
+              renderIpa();
+              syncCounts();
+	            toast('Démarche ajoutée.', 'ok');
+
+            if (els.proofCompany) els.proofCompany.value = '';
+            if (els.proofRole) els.proofRole.value = '';
+            if (els.proofEvidence) els.proofEvidence.value = '';
+            if (els.proofNote) els.proofNote.value = '';
+          }
+
+          function clearProofsMonth(){
+            const monthKey = safeMonthKey(els.proofsMonth && els.proofsMonth.value);
+            if (!confirm('Effacer toutes les démarches pour ' + monthKey + ' ?')) return;
+            if (!isPlainObject(state.proofs)) state.proofs = {};
+            state.proofs[monthKey] = [];
+            save();
+            renderProofs();
+            renderIpa();
+            syncCounts();
+            toast('Mois effacé.', '');
+          }
+
+          function proofCountForMonth(monthKey){
+            if (!isPlainObject(state.proofs)) return 0;
+            const list = Array.isArray(state.proofs[monthKey]) ? state.proofs[monthKey] : [];
+            return list.length;
+          }
+
+          function readInt(inputEl){
+            const raw = String(inputEl && inputEl.value ? inputEl.value : '').trim();
+            if (!raw) return 0;
+            const n = parseInt(raw, 10);
+            return Number.isFinite(n) && n > 0 ? n : 0;
+          }
+
+          function updateIpaTotals(monthKey){
+            const auto = proofCountForMonth(monthKey);
+            const extra = readInt(els.ipaProofsExtra);
+            if (els.ipaProofsAuto) els.ipaProofsAuto.value = String(auto);
+            if (els.ipaTotalSteps) els.ipaTotalSteps.value = String(auto + extra);
+          }
+
+          function renderIpa(){
+            if (!els.ipaMonth) return;
+            const monthKey = safeMonthKey(els.ipaMonth.value);
+            if (els.ipaMonth.value !== monthKey) els.ipaMonth.value = monthKey;
+            if (!isPlainObject(state.ipa)) state.ipa = {};
+
+            const v = isPlainObject(state.ipa[monthKey]) ? state.ipa[monthKey] : {};
+            if (els.ipaFullName) els.ipaFullName.value = String(v.fullName || '');
+            if (els.ipaAdvisor) els.ipaAdvisor.value = String(v.advisor || '');
+
+            const avail = String(v.available || '');
+            if (els.ipaAvailableYes) els.ipaAvailableYes.checked = (avail === 'Oui');
+            if (els.ipaAvailableNo) els.ipaAvailableNo.checked = (avail === 'Non');
+            if (els.ipaAvailabilityNote) els.ipaAvailabilityNote.value = String(v.availabilityNote || '');
+            if (els.ipaAvailabilityNote) els.ipaAvailabilityNote.disabled = (avail !== 'Non');
+
+            if (els.ipaProofsExtra) els.ipaProofsExtra.value = String(v.proofsExtra || '');
+            updateIpaTotals(monthKey);
+
+            if (els.ipaInterviews) els.ipaInterviews.value = String(v.interviews || '');
+            if (els.ipaTraining) els.ipaTraining.value = String(v.training || '');
+
+            const needs = Array.isArray(v.needs) ? v.needs : [];
+            if (els.ipaNeedCv) els.ipaNeedCv.checked = needs.includes('CV');
+            if (els.ipaNeedLetter) els.ipaNeedLetter.checked = needs.includes('Lettre');
+            if (els.ipaNeedInterview) els.ipaNeedInterview.checked = needs.includes('Entretien');
+            if (els.ipaNeedTargeting) els.ipaNeedTargeting.checked = needs.includes('Ciblage');
+            if (els.ipaNeedOther) els.ipaNeedOther.checked = needs.includes('Autre');
+            if (els.ipaNeedsNote) els.ipaNeedsNote.value = String(v.needsNote || '');
+
+            if (els.ipaGoals) els.ipaGoals.value = String(v.goals || '');
+            if (els.ipaDone) els.ipaDone.value = String(v.done || '');
+            if (els.ipaPlanned) els.ipaPlanned.value = String(v.planned || '');
+            if (els.ipaDifficulties) els.ipaDifficulties.value = String(v.difficulties || '');
+            if (els.ipaNotes) els.ipaNotes.value = String(v.notes || '');
+
+            const savedIso = String(v.savedIso || '');
+            if (els.ipaStatus) {
+              els.ipaStatus.value = savedIso ? ('Enregistré le ' + (new Date(savedIso)).toLocaleString('fr-CH')) : 'Non enregistré';
+            }
+
+            if (els.ipaTemplate) {
+              els.ipaTemplate.textContent =
+                'Objectifs:\\n- Envoyer 8 candidatures ciblées\\n- Faire 4 relances\\n- Mettre à jour le CV\\n\\n' +
+                'Actions réalisées:\\n- 6 candidatures envoyées (nettoyage, logistique)\\n- 2 appels à des entreprises\\n\\n' +
+                'Actions prévues:\\n- Contacter 5 entreprises (spontanées)\\n- Améliorer la lettre\\n\\n' +
+                'Difficultés / besoins:\\n- Besoin d’aide pour cibler les annonces et la formulation de la lettre';
+            }
+          }
+
+          function saveIpa(){
+            const monthKey = safeMonthKey(els.ipaMonth && els.ipaMonth.value);
+            if (!isPlainObject(state.ipa)) state.ipa = {};
+
+            const available =
+              (els.ipaAvailableYes && els.ipaAvailableYes.checked) ? 'Oui' :
+              (els.ipaAvailableNo && els.ipaAvailableNo.checked) ? 'Non' : '';
+
+            if (!available) {
+              toast('IPA: choisissez Oui/Non pour la disponibilité.', 'warn');
+              return;
+            }
+            const availabilityNote = String((els.ipaAvailabilityNote && els.ipaAvailabilityNote.value) || '').trim();
+            if (available === 'Non' && !availabilityNote) {
+              toast('IPA: si non disponible, indiquez une raison.', 'warn');
+              return;
+            }
+
+            const needs = [];
+            if (els.ipaNeedCv && els.ipaNeedCv.checked) needs.push('CV');
+            if (els.ipaNeedLetter && els.ipaNeedLetter.checked) needs.push('Lettre');
+            if (els.ipaNeedInterview && els.ipaNeedInterview.checked) needs.push('Entretien');
+            if (els.ipaNeedTargeting && els.ipaNeedTargeting.checked) needs.push('Ciblage');
+            if (els.ipaNeedOther && els.ipaNeedOther.checked) needs.push('Autre');
+
+            state.ipa[monthKey] = {
+              fullName: String((els.ipaFullName && els.ipaFullName.value) || ''),
+              advisor: String((els.ipaAdvisor && els.ipaAdvisor.value) || ''),
+              available,
+              availabilityNote,
+              proofsExtra: String((els.ipaProofsExtra && els.ipaProofsExtra.value) || ''),
+              interviews: String((els.ipaInterviews && els.ipaInterviews.value) || ''),
+              training: String((els.ipaTraining && els.ipaTraining.value) || ''),
+              needs,
+              needsNote: String((els.ipaNeedsNote && els.ipaNeedsNote.value) || ''),
+              goals: String((els.ipaGoals && els.ipaGoals.value) || ''),
+              done: String((els.ipaDone && els.ipaDone.value) || ''),
+              planned: String((els.ipaPlanned && els.ipaPlanned.value) || ''),
+              difficulties: String((els.ipaDifficulties && els.ipaDifficulties.value) || ''),
+              notes: String((els.ipaNotes && els.ipaNotes.value) || ''),
+              savedIso: new Date().toISOString()
+            };
+            save();
+            renderIpa();
+            syncCounts();
+            toast('IPA ORP enregistré.', 'ok');
+            checkCompletion();
+          }
+
+          function clearIpaMonth(){
+            const monthKey = safeMonthKey(els.ipaMonth && els.ipaMonth.value);
+            if (!confirm('Effacer le formulaire IPA ORP pour ' + monthKey + ' ?')) return;
+            if (!isPlainObject(state.ipa)) state.ipa = {};
+            delete state.ipa[monthKey];
+            save();
+            renderIpa();
+            syncCounts();
+            toast('Mois effacé.', '');
+            checkCompletion();
+          }
+
+          function insertIpaTemplate(){
+            const fields = [els.ipaFullName, els.ipaAdvisor, els.ipaAvailabilityNote, els.ipaTraining, els.ipaNeedsNote, els.ipaGoals, els.ipaDone, els.ipaPlanned, els.ipaDifficulties];
+            const hasText = fields.some(el => el && String(el.value || '').trim().length > 0);
+            if (hasText && !confirm('Remplacer le contenu par un exemple ?')) return;
+            if (els.ipaAvailableYes) els.ipaAvailableYes.checked = true;
+            if (els.ipaAvailableNo) els.ipaAvailableNo.checked = false;
+            if (els.ipaNeedCv) els.ipaNeedCv.checked = true;
+            if (els.ipaNeedLetter) els.ipaNeedLetter.checked = false;
+            if (els.ipaNeedInterview) els.ipaNeedInterview.checked = false;
+            if (els.ipaNeedTargeting) els.ipaNeedTargeting.checked = true;
+            if (els.ipaNeedOther) els.ipaNeedOther.checked = false;
+            if (els.ipaGoals) els.ipaGoals.value = 'Envoyer 8 candidatures ciblées, faire 4 relances, mettre à jour le CV.';
+            if (els.ipaDone) els.ipaDone.value = 'Candidatures envoyées, appels, entretiens/ateliers (si applicable).';
+            if (els.ipaPlanned) els.ipaPlanned.value = 'Cibler un secteur, contacter des entreprises, améliorer lettre + CV.';
+            if (els.ipaDifficulties) els.ipaDifficulties.value = 'Difficulté principale + demande d’aide (ex : lettre, ciblage, entretien).';
+            updateIpaTotals(safeMonthKey(els.ipaMonth && els.ipaMonth.value ? els.ipaMonth.value : monthKeyNow()));
+            try { (els.ipaGoals || els.ipaFullName) && (els.ipaGoals || els.ipaFullName).focus(); } catch (e) {}
+          }
+
+	        let doneOnce = false;
+	        function checkCompletion(){
+	          if (doneOnce) return;
+            const monthKey = safeMonthKey(els.ipaMonth && els.ipaMonth.value ? els.ipaMonth.value : monthKeyNow());
+            const ipaCount = (state.ipa && state.ipa[monthKey] && state.ipa[monthKey].savedIso) ? 1 : 0;
+	          const ok =
+	            ((state.fav || []).length >= MIN_FAV) &&
+	            (dedupeApplied(state.applied || []).length >= MIN_APPLY) &&
+	            (dedupeApplied(state.followups || []).length >= MIN_FOLLOW) &&
+              (ipaCount >= MIN_IPA);
+	          if (!ok) return;
+	          doneOnce = true;
+	          toast('Objectifs atteints : exercice terminé.', 'ok');
+	          try { window.proactifMarkExerciseDone && window.proactifMarkExerciseDone(); } catch (e) { }
+	        }
+
+        function clearFilters(){
+          state.filters = { morning:false, evening:false, 'no-heavy':false, 'no-experience':false };
+          save();
+          els.q.value = '';
+          els.city.value = '';
+          els.rate.value = '';
+          els.type.value = '';
+          els.chips.forEach((c) => c.setAttribute('aria-pressed','false'));
+          renderResults();
+          toast('Filtres effacés.', '');
+        }
+
+		        function resetAll(){
+		          if (!confirm('Réinitialiser la simulation ?')) return;
+		          state = { filters: { morning:false, evening:false, 'no-heavy':false, 'no-experience':false }, selectedJobId: null, fav: [], applied: [], followups: [], proofs: {}, ipa: {} };
+		          doneOnce = false;
+		          try { localStorage.removeItem(STORAGE_PREFIX + 'state'); } catch (e) {}
+          els.q.value = '';
+          els.city.value = '';
+          els.rate.value = '';
+          els.type.value = '';
+          els.chips.forEach((c) => c.setAttribute('aria-pressed','false'));
+          syncCounts();
+          renderPanel(null);
+	          renderResults();
+	          renderFav();
+		          renderTrack();
+              renderProofs();
+              renderIpa();
+		          setTab('search');
+		          toast('Réinitialisé.', '');
+		        }
+
+	        function init(){
+	          load();
+
+	          function selectTab(name){
+	            setTab(name);
+	            if (name === 'search') {
+	              try { els.q.focus(); } catch (e) {}
+	            } else if (name === 'fav') {
+	              renderFav();
+	            } else if (name === 'track') {
+	              renderTrack();
+              } else if (name === 'proofs') {
+                renderProofs();
+              } else {
+                renderIpa();
+	            }
+	          }
+
+	          els.tabs.search.addEventListener('click', () => selectTab('search'));
+	          els.tabs.fav.addEventListener('click', () => selectTab('fav'));
+	          els.tabs.track.addEventListener('click', () => selectTab('track'));
+            if (els.tabs.proofs) els.tabs.proofs.addEventListener('click', () => selectTab('proofs'));
+            if (els.tabs.ipa) els.tabs.ipa.addEventListener('click', () => selectTab('ipa'));
+
+	          // Tabs keyboard navigation (Left/Right)
+	          [els.tabs.search, els.tabs.fav, els.tabs.track, els.tabs.proofs, els.tabs.ipa].filter(Boolean).forEach((tab) => {
+	            tab.addEventListener('keydown', (ev) => {
+	              if (ev.key !== 'ArrowLeft' && ev.key !== 'ArrowRight') return;
+	              ev.preventDefault();
+	              const order = ['search','fav','track','proofs','ipa'];
+                const byId = { 'tab-search':'search', 'tab-fav':'fav', 'tab-track':'track', 'tab-proofs':'proofs', 'tab-ipa':'ipa' };
+	              const current = byId[tab.id] || 'search';
+	              const idx = order.indexOf(current);
+	              const dir = ev.key === 'ArrowRight' ? 1 : -1;
+	              const next = order[(idx + dir + order.length) % order.length];
+	              els.tabs[next].focus();
+	              selectTab(next);
+	            });
+	          });
+
+            // Defaults for monthly forms
+            const nowMonth = monthKeyNow();
+            if (els.proofsMonth) els.proofsMonth.value = safeMonthKey(els.proofsMonth.value || nowMonth);
+            if (els.ipaMonth) els.ipaMonth.value = safeMonthKey(els.ipaMonth.value || nowMonth);
+            if (els.proofDate && !els.proofDate.value) els.proofDate.value = isoDateNow();
+
+            if (els.proofsMonth) els.proofsMonth.addEventListener('change', renderProofs);
+            if (els.addProofBtn) els.addProofBtn.addEventListener('click', addProof);
+            if (els.clearProofsMonthBtn) els.clearProofsMonthBtn.addEventListener('click', clearProofsMonth);
+
+            if (els.ipaMonth) els.ipaMonth.addEventListener('change', () => { renderIpa(); syncCounts(); checkCompletion(); });
+            if (els.ipaProofsExtra) els.ipaProofsExtra.addEventListener('input', () => {
+              const monthKey = safeMonthKey(els.ipaMonth && els.ipaMonth.value ? els.ipaMonth.value : monthKeyNow());
+              updateIpaTotals(monthKey);
+            });
+            if (els.ipaAvailableYes) els.ipaAvailableYes.addEventListener('change', () => {
+              if (els.ipaAvailabilityNote) els.ipaAvailabilityNote.disabled = true;
+            });
+            if (els.ipaAvailableNo) els.ipaAvailableNo.addEventListener('change', () => {
+              if (els.ipaAvailabilityNote) {
+                els.ipaAvailabilityNote.disabled = false;
+                try { els.ipaAvailabilityNote.focus(); } catch (e) {}
+              }
+            });
+            if (els.saveIpaBtn) els.saveIpaBtn.addEventListener('click', saveIpa);
+            if (els.clearIpaMonthBtn) els.clearIpaMonthBtn.addEventListener('click', clearIpaMonth);
+            if (els.insertIpaTemplate) els.insertIpaTemplate.addEventListener('click', insertIpaTemplate);
+
+	          els.q.addEventListener('input', renderResults);
+	          els.city.addEventListener('input', renderResults);
+	          els.rate.addEventListener('change', renderResults);
+	          els.type.addEventListener('change', renderResults);
+
+          els.chips.forEach((chip) => {
+            chip.addEventListener('click', () => {
+              const key = chip.getAttribute('data-filter');
+              const next = !state.filters[key];
+              state.filters[key] = next;
+              chip.setAttribute('aria-pressed', next ? 'true' : 'false');
+              save();
+              renderResults();
+            });
+          });
+
+          if (els.clearFiltersBtn) els.clearFiltersBtn.addEventListener('click', clearFilters);
+          els.resetBtn.addEventListener('click', resetAll);
+
+          // apply stored filter UI
+          els.chips.forEach((chip) => {
+            const key = chip.getAttribute('data-filter');
+            chip.setAttribute('aria-pressed', state.filters[key] ? 'true' : 'false');
+          });
+
+	          syncCounts();
+	          renderResults();
+	          renderFav();
+	          renderTrack();
+            renderProofs();
+            renderIpa();
+	          if (state.selectedJobId) renderPanel(jobs.find(j => j.id === state.selectedJobId));
+	          else renderPanel(null);
+	          checkCompletion();
+	        }
+
+        init();
+      </script>
+
+    </main>
+  </div>
+</body>
+</html>

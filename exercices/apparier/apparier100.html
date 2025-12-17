@@ -1,0 +1,808 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>Exercice – Apparier</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --blue:#2980ff;
+    --green:#1a8c6d;
+    --light:#eef5ff;
+    --card:white;
+    --shadow:0 6px 20px rgba(0,0,0,.12);
+  }
+
+  body{
+    margin:0;
+    font-family:'Open Sans', sans-serif;
+    background:linear-gradient(155deg,#dff3ff,#c9f7e7);
+    padding:20px;
+    color:#003a52;
+  }
+
+  header{
+    text-align:center;
+    background:rgba(255,255,255,0.55);
+    padding:35px 20px;
+    border-radius:22px;
+    backdrop-filter:blur(10px);
+    box-shadow:var(--shadow);
+    margin-bottom:30px;
+  }
+
+  h1{
+    margin:0;
+    font-size:2rem;
+    font-weight:700;
+    letter-spacing:1px;
+  }
+
+  #scoreBox{
+    margin-top:12px;
+    font-weight:600;
+    font-size:1.2rem;
+  }
+
+  .progress-wrapper{
+    width:100%;
+    max-width:600px;
+    margin:20px auto 0 auto;
+    height:14px;
+    background:#cfe2ff;
+    border-radius:12px;
+    box-shadow:inset 0 2px 6px rgba(0,0,0,.1);
+  }
+
+  #progressBar{
+    height:100%;
+    width:0%;
+    background:var(--green);
+    border-radius:12px;
+    transition:0.3s;
+  }
+
+  #seriesProgressContainer{
+    margin-top:-10px;
+    height:12px;
+    background:#e6e6e6;
+    border-radius:12px;
+    box-shadow:inset 0 2px 6px rgba(0,0,0,.1);
+  }
+
+  #seriesProgressBar{
+    height:100%;
+    width:0%;
+    background:var(--blue);
+    border-radius:12px;
+    transition:0.4s;
+  }
+
+  .container{
+    max-width:900px;
+    margin:auto;
+    display:flex;
+    gap:40px;
+    justify-content:center;
+    flex-wrap:wrap;
+  }
+
+  .col{
+    background:var(--card);
+    padding:25px;
+    border-radius:18px;
+    box-shadow:var(--shadow);
+    width:320px;
+  }
+
+  .item{
+    background:#eef3f9;
+    padding:14px;
+    border-radius:14px;
+    margin-bottom:12px;
+    cursor:pointer;
+    transition:.25s;
+    display:flex;
+    align-items:center;
+    font-size:1.1rem;
+    font-weight:600;
+  }
+
+  .item:hover{
+    background:#d8eaff;
+    transform:translateX(3px);
+  }
+
+  .selected{
+    border:2px solid var(--green);
+    background:#d6fff0 !important;
+    box-shadow:0 12px 24px rgba(26,140,109,0.18);
+    transform:translateX(3px);
+  }
+
+  .correct{
+    background:#c4ffd8 !important;
+    border:2px solid #2ecc71;
+    animation:pairPop .3s ease;
+  }
+
+  .wrong{
+    background:#ffd2d2 !important;
+    border:2px solid #ff4d4d;
+    animation:pairShake .35s ease;
+  }
+
+  @keyframes pairPop{
+    0%{transform:scale(0.96);}
+    60%{transform:scale(1.05);}
+    100%{transform:scale(1);}
+  }
+
+  @keyframes pairShake{
+    0%,100%{transform:translateX(0);}
+    25%{transform:translateX(-4px);}
+    50%{transform:translateX(4px);}
+    75%{transform:translateX(-3px);}
+  }
+
+  button{
+    margin:35px auto;
+    display:block;
+    padding:14px 26px;
+    border:none;
+    border-radius:14px;
+    background:var(--green);
+    color:white;
+    font-size:1.15rem;
+    cursor:pointer;
+    font-weight:700;
+    transition:0.25s;
+    box-shadow:var(--shadow);
+  }
+
+  button:hover{
+    background:#0f5d46;
+    transform:translateY(-2px);
+  }
+
+  .pair-guide{
+    display:flex;
+    gap:18px;
+    flex-wrap:wrap;
+    margin:0 auto 26px;
+    max-width:960px;
+  }
+
+  .pair-guide__card{
+    flex:1 1 260px;
+    background:rgba(255,255,255,0.85);
+    border-radius:18px;
+    padding:20px 24px;
+    box-shadow:var(--shadow);
+    border:1px solid rgba(0,58,82,0.08);
+  }
+
+  .pair-guide__card h3{
+    margin-top:0;
+    font-size:1.1rem;
+    color:#003a52;
+  }
+
+  .pair-guide__card ol{
+    padding-left:18px;
+    margin:12px 0 0;
+    line-height:1.5;
+  }
+
+  .pair-guide__card--accent{
+    background:linear-gradient(135deg,#eaf5ff,#fffaf0);
+  }
+
+  .pair-guide__card--accent p{
+    margin:0;
+    line-height:1.5;
+  }
+
+  .pair-guide__tips{
+    margin:12px 0 0;
+    padding:0;
+    list-style:none;
+  }
+
+  .pair-guide__tips li{
+    margin:6px 0;
+    display:flex;
+    gap:6px;
+    align-items:flex-start;
+  }
+
+  .pair-pill-row{
+    display:flex;
+    gap:8px;
+    flex-wrap:wrap;
+    justify-content:center;
+    margin-top:14px;
+  }
+
+  .pair-pill{
+    background:#003a52;
+    color:#fff;
+    padding:6px 14px;
+    border-radius:999px;
+    font-size:0.9rem;
+    font-weight:600;
+    box-shadow:var(--shadow);
+  }
+
+  .col-title{
+    margin:0 0 6px 0;
+    font-size:1.1rem;
+    font-weight:700;
+    color:#003a52;
+    display:flex;
+    align-items:center;
+    gap:8px;
+  }
+
+  .col-subtitle{
+    margin:0 0 14px 0;
+    font-size:0.95rem;
+    color:rgba(0,58,82,0.75);
+  }
+
+  .col-items{
+    display:flex;
+    flex-direction:column;
+  }
+
+  .pair-legend{
+    max-width:760px;
+    margin:18px auto 0;
+    display:flex;
+    flex-wrap:wrap;
+    gap:10px;
+    justify-content:center;
+  }
+
+  .pair-legend span{
+    background:rgba(255,255,255,0.85);
+    border-radius:12px;
+    padding:8px 14px;
+    font-weight:600;
+    color:#003a52;
+    box-shadow:var(--shadow);
+    border:1px solid rgba(0,58,82,0.08);
+  }
+
+  #summaryScreen table th{
+    background:#2980ff;
+    color:white;
+    padding:10px;
+    border-radius:8px;
+  }
+
+  #summaryScreen table td{
+    padding:10px;
+    border-bottom:1px solid #ddd;
+  }
+</style>
+  <link rel="stylesheet" href="../../exercise-layout.css">
+  <script defer src="../../exercise-layout.js"></script>
+</head>
+<body>
+
+<div class="back-home" style="position:fixed;bottom:24px;right:clamp(12px,4vw,40px);margin:0;padding:0;z-index:80;">
+  <a class="back-home__link" href="../../index.html" style="display:inline-flex;align-items:center;gap:6px;text-decoration:none;color:#004c6d;font-weight:700;border:1px solid #cfdff0;padding:10px 18px;border-radius:999px;background:#fff;box-shadow:0 10px 25px rgba(0,0,0,0.18);backdrop-filter:blur(4px);">← Menu</a>
+</div>
+<script src="../shared/proactif-exercise.js"></script>
+<div class="exercise-shell">
+  <main class="exercise-card">
+
+
+<header>
+  <h1>🔗 Apparier les paires</h1>
+  <div style="max-width:750px;margin:0 auto 15px auto;padding:18px 22px;background:white;border-radius:16px;box-shadow:0 4px 14px rgba(0,0,0,0.12);text-align:center;border-left:6px solid #1a8c6d;">
+    <p style="margin:0;font-size:1.15rem;font-weight:600;line-height:1.55;color:#003a52;">
+      👉 <b>Consignes :</b><br>
+      Associez chaque mot de gauche avec le mot correspondant à droite.<br>
+      ✔ Une bonne réponse devient <b>verte</b> et se verrouille.<br>
+      ✖ Une erreur clignote en <b>rouge</b>.<br>
+      🎯 Complétez les <b>10 paires</b> pour réussir l’exercice.
+    </p>
+  </div>
+  <div id="scoreBox" aria-live="polite" role="status">Série : 1 / 10 | Score : 0 / 10 | Erreurs : 0 | Total : 0✔ / 0✖</div>
+  <div class="pair-pill-row">
+    <span class="pair-pill">🎯 10 séries à compléter</span>
+    <span class="pair-pill">✅ 10 paires par série</span>
+    <span class="pair-pill">🧠 Mémoire & vocabulaire</span>
+  </div>
+  <div style="width:100%;max-width:600px;margin:15px auto 0 auto;height:14px;background:#cfe2ff;border-radius:10px;">
+    <div id="progressBar" style="height:100%;width:0%;background:#1a8c6d;border-radius:10px;transition:0.3s;"></div>
+  </div>
+</header>
+
+<section class="pair-guide">
+  <article class="pair-guide__card">
+    <h3>Étapes rapides</h3>
+    <ol>
+      <li>Sélectionnez un mot dans la colonne de gauche.</li>
+      <li>Cherchez l’action correspondante à droite puis cliquez.</li>
+      <li>Poursuivez jusqu’à valider les 10 paires de la série.</li>
+    </ol>
+  </article>
+  <article class="pair-guide__card pair-guide__card--accent">
+    <h3>Conseils pour réussir</h3>
+    <p>Restez attentif aux familles de mots (maison, travail, ville…). Une stratégie visuelle aide à retenir les liens.</p>
+    <ul class="pair-guide__tips">
+      <li>💡 Survolez les mots : les indices apparaissent dans leur contexte.</li>
+      <li>🔁 Utilisez “Recommencer la série” pour consolider un thème.</li>
+      <li>📋 Observez le récapitulatif final pour cibler les axes à revoir.</li>
+    </ul>
+  </article>
+</section>
+
+<div id="seriesProgressContainer" style="width:100%;max-width:600px;margin:10px auto;height:12px;background:#e6e6e6;border-radius:10px;display:block;">
+  <div id="seriesProgressBar" style="height:100%;width:0%;background:#2980ff;border-radius:10px;transition:0.4s;"></div>
+</div>
+
+<div id="summaryScreen" style="display:none;text-align:center;margin-top:40px;background:white;padding:30px;border-radius:18px;box-shadow:0 4px 20px rgba(0,0,0,0.15);max-width:600px;margin-left:auto;margin-right:auto;">
+  <h2>🎉 Exercice terminé !</h2>
+  <p id="finalMessage" style="font-size:1.2rem;font-weight:600;color:#003a52;"></p>
+  <table id="recapTable" style="width:100%;border-collapse:collapse;margin-top:20px;font-size:1.1rem;">
+    <tr><th>Série</th><th>Score</th><th>Erreurs</th></tr>
+  </table>
+  <button onclick="restartAll()" style="margin-top:25px;padding:12px 22px;border:none;border-radius:12px;background:#1a8c6d;color:white;font-size:18px;font-weight:bold;cursor:pointer;">🔄 Recommencer au début</button>
+</div>
+
+<div class="container">
+  <div class="col">
+    <h3 class="col-title">🅰️ Mots à associer</h3>
+    <p class="col-subtitle">Choisissez un mot ici pour initier une correspondance.</p>
+    <div class="col-items" id="leftCol"></div>
+  </div>
+  <div class="col">
+    <h3 class="col-title">🅱️ Actions correspondantes</h3>
+    <p class="col-subtitle">Cliquez ensuite sur l’action qui complète correctement la paire.</p>
+    <div class="col-items" id="rightCol"></div>
+  </div>
+</div>
+
+<div class="pair-legend">
+  <span>🟢 Vert = paire validée</span>
+  <span>🔴 Rouge = à revoir</span>
+  <span>📊 Objectif : 10 séries x 10 paires</span>
+</div>
+
+<button onclick="resetGame()">🔄 Recommencer la série</button>
+
+<script>
+// --------------------------------------------------
+// 🔥 100 PAIRES THÉMATIQUES (cohérentes A1/A2)
+// --------------------------------------------------
+const allPairs = [
+  // 🍎 Maison
+  ["lit", "dormir"], ["table", "manger"], ["chaise", "s'asseoir"], ["lampe", "lumière"], ["fenêtre", "ouvrir"],
+  ["porte", "entrée"], ["cuisine", "préparer"], ["frigo", "froid"], ["balai", "nettoyer"], ["douche", "se laver"],
+
+  // 🍽️ Nourriture
+  ["pomme", "fruit"], ["banane", "jaune"], ["pain", "boulangerie"], ["fromage", "lait"], ["eau", "boire"],
+  ["café", "chaud"], ["thé", "chaud"], ["riz", "cuisiner"], ["poulet", "viande"], ["salade", "légumes"],
+
+  // 🚌 Transports
+  ["bus", "transport"], ["train", "rails"], ["avion", "voler"], ["vélo", "rouler"], ["voiture", "route"],
+  ["camion", "charger"], ["métro", "ville"], ["bateau", "mer"], ["taxi", "payer"], ["scooter", "deux roues"],
+
+  // 🧑‍🔧 Travail
+  ["ordinateur", "travail"], ["clavier", "taper"], ["souris", "cliquer"], ["écran", "afficher"], ["stylo", "écrire"],
+  ["dossier", "document"], ["réunion", "parler"], ["chef", "responsable"], ["ouvrier", "chantier"], ["vendeur", "magasin"],
+
+  // 📝 Administration
+  ["ORP", "emploi"], ["rendez-vous", "date"], ["formulaire", "remplir"], ["signature", "signer"], ["attestation", "document"],
+  ["carte d'identité", "papier"], ["lettre", "envoyer"], ["bureau", "administration"], ["courrier", "poste"], ["guichet", "service"],
+
+  // 🏥 Santé
+  ["médecin", "soigner"], ["pharmacie", "médicaments"], ["ordonnance", "traitement"], ["fièvre", "thermomètre"], ["toux", "malade"],
+  ["sirop", "boire"], ["pansement", "blessure"], ["hôpital", "soins"], ["dentiste", "dents"], ["douleur", "mal"],
+
+  // 🧸 Objets du quotidien
+  ["clé", "ouvrir"], ["téléphone", "appeler"], ["sac", "porter"], ["montre", "heure"], ["bouteille", "eau"],
+  ["papier", "feuille"], ["crayon", "dessiner"], ["gomme", "effacer"], ["ciseaux", "couper"], ["colle", "coller"],
+
+  // 🏃 Verbes → actions
+  ["manger", "nourriture"], ["boire", "eau"], ["marcher", "pieds"], ["courir", "vite"], ["lire", "livre"],
+  ["écrire", "stylo"], ["ouvrir", "porte"], ["fermer", "porte"], ["travailler", "emploi"], ["écouter", "radio"],
+
+  // 🏙️ Ville / magasins
+  ["magasin", "acheter"], ["poste", "courrier"], ["banque", "argent"], ["école", "apprendre"], ["restaurant", "manger"],
+  ["pharmacie", "médicaments"], ["bibliothèque", "livres"], ["parc", "marcher"], ["cinéma", "film"], ["hôtel", "dormir"],
+
+  // 💻 Bureautique
+  ["souris", "cliquer"], ["clavier", "taper"], ["ordinateur", "écran"], ["USB", "mémoire"], ["imprimante", "imprimer"],
+  ["fichier", "document"], ["courriel", "envoyer"], ["logiciel", "programme"], ["fenêtre", "ouvrir"], ["réseau", "internet"]
+];
+
+const SERIES_LENGTH = 10;
+const totalSeries = 10;
+const STATE_KEY = 'apparier100_state_v2';
+
+let deck = [];
+let pairs = [];
+let leftItems = [];
+let rightItems = [];
+let selectedLeft = null;
+let score = 0;
+let series = 1;
+let globalScore = 0;
+let globalErrors = 0;
+let errors = 0;
+let recap = [];
+let pendingAdvance = false;
+let completedBySeries = {};
+
+initializePersistentState();
+
+function initializePersistentState(){
+  const saved = loadState();
+  if(saved){
+    deck = saved.deck;
+    series = clampSeries(saved.series);
+    score = clampScore(saved.score);
+    errors = Number(saved.errors) || 0;
+    globalScore = Number(saved.globalScore) || 0;
+    globalErrors = Number(saved.globalErrors) || 0;
+    recap = Array.isArray(saved.recap) ? saved.recap : [];
+    pendingAdvance = !!saved.pendingAdvance;
+    completedBySeries = normalizeCompletedMap(saved.completedBySeries);
+  } else {
+    deck = generateDeck();
+    completedBySeries = {};
+  }
+  pairs = getSeriesPairs(series);
+  const completedCount = getCompletedList(series).length;
+  if(completedCount > score){
+    score = clampScore(completedCount);
+  }
+}
+
+function clampSeries(value){
+  if(!Number.isInteger(value)) return 1;
+  return Math.min(Math.max(value, 1), totalSeries);
+}
+
+function clampScore(value){
+  if(!Number.isInteger(value)) return 0;
+  return Math.min(Math.max(value, 0), SERIES_LENGTH);
+}
+
+function generateDeck(){
+  return shuffle([...allPairs]);
+}
+
+function loadState(){
+  try{
+    const raw = JSON.parse(localStorage.getItem(STATE_KEY));
+    if(!raw || !Array.isArray(raw.deck) || raw.deck.length !== allPairs.length) return null;
+    return raw;
+  }catch(e){
+    return null;
+  }
+}
+
+function saveState(){
+  try{
+    localStorage.setItem(STATE_KEY, JSON.stringify({
+      deck,
+      series,
+      score,
+      errors,
+      globalScore,
+      globalErrors,
+      recap,
+      pendingAdvance,
+      completedBySeries
+    }));
+  }catch(e){}
+}
+
+function getSeriesPairs(idx){
+  const start = (idx - 1) * SERIES_LENGTH;
+  const subset = deck.slice(start, start + SERIES_LENGTH);
+  if(subset.length < SERIES_LENGTH){
+    deck = generateDeck();
+    return deck.slice(0, SERIES_LENGTH);
+  }
+  return subset;
+}
+
+//---------------------------------------------------
+// Mélange
+//---------------------------------------------------
+function shuffle(arr){
+  for(let i=arr.length-1;i>0;i--){
+    const j=Math.floor(Math.random()*(i+1));
+    [arr[i],arr[j]]=[arr[j],arr[i]];
+  }
+  return arr;
+}
+
+function normalizeCompletedMap(source){
+  if(!source || typeof source !== 'object') return {};
+  const normalized = {};
+  Object.keys(source).forEach(key => {
+    const value = source[key];
+    if(Array.isArray(value)){
+      normalized[key] = value.filter(v => typeof v === 'string');
+    }
+  });
+  return normalized;
+}
+
+function seriesKey(idx){
+  return String(idx);
+}
+
+function getCompletedList(idx){
+  const key = seriesKey(idx);
+  if(!Array.isArray(completedBySeries[key])){
+    completedBySeries[key] = [];
+  }
+  return completedBySeries[key];
+}
+
+function recordCompletion(leftWord){
+  const list = getCompletedList(series);
+  if(!list.includes(leftWord)){
+    list.push(leftWord);
+    saveState();
+  }
+}
+
+function clearCompletedForSeries(idx){
+  completedBySeries[seriesKey(idx)] = [];
+  saveState();
+}
+
+//---------------------------------------------------
+// Mise à jour score + barre de progression paires
+//---------------------------------------------------
+function updateScoreAndProgress(){
+  const box = document.getElementById("scoreBox");
+  const bar = document.getElementById("progressBar");
+  if(!box || !bar) return;
+
+  box.textContent = `Série : ${series} / ${totalSeries} | Score : ${score} / ${pairs.length} | Erreurs : ${errors} | Total : ${globalScore}✔ / ${globalErrors}✖`;
+
+  const percent = (score / pairs.length) * 100;
+  bar.style.width = `${percent}%`;
+
+  // Couleur dynamique
+  if(percent < 40) bar.style.background = '#ff9800';      // orange
+  else if(percent < 80) bar.style.background = '#ffc107'; // jaune
+  else bar.style.background = '#1a8c6d';                  // vert
+
+  // Animation mini-pulse
+  bar.style.transform = 'scale(1.05)';
+  setTimeout(()=> bar.style.transform = 'scale(1)', 150);
+  saveState();
+
+  // Si la série est terminée
+  if(percent === 100){
+    if(!recap.some(r=>r.serie === series)){
+      recap.push({ serie: series, score: score, errors: errors });
+      saveState();
+    }
+
+    // Si c'était la dernière série → écran final
+    if(series === totalSeries){
+      document.querySelector('.container').style.display = 'none';
+      document.getElementById('summaryScreen').style.display = 'block';
+
+      document.getElementById('finalMessage').textContent = `Score total : ${globalScore} / ${totalSeries * 10} | Erreurs totales : ${globalErrors}`;
+
+      if (window.proactifMarkExerciseDone) {
+        try { window.proactifMarkExerciseDone(); } catch (e) { }
+      }
+
+      const table = document.getElementById('recapTable');
+      // on nettoie d'éventuelles anciennes lignes
+      [...table.querySelectorAll('tr')].forEach((tr,idx)=>{ if(idx>0) tr.remove(); });
+
+      recap.forEach(r => {
+        let row = document.createElement('tr');
+        row.innerHTML = `<td>${r.serie}</td><td>${r.score}</td><td>${r.errors}</td>`;
+        table.appendChild(row);
+      });
+
+      // mettre la barre de progression des séries à 100%
+      const sBar = document.getElementById('seriesProgressBar');
+      if(sBar) sBar.style.width = '100%';
+
+      saveState();
+      return; // on bloque ici, pas de nouvelle série
+    }
+
+    // Sinon → passer à la série suivante
+    scheduleNextSeries();
+  }
+}
+
+function scheduleNextSeries(){
+  if(pendingAdvance) return;
+  pendingAdvance = true;
+  saveState();
+  setTimeout(()=>advanceSeries(), 600);
+}
+
+function advanceSeries(){
+  if(series >= totalSeries){
+    pendingAdvance = false;
+    saveState();
+    return;
+  }
+  pendingAdvance = false;
+  series++;
+  score = 0;
+  errors = 0;
+  selectedLeft = null;
+  pairs = getSeriesPairs(series);
+  updateSeriesProgress();
+  saveState();
+  render();
+}
+
+//---------------------------------------------------
+// Barre de progression des séries
+//---------------------------------------------------
+function updateSeriesProgress(){
+  const bar = document.getElementById('seriesProgressBar');
+  if(!bar) return;
+  const done = series - 1; // séries terminées
+  const percent = (done / totalSeries) * 100;
+  bar.style.width = percent + '%';
+}
+
+//---------------------------------------------------
+// Interface
+//---------------------------------------------------
+function render(){
+  leftItems = shuffle([...pairs.map(p=>p[0])]);
+  rightItems = shuffle([...pairs.map(p=>p[1])]);
+  const completedSet = new Set(getCompletedList(series));
+  const pairMap = new Map(pairs.map(p=>[p[0], p[1]]));
+  const completedRight = new Set(
+    [...completedSet].map(left => pairMap.get(left)).filter(Boolean)
+  );
+
+  const L=document.getElementById("leftCol");
+  const R=document.getElementById("rightCol");
+  L.innerHTML="";
+  R.innerHTML="";
+
+  leftItems.forEach(txt=>{
+    const d=document.createElement("div");
+    d.className="item";
+    d.innerHTML = `${txt}`;
+    d.onclick=()=>selectLeft(d,txt);
+    if(completedSet.has(txt)){
+      d.classList.add("correct");
+      d.style.pointerEvents = "none";
+    }
+    L.appendChild(d);
+  });
+
+  rightItems.forEach(txt=>{
+    const d=document.createElement("div");
+    d.className="item";
+    d.innerHTML = `${txt}`;
+    d.onclick=()=>checkPair(d,txt);
+    if(completedRight.has(txt)){
+      d.classList.add("correct");
+      d.style.pointerEvents = "none";
+    }
+    R.appendChild(d);
+  });
+
+  updateScoreAndProgress();
+}
+
+//---------------------------------------------------
+// Empêcher multisélection
+//---------------------------------------------------
+function selectLeft(div,word){
+  document.querySelectorAll(".item").forEach(i=>i.classList.remove("selected"));
+  div.classList.add("selected");
+  selectedLeft=word;
+}
+
+//---------------------------------------------------
+// Vérification
+//---------------------------------------------------
+function checkPair(divRight,rightWord){
+  if(!selectedLeft) return;
+
+  const correctPair=pairs.find(p=>p[0]===selectedLeft);
+
+  if(correctPair && correctPair[1]===rightWord){
+    markCorrect(selectedLeft,rightWord);
+  } else {
+    errors++;
+    globalErrors++;
+    updateScoreAndProgress();
+    divRight.classList.add("wrong");
+    setTimeout(()=>divRight.classList.remove("wrong"),500);
+  }
+}
+
+//---------------------------------------------------
+// Validation
+//---------------------------------------------------
+function markCorrect(leftWord,rightWord){
+  score++;
+  globalScore++;
+  updateScoreAndProgress();
+  recordCompletion(leftWord);
+
+  document.querySelectorAll(".item").forEach(i=>{
+    if(i.textContent === leftWord || i.textContent === rightWord){
+      i.classList.add("correct");
+      i.style.pointerEvents = "none";
+    }
+    i.classList.remove("selected");
+  });
+
+  selectedLeft=null;
+}
+
+//---------------------------------------------------
+// Recommencer la série en cours
+//---------------------------------------------------
+function resetGame(){
+  score = 0;
+  errors = 0;
+  selectedLeft = null;
+  clearCompletedForSeries(series);
+  pairs = getSeriesPairs(series); // reprend la même série
+  pendingAdvance = false;
+  saveState();
+  render();
+}
+
+//---------------------------------------------------
+// Recommencer tout depuis le début (après écran final)
+//---------------------------------------------------
+function restartAll(){
+  deck = generateDeck();
+  series = 1;
+  score = 0;
+  errors = 0;
+  globalScore = 0;
+  globalErrors = 0;
+  recap = [];
+  pendingAdvance = false;
+  completedBySeries = {};
+  pairs = getSeriesPairs(series);
+
+  document.getElementById('summaryScreen').style.display = 'none';
+  document.querySelector('.container').style.display = 'flex';
+
+  updateSeriesProgress();
+  saveState();
+  render();
+}
+
+//---------------------------------------------------
+// Lancement initial
+//---------------------------------------------------
+if(pendingAdvance && series < totalSeries){
+  advanceSeries();
+} else {
+  updateSeriesProgress();
+  render();
+}
+</script>
+  </main>
+</div>
+
+</body>
+</html>

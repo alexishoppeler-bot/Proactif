@@ -1,0 +1,670 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Organiser des documents professionnels</title>
+  <style>
+    .docs-zone {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 16px;
+      margin-top: 14px;
+    }
+
+    @media (min-width: 860px) {
+      .docs-zone {
+        grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr);
+        gap: 18px;
+      }
+    }
+
+    .panel {
+      border-radius: 20px;
+      border: 1px solid rgba(12, 32, 63, 0.12);
+      background: rgba(255, 255, 255, 0.82);
+      box-shadow: 0 16px 34px rgba(12, 32, 63, 0.12);
+      overflow: hidden;
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+    }
+
+    .panel__head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      padding: 14px 14px;
+      border-bottom: 1px solid rgba(12, 32, 63, 0.08);
+      background: rgba(255, 255, 255, 0.65);
+    }
+
+    .panel__title {
+      margin: 0;
+      font-weight: 950;
+      color: rgba(11, 42, 74, 0.95);
+      font-size: 1.05rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .panel__body {
+      padding: 14px;
+      max-height: min(62vh, 720px);
+      overflow: auto;
+    }
+
+    .search {
+      width: min(320px, 100%);
+      border-radius: 14px;
+      padding: 10px 12px;
+      border: 1px solid rgba(12, 32, 63, 0.18);
+      background: rgba(255, 255, 255, 0.95);
+      box-shadow: 0 10px 24px rgba(12, 32, 63, 0.12);
+      font-weight: 800;
+      color: rgba(15, 27, 44, 0.92);
+    }
+
+    .search:focus-visible {
+      outline: 3px solid rgba(11, 107, 255, 0.35);
+      outline-offset: 2px;
+    }
+
+    .doc {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      text-align: left;
+      padding: 12px 12px;
+      margin-bottom: 10px;
+      border-radius: 16px;
+      border: 1px solid rgba(12, 32, 63, 0.14);
+      background: rgba(255, 255, 255, 0.92);
+      box-shadow: 0 12px 26px rgba(12, 32, 63, 0.10);
+      cursor: grab;
+      user-select: none;
+      transition: transform 160ms var(--exercise-ease, ease), box-shadow 160ms var(--exercise-ease, ease), border-color 160ms var(--exercise-ease, ease);
+    }
+
+    .doc:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 16px 34px rgba(12, 32, 63, 0.14);
+    }
+
+    .doc:active {
+      transform: translateY(0);
+      cursor: grabbing;
+    }
+
+    .doc:focus-visible {
+      outline: 3px solid rgba(11, 107, 255, 0.35);
+      outline-offset: 2px;
+    }
+
+    .doc.is-selected {
+      border-color: rgba(11, 107, 255, 0.55);
+      box-shadow: 0 0 0 4px rgba(11, 107, 255, 0.14), 0 16px 34px rgba(12, 32, 63, 0.14);
+      cursor: pointer;
+    }
+
+    .doc__meta {
+      color: rgba(15, 27, 44, 0.62);
+      font-weight: 800;
+      font-size: 0.9rem;
+      white-space: nowrap;
+    }
+
+    .folders-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 12px;
+    }
+
+    @media (min-width: 680px) {
+      .folders-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+
+    .folder {
+      border-radius: 18px;
+      border: 2px dashed rgba(11, 107, 255, 0.5);
+      background: rgba(11, 107, 255, 0.06);
+      padding: 14px;
+      transition: transform 160ms var(--exercise-ease, ease), border-color 160ms var(--exercise-ease, ease), background 160ms var(--exercise-ease, ease);
+      outline: none;
+    }
+
+    .folder:hover {
+      transform: translateY(-1px);
+      border-color: rgba(11, 107, 255, 0.72);
+    }
+
+    .folder:focus-visible {
+      outline: 3px solid rgba(11, 107, 255, 0.35);
+      outline-offset: 2px;
+    }
+
+    .folder.is-over {
+      border-color: rgba(34, 197, 94, 0.7);
+      background: rgba(34, 197, 94, 0.08);
+    }
+
+    .folder.correct {
+      border-color: rgba(34, 197, 94, 0.8);
+      background: rgba(34, 197, 94, 0.10);
+    }
+
+    .folder.error {
+      border-color: rgba(239, 68, 68, 0.85);
+      background: rgba(239, 68, 68, 0.10);
+    }
+
+    .folder__head {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+
+    .folder__title {
+      font-weight: 950;
+      color: rgba(11, 42, 74, 0.95);
+    }
+
+    .folder__count {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 10px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.82);
+      border: 1px solid rgba(12, 32, 63, 0.16);
+      color: rgba(15, 27, 44, 0.82);
+      font-weight: 900;
+      font-size: 0.9rem;
+      box-shadow: 0 10px 22px rgba(12, 32, 63, 0.12);
+    }
+
+    .folder__dropHint {
+      margin: 0;
+      color: rgba(15, 27, 44, 0.68);
+      font-weight: 700;
+      font-size: 0.95rem;
+    }
+
+    .selected-pill {
+      margin-top: 10px;
+      display: none;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      padding: 10px 12px;
+      border-radius: 16px;
+      border: 1px solid rgba(11, 107, 255, 0.3);
+      background: rgba(11, 107, 255, 0.08);
+      color: rgba(11, 42, 74, 0.95);
+      font-weight: 900;
+    }
+
+    .selected-pill.is-visible {
+      display: flex;
+      animation: gameFadeUp 420ms var(--exercise-ease, ease) both;
+    }
+
+    .kbd {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 10px;
+      border: 1px solid rgba(12, 32, 63, 0.14);
+      background: #fff;
+      color: #0b2a4a;
+      font-weight: 900;
+      font-size: 0.9em;
+      box-shadow: 0 10px 18px rgba(12, 32, 63, 0.10);
+    }
+  </style>
+  <link rel="stylesheet" href="../../exercise-layout.css">
+  <link rel="stylesheet" href="../shared/game-modern.css">
+  <script defer src="../../exercise-layout.js"></script>
+  <script defer src="../shared/game-modern.js"></script>
+</head>
+
+<body data-exercise-subtitle="Glisse-dépose ou sélectionne un document, puis clique sur le bon dossier. (Compatible mobile)">
+
+  <div class="back-home" style="max-width:1100px;margin:10px auto 0;padding:0 20px;">
+    <a class="back-home__link" href="../../index.html" style="display:inline-flex;align-items:center;gap:6px;text-decoration:none;color:#004c6d;font-weight:700;border:1px solid #cfdff0;padding:6px 14px;border-radius:999px;background:#fff;box-shadow:0 2px 4px rgba(0,0,0,0.08);">← Retour à l’index</a>
+  </div>
+
+  <script src="../shared/proactif-exercise.js"></script>
+  <div class="exercise-shell">
+    <main class="exercise-card">
+
+      <div class="game-app" id="docs-app">
+        <div class="game-topbar">
+          <div class="game-topbar__title">
+            <span class="game-badge">📂 Documents</span>
+          </div>
+          <div class="game-actions">
+            <button id="sound-toggle" type="button" class="gbtn" aria-pressed="true">🔊 Son</button>
+            <button id="undo-btn" type="button" class="gbtn" disabled>Annuler</button>
+            <button id="reset-btn" type="button" class="gbtn gbtn--danger">Réinitialiser</button>
+          </div>
+        </div>
+
+        <h1 style="margin:0 0 12px;">Organiser des documents professionnels</h1>
+
+        <div class="game-stats" aria-label="Statistiques">
+          <div class="gstat"><div class="gstat__label">Classés</div><div class="gstat__value" id="counter">0 / 80</div></div>
+          <div class="gstat"><div class="gstat__label">Restants</div><div class="gstat__value" id="remaining">80</div></div>
+          <div class="gstat"><div class="gstat__label">Sélection</div><div class="gstat__value" id="selection">—</div></div>
+          <div class="gstat"><div class="gstat__label">Raccourcis</div><div class="gstat__value" style="font-size:1rem;"><span class="kbd">Esc</span></div></div>
+        </div>
+
+        <div class="timer-bar" aria-hidden="true" style="margin-top:10px;">
+          <div class="timer-fill" id="progress-fill"></div>
+        </div>
+
+        <div class="selected-pill" id="selected-pill">
+          <span id="selected-text">—</span>
+          <button id="clear-selection" type="button" class="gbtn">Annuler sélection</button>
+        </div>
+
+        <div class="docs-zone">
+          <section class="panel" aria-label="Documents à classer">
+            <div class="panel__head">
+              <h2 class="panel__title">📄 Documents</h2>
+              <input id="search" class="search" type="search" placeholder="Rechercher… (ex: Salaire_3)" aria-label="Rechercher un document">
+            </div>
+            <div class="panel__body" id="docsContainer" aria-label="Liste des documents" tabindex="0"></div>
+          </section>
+
+          <section class="panel" aria-label="Dossiers">
+            <div class="panel__head">
+              <h2 class="panel__title">📁 Dossiers</h2>
+              <div class="doc__meta">Clique un dossier pour classer</div>
+            </div>
+            <div class="panel__body">
+              <div class="folders-grid" id="folders">
+                <div class="folder" data-type="orp" tabindex="0" role="button" aria-label="Dossier ORP / Chômage">
+                  <div class="folder__head">
+                    <div class="folder__title">📁 ORP / Chômage</div>
+                    <div class="folder__count" data-count="orp">0 / 10</div>
+                  </div>
+                  <p class="folder__dropHint">Dépose ici.</p>
+                </div>
+                <div class="folder" data-type="salaires" tabindex="0" role="button" aria-label="Dossier Fiches de salaire">
+                  <div class="folder__head">
+                    <div class="folder__title">📁 Fiches de salaire</div>
+                    <div class="folder__count" data-count="salaires">0 / 10</div>
+                  </div>
+                  <p class="folder__dropHint">Dépose ici.</p>
+                </div>
+                <div class="folder" data-type="attestations" tabindex="0" role="button" aria-label="Dossier Attestations / Certificats">
+                  <div class="folder__head">
+                    <div class="folder__title">📁 Attestations / Certificats</div>
+                    <div class="folder__count" data-count="attestations">0 / 10</div>
+                  </div>
+                  <p class="folder__dropHint">Dépose ici.</p>
+                </div>
+                <div class="folder" data-type="contrats" tabindex="0" role="button" aria-label="Dossier Contrats de travail">
+                  <div class="folder__head">
+                    <div class="folder__title">📁 Contrats de travail</div>
+                    <div class="folder__count" data-count="contrats">0 / 10</div>
+                  </div>
+                  <p class="folder__dropHint">Dépose ici.</p>
+                </div>
+                <div class="folder" data-type="assurances" tabindex="0" role="button" aria-label="Dossier Assurances">
+                  <div class="folder__head">
+                    <div class="folder__title">📁 Assurances</div>
+                    <div class="folder__count" data-count="assurances">0 / 10</div>
+                  </div>
+                  <p class="folder__dropHint">Dépose ici.</p>
+                </div>
+                <div class="folder" data-type="factures" tabindex="0" role="button" aria-label="Dossier Factures / Impôts">
+                  <div class="folder__head">
+                    <div class="folder__title">📁 Factures / Impôts</div>
+                    <div class="folder__count" data-count="factures">0 / 10</div>
+                  </div>
+                  <p class="folder__dropHint">Dépose ici.</p>
+                </div>
+                <div class="folder" data-type="cv" tabindex="0" role="button" aria-label="Dossier CV">
+                  <div class="folder__head">
+                    <div class="folder__title">📁 CV</div>
+                    <div class="folder__count" data-count="cv">0 / 10</div>
+                  </div>
+                  <p class="folder__dropHint">Dépose ici.</p>
+                </div>
+                <div class="folder" data-type="lm" tabindex="0" role="button" aria-label="Dossier Lettres de motivation">
+                  <div class="folder__head">
+                    <div class="folder__title">📁 Lettres de motivation</div>
+                    <div class="folder__count" data-count="lm">0 / 10</div>
+                  </div>
+                  <p class="folder__dropHint">Dépose ici.</p>
+                </div>
+              </div>
+            </div>
+          </section>
+        </div>
+
+        <details style="margin-top:14px;">
+          <summary style="cursor:pointer;font-weight:950;color:rgba(11,42,74,0.95);">💡 Conseils</summary>
+          <div style="margin-top:10px;color:rgba(15,27,44,0.76);font-weight:700;display:grid;gap:10px;">
+            <div>• Ordinateur : tu peux <strong>glisser-déposer</strong> les documents.</div>
+            <div>• Mobile : <strong>tape</strong> un document pour le sélectionner, puis tape le dossier.</div>
+            <div>• Pour corriger : tape un document déjà classé pour le remettre dans la liste.</div>
+            <div>• <span class="kbd">Esc</span> annule la sélection.</div>
+          </div>
+        </details>
+      </div>
+
+      <script>
+        const KEY = "docs_autosave_v3";
+
+        const DATA = [
+          ...Array.from({ length: 10 }, (_, i) => ["orp", "ORP_" + (i + 1)]),
+          ...Array.from({ length: 10 }, (_, i) => ["salaires", "Salaire_" + (i + 1)]),
+          ...Array.from({ length: 10 }, (_, i) => ["attestations", "Attestation_" + (i + 1)]),
+          ...Array.from({ length: 10 }, (_, i) => ["contrats", "Contrat_" + (i + 1)]),
+          ...Array.from({ length: 10 }, (_, i) => ["assurances", "Assurance_" + (i + 1)]),
+          ...Array.from({ length: 10 }, (_, i) => ["factures", "Facture_" + (i + 1)]),
+          ...Array.from({ length: 10 }, (_, i) => ["cv", "CV_" + (i + 1)]),
+          ...Array.from({ length: 10 }, (_, i) => ["lm", "LM_" + (i + 1)])
+        ];
+
+        function loadState() {
+          try {
+            const raw = localStorage.getItem(KEY);
+            if (!raw) return null;
+            const parsed = JSON.parse(raw);
+            if (!parsed || !Array.isArray(parsed.order) || typeof parsed.placed !== "object") return null;
+            return parsed;
+          } catch (e) {
+            return null;
+          }
+        }
+
+        let state = loadState();
+        if (!state) {
+          state = {
+            order: [...DATA].sort(() => Math.random() - 0.5),
+            placed: {}
+          };
+          save();
+        }
+
+        const ui = window.ProactifGameUI || null;
+        const appEl = document.getElementById("docs-app");
+        const docsContainer = document.getElementById("docsContainer");
+        const counterEl = document.getElementById("counter");
+        const remainingEl = document.getElementById("remaining");
+        const selectionEl = document.getElementById("selection");
+        const progressFill = document.getElementById("progress-fill");
+        const searchEl = document.getElementById("search");
+        const undoBtn = document.getElementById("undo-btn");
+        const resetBtn = document.getElementById("reset-btn");
+        const soundToggle = document.getElementById("sound-toggle");
+        const selectedPill = document.getElementById("selected-pill");
+        const selectedText = document.getElementById("selected-text");
+        const clearSelectionBtn = document.getElementById("clear-selection");
+
+        let dragged = null;
+        let selectedDocName = null;
+        let lastMove = null;
+
+        function uiToast(message, type) {
+          try { if (ui) ui.toast(appEl, message, type || "info"); } catch (e) { }
+        }
+
+        function save() {
+          try { localStorage.setItem(KEY, JSON.stringify(state)); } catch (e) { }
+        }
+
+        function getDoneCount() {
+          return Object.keys(state.placed || {}).length;
+        }
+
+        function computeFolderCounts() {
+          const counts = { orp: 0, salaires: 0, attestations: 0, contrats: 0, assurances: 0, factures: 0, cv: 0, lm: 0 };
+          Object.keys(state.placed || {}).forEach(name => {
+            const type = state.placed[name];
+            if (counts[type] !== undefined) counts[type] += 1;
+          });
+          return counts;
+        }
+
+        function refreshHeader() {
+          const done = getDoneCount();
+          const total = state.order.length;
+          if (counterEl) counterEl.textContent = done + " / " + total;
+          if (remainingEl) remainingEl.textContent = String(Math.max(0, total - done));
+          if (progressFill) progressFill.style.width = ((done / total) * 100).toFixed(2) + "%";
+        }
+
+        function refreshFolderBadges() {
+          const counts = computeFolderCounts();
+          document.querySelectorAll(".folder__count").forEach(el => {
+            const type = el.getAttribute("data-count");
+            if (!type) return;
+            el.textContent = String(counts[type] || 0) + " / 10";
+          });
+        }
+
+        function setSelection(name) {
+          selectedDocName = name || null;
+          const has = !!selectedDocName;
+          if (selectionEl) selectionEl.textContent = has ? selectedDocName : "—";
+          if (selectedPill) selectedPill.classList.toggle("is-visible", has);
+          if (selectedText) selectedText.textContent = has ? ("Sélection : " + selectedDocName) : "—";
+          if (!has) {
+            document.querySelectorAll(".doc.is-selected").forEach(el => el.classList.remove("is-selected"));
+          }
+        }
+
+        function matchesSearch(name) {
+          const q = String(searchEl && searchEl.value ? searchEl.value : "").trim().toLowerCase();
+          if (!q) return true;
+          return String(name || "").toLowerCase().includes(q);
+        }
+
+        function render() {
+          docsContainer.innerHTML = "";
+          document.querySelectorAll(".folder .doc").forEach(d => d.remove());
+
+          state.order.forEach(([type, name]) => {
+            const el = document.createElement("button");
+            el.type = "button";
+            el.className = "doc";
+            el.textContent = "📄 " + name + ".pdf";
+            el.draggable = true;
+            el.dataset.type = type;
+            el.dataset.name = name;
+
+            if (!matchesSearch(name)) el.style.display = "none";
+
+            el.addEventListener("dragstart", () => { dragged = el; });
+            el.addEventListener("click", () => {
+              const currentFolder = state.placed[name];
+              if (currentFolder) {
+                // Unplace
+                lastMove = { kind: "unplace", name: name, from: currentFolder };
+                delete state.placed[name];
+                save();
+                render();
+                uiToast("Retiré du dossier.", "info");
+                if (ui) ui.playTone("level");
+                undoBtn.disabled = false;
+                return;
+              }
+              // Select
+              document.querySelectorAll(".doc.is-selected").forEach(x => x.classList.remove("is-selected"));
+              el.classList.add("is-selected");
+              setSelection(name);
+              uiToast("Choisis un dossier.", "info");
+            });
+
+            const targetType = state.placed[name];
+            if (targetType) {
+              const folder = document.querySelector(`.folder[data-type="${targetType}"]`);
+              if (folder) folder.appendChild(el);
+            } else {
+              docsContainer.appendChild(el);
+            }
+          });
+
+          refreshHeader();
+          refreshFolderBadges();
+          if (selectedDocName && state.placed[selectedDocName]) setSelection(null);
+        }
+
+        function flashFolder(folder, ok) {
+          if (!folder) return;
+          folder.classList.remove("correct", "error");
+          folder.classList.add(ok ? "correct" : "error");
+          setTimeout(() => folder.classList.remove(ok ? "correct" : "error"), 650);
+        }
+
+        function attemptPlace(name, folderType, folderEl) {
+          if (!name) return;
+          const entry = state.order.find(x => x[1] === name);
+          if (!entry) return;
+
+          const expectedType = entry[0];
+          if (expectedType === folderType) {
+            lastMove = { kind: "place", name: name, to: folderType };
+            state.placed[name] = folderType;
+            save();
+            render();
+            flashFolder(folderEl, true);
+            uiToast("Bien classé !", "ok");
+            if (ui) ui.playTone("ok");
+            if (ui) ui.vibrate(20);
+            undoBtn.disabled = false;
+            setSelection(null);
+
+            const done = getDoneCount();
+            if (done === state.order.length) {
+              uiToast("Bravo, tout est classé !", "ok");
+              if (ui && appEl) ui.confettiBurst(appEl, folderEl);
+              if (window.proactifMarkExerciseDone) {
+                try { window.proactifMarkExerciseDone(); } catch (e) { }
+              }
+            }
+          } else {
+            flashFolder(folderEl, false);
+            uiToast("Pas le bon dossier.", "bad");
+            if (ui) ui.playTone("bad");
+            if (ui) ui.vibrate([35, 20, 35]);
+          }
+        }
+
+        function bindFolders() {
+          document.querySelectorAll(".folder").forEach(folder => {
+            folder.addEventListener("dragover", e => {
+              e.preventDefault();
+              folder.classList.add("is-over");
+            });
+            folder.addEventListener("dragleave", () => folder.classList.remove("is-over"));
+            folder.addEventListener("drop", () => {
+              folder.classList.remove("is-over");
+              if (!dragged) return;
+              attemptPlace(dragged.dataset.name, folder.dataset.type, folder);
+              dragged = null;
+            });
+
+            folder.addEventListener("click", () => {
+              if (!selectedDocName) return;
+              attemptPlace(selectedDocName, folder.dataset.type, folder);
+            });
+            folder.addEventListener("keydown", e => {
+              if (e.key === "Enter" || e.key === " ") {
+                e.preventDefault();
+                if (!selectedDocName) return;
+                attemptPlace(selectedDocName, folder.dataset.type, folder);
+              }
+            });
+          });
+
+          // Drop to unplace: docs area accepts drop.
+          docsContainer.addEventListener("dragover", e => e.preventDefault());
+          docsContainer.addEventListener("drop", () => {
+            if (!dragged) return;
+            const name = dragged.dataset.name;
+            if (state.placed[name]) {
+              lastMove = { kind: "unplace", name: name, from: state.placed[name] };
+              delete state.placed[name];
+              save();
+              render();
+              uiToast("Retiré du dossier.", "info");
+              if (ui) ui.playTone("level");
+              undoBtn.disabled = false;
+            }
+            dragged = null;
+          });
+        }
+
+        function undoLastMove() {
+          if (!lastMove) return;
+          const move = lastMove;
+          lastMove = null;
+          undoBtn.disabled = true;
+
+          if (move.kind === "place") {
+            if (state.placed[move.name] === move.to) {
+              delete state.placed[move.name];
+              save();
+              render();
+              uiToast("Annulé.", "info");
+              if (ui) ui.playTone("level");
+            }
+          } else if (move.kind === "unplace") {
+            state.placed[move.name] = move.from;
+            save();
+            render();
+            uiToast("Rétabli.", "info");
+            if (ui) ui.playTone("level");
+          }
+        }
+
+        function resetAll() {
+          if (!confirm("Réinitialiser l’exercice ?")) return;
+          try { localStorage.removeItem(KEY); } catch (e) { }
+          state = {
+            order: [...DATA].sort(() => Math.random() - 0.5),
+            placed: {}
+          };
+          save();
+          setSelection(null);
+          lastMove = null;
+          undoBtn.disabled = true;
+          render();
+          uiToast("Réinitialisé.", "info");
+        }
+
+        if (ui && soundToggle) ui.bindSoundToggle(soundToggle);
+        if (resetBtn) resetBtn.addEventListener("click", resetAll);
+        if (undoBtn) undoBtn.addEventListener("click", undoLastMove);
+        if (clearSelectionBtn) clearSelectionBtn.addEventListener("click", () => setSelection(null));
+
+        if (searchEl) {
+          searchEl.addEventListener("input", () => render());
+        }
+
+        document.addEventListener("keydown", e => {
+          if (e.key === "Escape") setSelection(null);
+        });
+
+        render();
+        bindFolders();
+        refreshHeader();
+      </script>
+
+    </main>
+  </div>
+
+</body>
+</html>

@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>L’heure – Écrire HH:MM</title>
+  <style>
+    .time-clock {
+      display: grid;
+      place-items: center;
+      margin: 14px 0 6px;
+    }
+
+    .time-display {
+      width: min(420px, 100%);
+      padding: 18px 16px;
+      border-radius: 18px;
+      border: 1px solid rgba(12, 32, 63, 0.18);
+      background: radial-gradient(circle at 30% 20%, rgba(34, 197, 94, 0.16), transparent 55%),
+        radial-gradient(circle at 70% 70%, rgba(11, 107, 255, 0.14), transparent 55%),
+        #05070a;
+      box-shadow: 0 18px 42px rgba(12, 32, 63, 0.18);
+    }
+
+    .time-input {
+      width: 100%;
+      background: transparent;
+      border: none;
+      outline: none;
+      color: rgba(180, 255, 210, 0.95);
+      font: 900 clamp(2.2rem, 8vw, 3.2rem)/1.2 ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      text-align: center;
+      letter-spacing: 0.22em;
+      caret-color: rgba(34, 197, 94, 0.95);
+    }
+
+    .time-input::placeholder {
+      color: rgba(180, 255, 210, 0.35);
+    }
+
+    .time-help {
+      margin: 10px 0 0;
+      color: rgba(15, 27, 44, 0.72);
+      font-weight: 700;
+      text-align: center;
+    }
+
+    .mini-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin: 10px 0 0;
+    }
+
+    .progress-track {
+      width: 100%;
+      height: 10px;
+      border-radius: 999px;
+      background: rgba(12, 32, 63, 0.1);
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, rgba(11, 107, 255, 0.95), rgba(34, 197, 94, 0.82));
+      border-radius: 999px;
+      transition: width 260ms var(--exercise-ease, ease);
+    }
+
+    .answer-box {
+      margin-top: 10px;
+      border-radius: 16px;
+      padding: 12px 12px;
+      border: 1px solid rgba(12, 32, 63, 0.12);
+      background: rgba(255, 255, 255, 0.75);
+      color: rgba(15, 27, 44, 0.85);
+      font-weight: 800;
+      display: none;
+    }
+
+    .answer-box.is-visible {
+      display: block;
+      animation: gameFadeUp 420ms var(--exercise-ease, ease) both;
+    }
+
+    details {
+      margin-top: 12px;
+      border-radius: 16px;
+      border: 1px solid rgba(12, 32, 63, 0.12);
+      background: rgba(255, 255, 255, 0.75);
+      padding: 12px 12px;
+    }
+
+    summary {
+      cursor: pointer;
+      font-weight: 900;
+      color: rgba(11, 42, 74, 0.95);
+      list-style: none;
+    }
+
+    summary::-webkit-details-marker {
+      display: none;
+    }
+
+    .help-grid {
+      margin-top: 10px;
+      display: grid;
+      gap: 10px;
+      color: rgba(15, 27, 44, 0.76);
+      font-weight: 700;
+    }
+
+    .kbd {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 10px;
+      border: 1px solid rgba(12, 32, 63, 0.14);
+      background: #fff;
+      color: #0b2a4a;
+      font-weight: 900;
+      font-size: 0.9em;
+      box-shadow: 0 10px 18px rgba(12, 32, 63, 0.10);
+    }
+  </style>
+  <link rel="stylesheet" href="../../exercise-layout.css">
+  <link rel="stylesheet" href="../shared/game-modern.css">
+  <script defer src="../../exercise-layout.js"></script>
+  <script defer src="../shared/game-modern.js"></script>
+</head>
+<body data-exercise-subtitle="Écris l’heure au format HH:MM, et progresse exercice par exercice.">
+
+  <div class="back-home" style="max-width:1100px;margin:10px auto 0;padding:0 20px;">
+    <a class="back-home__link" href="../../index.html" style="display:inline-flex;align-items:center;gap:6px;text-decoration:none;color:#004c6d;font-weight:700;border:1px solid #cfdff0;padding:6px 14px;border-radius:999px;background:#fff;box-shadow:0 2px 4px rgba(0,0,0,0.08);">← Retour à l’index</a>
+  </div>
+
+  <script src="../shared/proactif-exercise.js"></script>
+  <div class="exercise-shell">
+    <main class="exercise-card">
+
+      <div class="game-app" id="time-app">
+        <div class="game-topbar">
+          <div class="game-topbar__title">
+            <span class="game-badge">🕒 L’heure</span>
+          </div>
+          <div class="game-actions">
+            <button id="sound-toggle" type="button" class="gbtn" aria-pressed="true">🔊 Son</button>
+            <button id="btnReset" type="button" class="gbtn gbtn--danger">Réinitialiser</button>
+          </div>
+        </div>
+
+        <h1 style="margin:0 0 12px;">Écrire l’heure</h1>
+
+        <div class="game-stats" aria-label="Progression">
+          <div class="gstat"><div class="gstat__label">Exercice</div><div class="gstat__value"><span id="numEx">1</span> / 50</div></div>
+          <div class="gstat"><div class="gstat__label">Réussis</div><div class="gstat__value"><span id="doneCount">0</span> / 50</div></div>
+          <div class="gstat"><div class="gstat__label">Indice(s)</div><div class="gstat__value"><span id="hintCount">0</span></div></div>
+          <div class="gstat"><div class="gstat__label">Raccourci</div><div class="gstat__value" style="font-size:1rem;"><span class="kbd">Entrée</span></div></div>
+        </div>
+
+        <div class="progress-track" aria-hidden="true"><div class="progress-fill" id="progress-fill"></div></div>
+
+        <div class="game-stage" style="margin-top:14px;">
+          <div class="game-big" id="consigne" aria-live="polite">Consigne…</div>
+
+          <div class="time-clock">
+            <div class="time-display">
+              <input id="timeInput" class="time-input" type="text" maxlength="5" placeholder="00:00"
+                autocomplete="off" inputmode="numeric" aria-label="Heure au format HH:MM" />
+            </div>
+            <p class="time-help">Tape <span class="kbd">0815</span> ou <span class="kbd">08:15</span>, puis <span class="kbd">Entrée</span>.</p>
+          </div>
+
+          <div class="mini-row">
+            <button id="btnValider" type="button" class="gbtn gbtn--primary">Valider</button>
+            <button id="btnHint" type="button" class="gbtn">Voir la réponse</button>
+          </div>
+
+          <div id="answer" class="answer-box" role="status" aria-live="polite"></div>
+
+          <details>
+            <summary>💡 Aide</summary>
+            <div class="help-grid">
+              <div>• Format : <strong>HH:MM</strong> (ex: 08:15).</div>
+              <div>• « et quart » → <strong>:15</strong> · « et demie » → <strong>:30</strong> · « moins le quart » → <strong>:45</strong>.</div>
+              <div>• Sauvegarde automatique : tu peux revenir plus tard.</div>
+            </div>
+          </details>
+        </div>
+      </div>
+
+      <script>
+        const heures = [
+          "01:15", "02:30", "03:45", "04:20", "05:10", "06:55", "07:05", "08:40", "09:50", "10:25",
+          "11:35", "12:00", "13:15", "14:45", "15:05", "16:30", "17:50", "18:10", "19:25", "20:40",
+          "21:55", "22:05", "23:35", "00:45", "01:50", "02:05", "03:35", "04:55", "05:25", "06:15",
+          "07:45", "08:50", "09:20", "10:10", "11:05", "12:50", "13:40", "14:25", "15:55", "16:05",
+          "17:15", "18:45", "19:50", "20:25", "21:10", "22:40", "23:15", "00:30", "12:35", "04:10"
+        ];
+
+        // Liste fixe (50 exercices) - gardée simple pour la performance et la stabilité.
+
+        const heuresTxt = [
+          "minuit", "une heure", "deux heures", "trois heures", "quatre heures", "cinq heures",
+          "six heures", "sept heures", "huit heures", "neuf heures", "dix heures", "onze heures",
+          "midi", "treize heures", "quatorze heures", "quinze heures", "seize heures", "dix-sept heures",
+          "dix-huit heures", "dix-neuf heures", "vingt heures", "vingt et une heures", "vingt-deux heures", "vingt-trois heures"
+        ];
+
+        function heureEnLettres(timeStr) {
+          const parts = timeStr.split(":");
+          const hh = parseInt(parts[0], 10);
+          const mm = parseInt(parts[1], 10);
+          const base = heuresTxt[hh] || timeStr;
+
+          if (isNaN(mm)) return base;
+          if (mm === 0) return base;
+          if (mm === 15) return base + " et quart";
+          if (mm === 30) return base + " et demie";
+          if (mm === 45) {
+            const nextH = (hh + 1) % 24;
+            return (heuresTxt[nextH] || timeStr) + " moins le quart";
+          }
+          return base + " " + mm + " minutes";
+        }
+
+        let index = parseInt(localStorage.getItem("montreInv_index") || "0", 10);
+        if (isNaN(index) || index < 0 || index >= heures.length) index = 0;
+
+        let sauv = {};
+        try {
+          const saved = localStorage.getItem("montreInv_sauv");
+          if (saved) sauv = JSON.parse(saved) || {};
+        } catch (e) { sauv = {}; }
+
+        const DONE_KEY = "montreInv_done_v1";
+        const HINT_KEY = "montreInv_hints_v1";
+
+        let done = {};
+        try {
+          const raw = localStorage.getItem(DONE_KEY);
+          if (raw) done = JSON.parse(raw) || {};
+        } catch (e) { done = {}; }
+
+        let hintsUsed = 0;
+        try {
+          hintsUsed = parseInt(localStorage.getItem(HINT_KEY) || "0", 10);
+          if (!Number.isFinite(hintsUsed) || hintsUsed < 0) hintsUsed = 0;
+        } catch (e) { hintsUsed = 0; }
+
+        let heureActuelle = "00:00";
+
+        const ui = window.ProactifGameUI || null;
+        const appEl = document.getElementById("time-app");
+
+        function uiToast(message, type) {
+          try { if (ui) ui.toast(appEl, message, type || "info"); } catch (e) { }
+        }
+
+        function saveDone() {
+          try { localStorage.setItem(DONE_KEY, JSON.stringify(done)); } catch (e) { }
+        }
+
+        function refreshStats() {
+          const doneCountEl = document.getElementById("doneCount");
+          const hintCountEl = document.getElementById("hintCount");
+          const progressFill = document.getElementById("progress-fill");
+          const doneCount = Object.keys(done || {}).length;
+
+          if (doneCountEl) doneCountEl.textContent = String(doneCount);
+          if (hintCountEl) hintCountEl.textContent = String(hintsUsed);
+          if (progressFill) {
+            const pct = (doneCount / heures.length) * 100;
+            progressFill.style.width = Math.max(0, Math.min(100, pct)).toFixed(2) + "%";
+          }
+        }
+
+        function normaliserHeure(val) {
+          if (!val) return "";
+          val = val.replace(/[^0-9:]/g, "");
+
+          if (/^\d{3,4}$/.test(val)) {
+            const digits = val.padStart(4, "0");
+            const h = digits.slice(0, 2);
+            const m = digits.slice(2, 4);
+            val = h + ":" + m;
+          }
+
+          if (val.length === 2 && !val.includes(":")) val = val + ":";
+          if (val.length > 5) val = val.slice(0, 5);
+          if (!/^\d{2}:\d{2}$/.test(val)) return val;
+
+          let [h, m] = val.split(":");
+          let hh = Math.min(Math.max(parseInt(h, 10), 0), 23);
+          let mm = Math.min(Math.max(parseInt(m, 10), 0), 59);
+          const hhStr = hh.toString().padStart(2, "0");
+          const mmStr = mm.toString().padStart(2, "0");
+          return hhStr + ":" + mmStr;
+        }
+
+        function chargerExercice() {
+          const consigneElt = document.getElementById("consigne");
+          const timeInput = document.getElementById("timeInput");
+          const numExElt = document.getElementById("numEx");
+          const answerEl = document.getElementById("answer");
+          const btnHint = document.getElementById("btnHint");
+          if (!consigneElt || !timeInput || !numExElt) return;
+
+          numExElt.innerText = String(index + 1);
+          const cible = heures[index];
+          consigneElt.innerText = "Mets la montre sur : " + heureEnLettres(cible);
+
+          heureActuelle = sauv[index] || "00:00";
+          timeInput.value = heureActuelle;
+          timeInput.focus();
+          timeInput.select();
+
+          if (answerEl) {
+            answerEl.classList.remove("is-visible");
+            answerEl.textContent = "";
+          }
+          if (btnHint) btnHint.textContent = "Voir la réponse";
+          refreshStats();
+        }
+
+        function sauvegarder() {
+          sauv[index] = heureActuelle;
+          try { localStorage.setItem("montreInv_sauv", JSON.stringify(sauv)); } catch (e) { }
+        }
+
+        function valider() {
+          const timeInput = document.getElementById("timeInput");
+          if (!timeInput) return;
+
+          const normalisee = normaliserHeure(timeInput.value);
+          if (!/^\d{2}:\d{2}$/.test(normalisee)) {
+            uiToast("Format incorrect. Utilise HH:MM.", "bad");
+            if (ui) ui.playTone("bad");
+            return;
+          }
+
+          heureActuelle = normalisee;
+          sauvegarder();
+          timeInput.value = heureActuelle;
+
+          const attendu = heures[index];
+          if (heureActuelle === attendu) {
+            done[String(index)] = true;
+            saveDone();
+            refreshStats();
+            uiToast("Correct !", "ok");
+            if (ui) ui.playTone("ok");
+
+            setTimeout(() => {
+              index++;
+              if (index >= heures.length) {
+                try { localStorage.setItem("montreInv_index", String(heures.length - 1)); } catch (e) { }
+                uiToast("Terminé !", "ok");
+                try { if (ui) ui.confettiBurst(appEl, document.getElementById("consigne")); } catch (e) { }
+                if (window.proactifMarkExerciseDone) {
+                  try { window.proactifMarkExerciseDone(); } catch (e) { }
+                }
+                return;
+              }
+              try { localStorage.setItem("montreInv_index", String(index)); } catch (e) { }
+              chargerExercice();
+            }, 520);
+          } else {
+            uiToast("Incorrect. Essaie encore.", "bad");
+            if (ui) ui.playTone("bad");
+          }
+        }
+
+        function toggleHint() {
+          const answerEl = document.getElementById("answer");
+          const btnHint = document.getElementById("btnHint");
+          if (!answerEl || !btnHint) return;
+
+          const cible = heures[index];
+          const showing = answerEl.classList.contains("is-visible");
+          if (showing) {
+            answerEl.classList.remove("is-visible");
+            answerEl.textContent = "";
+            btnHint.textContent = "Voir la réponse";
+            return;
+          }
+
+          if (!confirm("Afficher la réponse ?")) return;
+          hintsUsed += 1;
+          try { localStorage.setItem(HINT_KEY, String(hintsUsed)); } catch (e) { }
+          refreshStats();
+
+          answerEl.textContent = "Réponse : " + cible;
+          answerEl.classList.add("is-visible");
+          btnHint.textContent = "Masquer la réponse";
+          uiToast("Réponse affichée", "info");
+        }
+
+        function resetAll() {
+          if (!confirm("Effacer toutes les données et recommencer ?")) return;
+          try {
+            localStorage.removeItem("montreInv_index");
+            localStorage.removeItem("montreInv_sauv");
+            localStorage.removeItem(DONE_KEY);
+            localStorage.removeItem(HINT_KEY);
+          } catch (e) { }
+
+          index = 0;
+          sauv = {};
+          done = {};
+          hintsUsed = 0;
+          heureActuelle = "00:00";
+          refreshStats();
+          chargerExercice();
+          uiToast("Réinitialisé.", "info");
+        }
+
+        window.addEventListener("DOMContentLoaded", () => {
+          const timeInput = document.getElementById("timeInput");
+          const btnValider = document.getElementById("btnValider");
+          const btnReset = document.getElementById("btnReset");
+          const btnHint = document.getElementById("btnHint");
+          const soundToggle = document.getElementById("sound-toggle");
+
+          if (timeInput) {
+            timeInput.addEventListener("input", () => {
+              let val = timeInput.value;
+              val = normaliserHeure(val);
+              timeInput.value = val;
+              if (/^\d{2}:\d{2}$/.test(val)) {
+                heureActuelle = val;
+                sauvegarder();
+              }
+            });
+            timeInput.addEventListener("keydown", (e) => {
+              if (e.key === "Enter") {
+                e.preventDefault();
+                valider();
+              }
+            });
+          }
+
+          if (btnValider) btnValider.addEventListener("click", valider);
+          if (btnReset) btnReset.addEventListener("click", resetAll);
+          if (btnHint) btnHint.addEventListener("click", toggleHint);
+          if (ui && soundToggle) ui.bindSoundToggle(soundToggle);
+
+          chargerExercice();
+        });
+      </script>
+
+    </main>
+  </div>
+
+</body>
+</html>

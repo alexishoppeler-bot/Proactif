@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>Mise en forme – Consignes aléatoires</title>
+
+<style>
+body{
+  font-family:Calibri, Arial;
+  margin:0;
+  background:#eef1f7;
+}
+h1{text-align:center;margin:16px}
+
+/* BLOCS */
+.box{
+  width:88%;
+  margin:10px auto;
+  background:#fff;
+  padding:16px;
+  border-radius:10px;
+}
+#modele{border:2px solid #4a75f7}
+#consigne{border:2px dashed #4a75f7}
+
+/* EDITEUR */
+.editor-box{
+  width:88%;
+  margin:0 auto 24px;
+  border:1px solid #c6ccd8;
+  border-radius:10px;
+  overflow:hidden;
+}
+#toolbar{
+  background:#f5f6fb;
+  padding:6px;
+  display:flex;
+  flex-wrap:wrap;
+  gap:6px;
+  border-bottom:1px solid #c6ccd8;
+}
+.btn, select{
+  height:32px;
+  border:1px solid #c6ccd8;
+  background:#fff;
+  border-radius:4px;
+  cursor:pointer;
+  padding:0 10px;
+}
+.btn:hover{background:#e6edff}
+
+#editor{
+  min-height:320px;
+  padding:12px;
+}
+#editor div{min-height:24px}
+
+/* ACTIONS */
+.actions{
+  width:88%;
+  margin:10px auto;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+}
+#info{font-weight:bold}
+</style>
+  <link rel="stylesheet" href="../../exercise-layout.css">
+  <script defer src="../../exercise-layout.js"></script>
+</head>
+
+<body>
+
+<div class="back-home" style="max-width:1100px;margin:10px auto 0;padding:0 20px;">
+  <a class="back-home__link" href="../../index.html" style="display:inline-flex;align-items:center;gap:6px;text-decoration:none;color:#004c6d;font-weight:700;border:1px solid #cfdff0;padding:6px 14px;border-radius:999px;background:#fff;box-shadow:0 2px 4px rgba(0,0,0,0.08);">← Retour à l’index</a>
+</div>
+<script src="../shared/proactif-exercise.js"></script>
+<div class="exercise-shell">
+  <main class="exercise-card">
+
+
+
+<h1>📝 Mise en forme – Consignes aléatoires</h1>
+
+<!-- TEXTE -->
+<div class="box" id="modele">
+<b>Texte à recopier (toujours le même) :</b><br><br>
+1. Je m’appelle Alex.<br>
+2. Je cherche un emploi.<br>
+3. Je prépare mon CV.<br>
+4. Je respecte les consignes.<br>
+5. Je travaille en équipe.<br>
+6. Je suis ponctuel.<br>
+7. Je progresse chaque jour.<br>
+8. Je veux réussir.
+</div>
+
+<!-- CONSIGNES -->
+<div class="box" id="consigne"></div>
+
+<!-- EDITEUR -->
+<div class="editor-box">
+  <div id="toolbar">
+    <button class="btn" onclick="exec('bold')"><b>B</b></button>
+    <button class="btn" onclick="exec('italic')"><i>I</i></button>
+    <button class="btn" onclick="exec('underline')"><u>U</u></button>
+    <button class="btn" onclick="toggleHighlight()">🖍</button>
+
+    <select onchange="exec('fontName',this.value)">
+      <option value="">Police</option>
+      <option>Calibri</option>
+      <option>Arial</option>
+      <option>Verdana</option>
+      <option>Times New Roman</option>
+    </select>
+
+    <select onchange="exec('fontSize',this.value)">
+      <option value="">Taille</option>
+      <option value="3">14</option>
+      <option value="4">16</option>
+      <option value="5">18</option>
+      <option value="6">20</option>
+      <option value="7">24</option>
+    </select>
+
+    <select onchange="exec('foreColor',this.value)">
+      <option value="">Couleur</option>
+      <option value="black">Noir</option>
+      <option value="blue">Bleu</option>
+      <option value="red">Rouge</option>
+      <option value="green">Vert</option>
+    </select>
+
+    <button class="btn" onclick="exec('justifyLeft')">⬅</button>
+    <button class="btn" onclick="exec('justifyCenter')">⇤⇥</button>
+    <button class="btn" onclick="exec('justifyRight')">➡</button>
+
+    <button class="btn" onclick="clearFormat()">🧹 Effacer mise en forme</button>
+  </div>
+
+  <div id="editor" contenteditable="true">
+    <div><br></div>
+  </div>
+</div>
+
+<!-- ACTIONS -->
+<div class="actions">
+  <div id="info">🎯 8 consignes – combinées au hasard</div>
+  <button class="btn" onclick="nouvelleConsigne()">🎲 Nouvelles consignes</button>
+</div>
+
+<script>
+let highlight=false;
+let proactifDoneOnce = false;
+const expectedPhrases = [
+  "je m'appelle alex",
+  "je cherche un emploi",
+  "je prepare mon cv",
+  "je respecte les consignes",
+  "je travaille en equipe",
+  "je suis ponctuel",
+  "je progresse chaque jour",
+  "je veux reussir"
+];
+
+function normalizeText(s){
+  try { s = (s || "").toString().normalize("NFD").replace(/[\u0300-\u036f]/g, ""); } catch (e) { s = (s || "").toString(); }
+  return s
+    .toLowerCase()
+    .replace(/[’']/g, "'")
+    .replace(/[^a-z0-9'\n ]+/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+function checkCompletion(){
+  if (proactifDoneOnce) return;
+  try {
+    const text = normalizeText(editor && editor.innerText ? editor.innerText : "");
+    const ok = expectedPhrases.every(p => text.indexOf(p) !== -1);
+    if (!ok) return;
+    proactifDoneOnce = true;
+    const info = document.getElementById("info");
+    if (info) info.textContent = "✅ Texte recopié : exercice terminé";
+    try { window.proactifMarkExerciseDone && window.proactifMarkExerciseDone(); } catch (e) { }
+  } catch (e) { }
+}
+
+/* COMMANDES TYPE WORD */
+function exec(cmd,val=null){
+  editor.focus();
+  document.execCommand(cmd,false,val);
+}
+function toggleHighlight(){
+  editor.focus();
+  highlight=!highlight;
+  document.execCommand("backColor",false,highlight?"#fff59d":"transparent");
+}
+function clearFormat(){
+  editor.focus();
+  document.execCommand("removeFormat");
+  document.execCommand("justifyLeft");
+  document.execCommand("backColor",false,"transparent");
+  highlight=false;
+}
+
+/* BANQUE DE CONSIGNES */
+const consignes=[
+"Calibri taille 20 et gras",
+"Arial taille 16",
+"Verdana taille 18 et italique",
+"Times New Roman taille 24",
+"bleue",
+"rouge",
+"verte",
+"soulignée",
+"centrée",
+"alignée à droite",
+"surlignée",
+"gras et bleue",
+"italique et centrée",
+"gras, rouge et centrée",
+"police Arial et surlignée"
+];
+
+/* GÉNÉRATEUR ALÉATOIRE */
+function nouvelleConsigne(){
+  let used=[];
+  let html="<b>Consignes de mise en forme :</b><ul>";
+  for(let i=1;i<=8;i++){
+    let c;
+    do{
+      c=consignes[Math.floor(Math.random()*consignes.length)];
+    }while(used.includes(c));
+    used.push(c);
+    html+="<li>Ligne "+i+" : "+c+"</li>";
+  }
+  html+="</ul>";
+  document.getElementById("consigne").innerHTML=html;
+}
+
+/* INITIAL */
+nouvelleConsigne();
+
+// Auto-validation : recopiage du texte (mise en forme libre)
+const editor = document.getElementById("editor");
+if (editor) {
+  editor.addEventListener("input", checkCompletion);
+  editor.addEventListener("paste", () => setTimeout(checkCompletion, 0));
+  checkCompletion();
+}
+</script>
+
+  </main>
+</div>
+
+</body>
+</html>

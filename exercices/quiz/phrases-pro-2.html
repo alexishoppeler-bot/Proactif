@@ -1,0 +1,647 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Quiz – Phrases professionnelles (niveau 2)</title>
+  <style>
+    :root{
+      --bg1:#eef3f9;
+      --bg2:#dfeaff;
+      --card:#ffffff;
+      --text:#0f172a;
+      --muted:#475569;
+      --border:rgba(2, 6, 23, 0.10);
+      --shadow:0 18px 55px rgba(15, 23, 42, 0.16);
+      --blue:#2563eb;
+      --green:#16a34a;
+      --red:#dc2626;
+      --focus:rgba(37, 99, 235, 0.35);
+    }
+
+    body{
+      margin:0;
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      color:var(--text);
+      background: radial-gradient(1200px 600px at 10% 0%, var(--bg2), transparent 60%),
+                  radial-gradient(900px 520px at 90% 10%, #dff7ed, transparent 55%),
+                  linear-gradient(180deg, var(--bg1), #ffffff);
+      padding: 28px 14px 40px;
+    }
+
+    .app{
+      max-width: 980px;
+      margin: 0 auto;
+      background: rgba(255,255,255,0.78);
+      border: 1px solid rgba(2, 6, 23, 0.08);
+      border-radius: 22px;
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      overflow: hidden;
+      animation: in .35s ease-out;
+    }
+
+    @keyframes in{
+      from{opacity:0; transform: translateY(10px);}
+      to{opacity:1; transform: translateY(0);}
+    }
+
+    .header{
+      padding: 22px 22px 14px;
+      background: linear-gradient(120deg, rgba(37,99,235,0.10), rgba(22,163,74,0.08));
+      border-bottom: 1px solid rgba(2, 6, 23, 0.08);
+    }
+
+    .titleRow{
+      display:flex;
+      gap: 14px;
+      align-items:center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+    }
+
+    h1{
+      margin:0;
+      font-size: 26px;
+      letter-spacing: -0.02em;
+      display:flex;
+      align-items:center;
+      gap:10px;
+    }
+
+    .meta{
+      display:flex;
+      gap:10px;
+      flex-wrap: wrap;
+      align-items:center;
+      justify-content:flex-end;
+      color: var(--muted);
+      font-weight: 650;
+      font-size: 13px;
+    }
+
+    .pill{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      padding: 7px 10px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.8);
+      border: 1px solid rgba(2, 6, 23, 0.10);
+      box-shadow: 0 8px 20px rgba(2, 6, 23, 0.06);
+    }
+
+    .barWrap{
+      margin-top: 14px;
+      height: 12px;
+      border-radius: 999px;
+      background: rgba(2, 6, 23, 0.08);
+      overflow:hidden;
+    }
+    .bar{
+      height:100%;
+      width:0%;
+      background: linear-gradient(90deg, var(--blue), #22c55e);
+      transition: width .25s ease;
+    }
+
+    .content{ padding: 20px 22px 24px; }
+
+    .grid{
+      display:grid;
+      grid-template-columns: 1.2fr 0.8fr;
+      gap: 16px;
+      align-items:start;
+    }
+
+    @media (max-width: 900px){ .grid{ grid-template-columns: 1fr; } }
+
+    .card{
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 18px;
+      box-shadow: 0 10px 28px rgba(15, 23, 42, 0.08);
+    }
+
+    .card h2{
+      margin:0 0 10px;
+      font-size: 16px;
+      color:#0b3b7a;
+      letter-spacing: -0.01em;
+    }
+
+    .hint{
+      color: var(--muted);
+      line-height: 1.55;
+      margin: 0;
+      font-size: 14px;
+      font-weight: 650;
+    }
+
+    .qTitle{
+      font-weight: 900;
+      letter-spacing: -0.02em;
+      font-size: 17px;
+      margin: 0 0 10px;
+    }
+
+    .choices{
+      display:grid;
+      gap:10px;
+      margin-top: 12px;
+    }
+
+    .choice{
+      appearance:none;
+      -webkit-appearance:none;
+      width:100%;
+      text-align:left;
+      border-radius: 16px;
+      border: 1px solid rgba(2, 6, 23, 0.12);
+      background: linear-gradient(180deg, rgba(255,255,255,0.96), rgba(248,250,252,0.96));
+      padding: 12px 12px;
+      cursor:pointer;
+      transition: transform .12s ease, box-shadow .12s ease, border-color .12s ease, background .12s ease;
+      position:relative;
+      font-weight: 750;
+      line-height: 1.35;
+      color: #0f172a;
+    }
+
+    .choice:hover{
+      transform: translateY(-1px);
+      box-shadow: 0 12px 25px rgba(2, 6, 23, 0.10);
+      border-color: rgba(37, 99, 235, 0.35);
+    }
+
+    .choice:focus-visible{ outline: 3px solid var(--focus); outline-offset: 3px; }
+    .choice[disabled]{ cursor: not-allowed; opacity: 0.82; }
+
+    .choice[data-state="correct"]{
+      border-color: rgba(22, 163, 74, 0.45);
+      box-shadow: 0 16px 34px rgba(22, 163, 74, 0.18);
+      background: linear-gradient(180deg, rgba(220,252,231,0.9), rgba(248,250,252,0.98));
+    }
+    .choice[data-state="wrong"]{
+      border-color: rgba(220, 38, 38, 0.45);
+      box-shadow: 0 16px 34px rgba(220, 38, 38, 0.14);
+      background: linear-gradient(180deg, rgba(254,226,226,0.85), rgba(248,250,252,0.98));
+    }
+
+    .choice .tag{
+      position:absolute;
+      top:10px;
+      right:10px;
+      font-size: 12px;
+      font-weight: 950;
+      padding: 4px 8px;
+      border-radius: 999px;
+      background: rgba(2, 6, 23, 0.08);
+      color: rgba(2, 6, 23, 0.7);
+      opacity: 0;
+      transform: translateY(-2px);
+      transition: opacity .15s ease, transform .15s ease;
+    }
+    .choice[data-state="correct"] .tag{
+      background: rgba(22, 163, 74, 0.14);
+      color: #14532d;
+      opacity: 1;
+      transform: translateY(0);
+    }
+    .choice[data-state="wrong"] .tag{
+      background: rgba(220, 38, 38, 0.14);
+      color: #7f1d1d;
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .feedback{
+      margin-top: 14px;
+      border-radius: 16px;
+      padding: 12px;
+      border: 1px solid rgba(2, 6, 23, 0.10);
+      background: rgba(255,255,255,0.8);
+      display:none;
+    }
+    .feedback.show{ display:block; animation: pop .18s ease-out; }
+    @keyframes pop{ from{opacity:0; transform: translateY(4px);} to{opacity:1; transform: translateY(0);} }
+    .feedback .status{ font-weight: 950; margin-bottom: 4px; letter-spacing: -0.01em; }
+    .feedback[data-kind="ok"] .status{ color: var(--green); }
+    .feedback[data-kind="no"] .status{ color: var(--red); }
+    .feedback .explain{ color: var(--muted); margin:0; line-height: 1.55; font-weight: 650; font-size: 14px; }
+
+    .actions{ display:flex; gap: 10px; margin-top: 14px; flex-wrap: wrap; }
+    .btn{
+      border: 1px solid rgba(2, 6, 23, 0.12);
+      background: rgba(255,255,255,0.9);
+      border-radius: 14px;
+      padding: 10px 12px;
+      font-weight: 850;
+      cursor:pointer;
+      transition: transform .12s ease, box-shadow .12s ease, background .12s ease;
+      color: #0f172a;
+    }
+    .btn:hover{ transform: translateY(-1px); box-shadow: 0 14px 30px rgba(2, 6, 23, 0.12); }
+    .btn:focus-visible{ outline: 3px solid var(--focus); outline-offset: 3px; }
+    .btn.primary{ border-color: rgba(37, 99, 235, 0.35); background: linear-gradient(180deg, rgba(37,99,235,0.12), rgba(255,255,255,0.9)); }
+    .btn.success{ border-color: rgba(22, 163, 74, 0.35); background: linear-gradient(180deg, rgba(22,163,74,0.12), rgba(255,255,255,0.9)); }
+    .btn.danger{ border-color: rgba(220, 38, 38, 0.35); background: linear-gradient(180deg, rgba(220,38,38,0.10), rgba(255,255,255,0.9)); }
+    .btn[disabled]{ opacity:0.55; cursor:not-allowed; transform:none; box-shadow:none; }
+
+    .side{ position: sticky; top: 18px; }
+    @media (max-width: 900px){ .side{ position: static; } }
+
+    .scoreBig{ font-size: 36px; font-weight: 950; letter-spacing: -0.03em; margin: 6px 0 0; }
+    .small{ color: var(--muted); font-weight: 650; font-size: 13px; margin: 6px 0 0; line-height: 1.5; }
+
+    .result{ display:none; }
+    .result.show{ display:block; animation: in .25s ease-out; }
+
+    .badge{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      font-weight: 950;
+      padding: 8px 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(2, 6, 23, 0.12);
+      background: rgba(255,255,255,0.86);
+      margin-top: 8px;
+      width: fit-content;
+    }
+    .badge.ok{ border-color: rgba(22, 163, 74, 0.30); }
+    .badge.no{ border-color: rgba(220, 38, 38, 0.30); }
+    .badge span.dot{ width:10px;height:10px;border-radius:999px;display:inline-block;background: rgba(2, 6, 23, 0.25); }
+    .badge.ok span.dot{ background: rgba(22, 163, 74, 0.9); }
+    .badge.no span.dot{ background: rgba(220, 38, 38, 0.9); }
+  </style>
+  <link rel="stylesheet" href="../../exercise-layout.css">
+  <script defer src="../../exercise-layout.js"></script>
+</head>
+<body>
+  <div class="back-home" style="max-width:1100px;margin:10px auto 0;padding:0 20px;">
+    <a class="back-home__link" href="../../index.html" style="display:inline-flex;align-items:center;gap:6px;text-decoration:none;color:#004c6d;font-weight:700;border:1px solid #cfdff0;padding:6px 14px;border-radius:999px;background:#fff;box-shadow:0 2px 4px rgba(0,0,0,0.08);">← Retour à l’index</a>
+  </div>
+  <script src="../shared/proactif-exercise.js"></script>
+  <div class="exercise-shell">
+    <main class="exercise-card">
+
+      <div class="app" id="app">
+        <div class="header">
+          <div class="titleRow">
+            <h1>💬 Phrases pro — niveau 2</h1>
+            <div class="meta">
+              <span class="pill">Question <span id="qIndex">1</span>/<span id="qTotal">12</span></span>
+              <span class="pill">Score : <span id="score">0</span></span>
+              <span class="pill">Objectif : <span id="target">9/12</span></span>
+            </div>
+          </div>
+          <div class="barWrap" aria-hidden="true">
+            <div class="bar" id="bar"></div>
+          </div>
+        </div>
+
+        <div class="content">
+          <div class="grid">
+            <section class="card" aria-labelledby="qTitle">
+              <h2>Consigne</h2>
+              <p class="hint">Niveau 2 : choisissez la phrase la plus professionnelle (plusieurs propositions peuvent sembler correctes).</p>
+
+              <div style="height:14px"></div>
+
+              <p class="qTitle" id="qTitle"></p>
+              <div class="choices" id="choices"></div>
+
+              <div class="feedback" id="feedback" role="status" aria-live="polite">
+                <div class="status" id="feedbackTitle"></div>
+                <p class="explain" id="feedbackExplain"></p>
+              </div>
+
+              <div class="actions">
+                <button class="btn primary" id="nextBtn" type="button" disabled>Suivant</button>
+                <button class="btn" id="skipBtn" type="button">Passer</button>
+                <button class="btn danger" id="restartBtn" type="button">Recommencer</button>
+              </div>
+            </section>
+
+            <aside class="card side">
+              <h2>Astuce niveau 2</h2>
+              <p class="hint">Visez : précision (dates/heures), formule de politesse, et une demande claire. La meilleure réponse n’est pas forcément la plus longue.</p>
+              <p class="small"><strong>À éviter :</strong> injonctions (“faites”), reproches (“vous n’avez pas”), familiarité.</p>
+
+              <div class="result" id="result">
+                <div class="badge" id="badge">
+                  <span class="dot" aria-hidden="true"></span>
+                  <span id="badgeText"></span>
+                </div>
+                <div class="scoreBig" id="scoreBig">0/12</div>
+                <p class="small" id="resultText"></p>
+                <div class="actions">
+                  <button class="btn success" id="reviewBtn" type="button">Voir les réponses</button>
+                </div>
+              </div>
+            </aside>
+          </div>
+        </div>
+      </div>
+
+      <script>
+        const STORAGE_PREFIX = 'proactif_phrases_pro_2_v1:';
+        const PASS_MIN = 9; // sur 12
+
+        const questions = [
+          {
+            title: "Vous demandez un délai pour répondre (vous avez besoin de vérifier une info).",
+            choices: [
+              { text: "Merci pour votre message. Je regarde cela et je reviens vers vous dès que possible, je vous tiens au courant.", ok: false, why: "Poli, mais trop vague : pas de délai/échéance." },
+              { text: "Je reviens vers vous demain.", ok: false, why: "Un peu court : manque de politesse et de précision (heure)." },
+              { text: "Merci pour votre message. Je vérifie et je reviens vers vous d’ici demain 16h.", ok: true, why: "Poli + action + délai précis." }
+            ]
+          },
+          {
+            title: "Vous avez reçu une consigne, mais vous n’êtes pas sûr(e) d’avoir compris.",
+            choices: [
+              { text: "Je comprends pas, pouvez-vous expliquer ?", ok: false, why: "Trop direct et pas assez précis." },
+              { text: "Bonjour, j’ai un doute sur la consigne. Pouvez-vous préciser ? Merci.", ok: false, why: "Poli, mais il manque une reformulation concrète de ce que vous avez compris." },
+              { text: "Pour être sûr(e) d’avoir bien compris : je dois… Pouvez-vous confirmer, s’il vous plaît ? Merci.", ok: true, why: "Reformulation + demande de confirmation." }
+            ]
+          },
+          {
+            title: "Vous devez demander un changement de rendez-vous.",
+            choices: [
+              { text: "Je ne peux pas venir. On change le rendez-vous.", ok: false, why: "Trop direct et sans proposition." },
+              { text: "Bonjour, je souhaite déplacer le rendez-vous. Merci.", ok: false, why: "Poli mais incomplet : proposez des créneaux." },
+              { text: "Bonjour, serait-il possible de déplacer notre rendez-vous ? Je suis disponible mardi ou mercredi. Merci.", ok: true, why: "Poli + propose des créneaux." }
+            ]
+          },
+          {
+            title: "Vous envoyez un document en pièce jointe.",
+            choices: [
+              { text: "Bonjour, je vous transmets le document en pièce jointe. Merci de le traiter rapidement, c’est urgent.", ok: false, why: "Poli, mais le ton met une pression inutile (“urgent”)." },
+              { text: "Je vous ai mis le document en pièce jointe, dites-moi si c’est bon.", ok: false, why: "Trop familier (“si c’est bon”)." },
+              { text: "Bonjour, veuillez trouver en pièce jointe le document demandé. Je reste à disposition si besoin. Cordialement,", ok: true, why: "Formule standard + ouverture + formule de fin." }
+            ]
+          },
+          {
+            title: "Vous devez vous excuser pour une erreur (ex. document incomplet).",
+            choices: [
+              { text: "Je vous prie de m’excuser, mais ce n’est pas de ma faute. Voilà la version corrigée.", ok: false, why: "Se déresponsabilise : à éviter en contexte pro." },
+              { text: "Désolé(e), j’ai fait une erreur, je corrige.", ok: false, why: "Intention correcte, mais trop familier et pas assez complet." },
+              { text: "Je vous prie de m’excuser pour cette erreur. Vous trouverez ci-joint la version corrigée.", ok: true, why: "Excuses + solution immédiate, ton professionnel." }
+            ]
+          },
+          {
+            title: "Vous relancez poliment (sans pression).",
+            choices: [
+              { text: "Bonjour, je relance car je n’ai pas eu de réponse. Merci de répondre.", ok: false, why: "Le ton peut être perçu comme une pression." },
+              { text: "Vous avez vu mon message ? J’attends votre réponse.", ok: false, why: "Peut être perçu comme accusateur." },
+              { text: "Je me permets de vous relancer concernant mon message du … Merci d’avance pour votre retour.", ok: true, why: "Relance standard, polie et datée." }
+            ]
+          },
+          {
+            title: "Vous confirmez une compréhension / une action.",
+            choices: [
+              { text: "Bien reçu. Je m’en occupe et je vous dis quand j’ai fini.", ok: false, why: "Trop oral (“je vous dis”). Mieux : “je vous confirme”." },
+              { text: "Ok, c’est noté, je m’en occupe.", ok: false, why: "Le “ok” est trop familier." },
+              { text: "Bien reçu. Je m’en occupe aujourd’hui et je vous confirme dès que c’est terminé.", ok: true, why: "Professionnel + engagement clair." }
+            ]
+          },
+          {
+            title: "Vous informez d’un retard (mais vous pouvez donner une estimation).",
+            choices: [
+              { text: "Bonjour, je serai en retard, je suis dans les transports. Merci.", ok: false, why: "Poli, mais il manque une estimation (10 minutes, 15 minutes…)." },
+              { text: "Je serai en retard de 10 à 15 minutes. Désolé(e).", ok: false, why: "Il manque une formule d’appel et une excuse plus professionnelle." },
+              { text: "Bonjour, je serai en retard de 10 à 15 minutes. Je m’excuse et j’arrive au plus vite.", ok: true, why: "Estimation + excuses, ton pro." }
+            ]
+          },
+          {
+            title: "Vous refusez une demande en restant professionnel/le.",
+            choices: [
+              { text: "Je ne peux pas, désolé(e).", ok: false, why: "Trop court : manque de politesse/formule." },
+              { text: "Merci pour votre demande. Malheureusement, je ne peux pas y répondre favorablement. Cordialement.", ok: true, why: "Poli, clair, formule de fin." },
+              { text: "Non, ce n’est pas possible pour moi. Bonne journée.", ok: false, why: "Encore trop direct, sans remercier." }
+            ]
+          },
+          {
+            title: "Vous demandez une confirmation écrite.",
+            choices: [
+              { text: "Pouvez-vous confirmer la date et l’heure par écrit, s’il vous plaît ?", ok: true, why: "Demande complète et précise." },
+              { text: "Pouvez-vous confirmer ?", ok: false, why: "Incomplet : confirmer quoi exactement ?" },
+              { text: "Confirmez-moi ça rapidement.", ok: false, why: "Trop injonctif." }
+            ]
+          },
+          {
+            title: "Vous terminez un e-mail professionnel (niveau 2).",
+            choices: [
+              { text: "Merci,", ok: false, why: "Ce n’est pas une formule de fin complète." },
+              { text: "À bientôt,", ok: false, why: "Peut être trop informel selon le contexte." },
+              { text: "Cordialement,", ok: true, why: "Formule standard et adaptée." }
+            ]
+          },
+          {
+            title: "Vous demandez une précision (ton neutre et respectueux).",
+            choices: [
+              { text: "Bonjour, vous n’avez pas donné l’adresse. Merci de l’envoyer.", ok: false, why: "Accusateur + injonction (“merci de…”)." },
+              { text: "Bonjour, pouvez-vous me préciser le lieu (adresse) et l’heure, s’il vous plaît ? Merci.", ok: true, why: "Clair, neutre, poli." },
+              { text: "J’ai une question : c’est où ?", ok: false, why: "Trop familier." }
+            ]
+          }
+        ];
+
+        const qTotal = questions.length;
+        document.getElementById('qTotal').textContent = String(qTotal);
+        document.getElementById('target').textContent = PASS_MIN + '/' + qTotal;
+
+        const qIndexEl = document.getElementById('qIndex');
+        const scoreEl = document.getElementById('score');
+        const barEl = document.getElementById('bar');
+        const qTitleEl = document.getElementById('qTitle');
+        const choicesEl = document.getElementById('choices');
+        const feedbackEl = document.getElementById('feedback');
+        const feedbackTitleEl = document.getElementById('feedbackTitle');
+        const feedbackExplainEl = document.getElementById('feedbackExplain');
+        const nextBtn = document.getElementById('nextBtn');
+        const skipBtn = document.getElementById('skipBtn');
+        const restartBtn = document.getElementById('restartBtn');
+        const resultEl = document.getElementById('result');
+        const badgeEl = document.getElementById('badge');
+        const badgeTextEl = document.getElementById('badgeText');
+        const scoreBigEl = document.getElementById('scoreBig');
+        const resultTextEl = document.getElementById('resultText');
+        const reviewBtn = document.getElementById('reviewBtn');
+
+        let order = [];
+        let index = 0;
+        let score = 0;
+        let answered = [];
+        let finished = false;
+
+        function shuffle(arr){
+          const a = arr.slice();
+          for(let i=a.length-1;i>0;i--){
+            const j = Math.floor(Math.random()*(i+1));
+            const t = a[i]; a[i]=a[j]; a[j]=t;
+          }
+          return a;
+        }
+
+        function saveBest(){
+          try {
+            const bestKey = STORAGE_PREFIX + 'best';
+            const best = parseInt(localStorage.getItem(bestKey) || '0', 10);
+            if (score > best) localStorage.setItem(bestKey, String(score));
+          } catch (e) { }
+        }
+
+        function setProgress(){
+          qIndexEl.textContent = String(Math.min(index + 1, qTotal));
+          scoreEl.textContent = String(score);
+          const pct = (index / qTotal) * 100;
+          barEl.style.width = Math.max(0, Math.min(100, pct)).toFixed(0) + '%';
+        }
+
+        function showFeedback(kind, title, explain){
+          feedbackEl.dataset.kind = kind;
+          feedbackTitleEl.textContent = title;
+          feedbackExplainEl.textContent = explain;
+          feedbackEl.classList.add('show');
+        }
+
+        function clearFeedback(){
+          feedbackEl.classList.remove('show');
+          feedbackEl.dataset.kind = '';
+          feedbackTitleEl.textContent = '';
+          feedbackExplainEl.textContent = '';
+        }
+
+        function disableChoices(){
+          Array.from(choicesEl.querySelectorAll('button.choice')).forEach(btn => btn.disabled = true);
+        }
+
+        function renderQuestion(){
+          finished = false;
+          resultEl.classList.remove('show');
+          clearFeedback();
+          nextBtn.disabled = true;
+          skipBtn.disabled = false;
+
+          const q = questions[order[index]];
+          qTitleEl.textContent = q.title;
+          choicesEl.innerHTML = '';
+
+          q.choices.forEach((c, i) => {
+            const btn = document.createElement('button');
+            btn.type = 'button';
+            btn.className = 'choice';
+            btn.innerHTML = '<span class="tag"></span>' + c.text;
+            btn.addEventListener('click', () => choose(i));
+            choicesEl.appendChild(btn);
+          });
+
+          setProgress();
+        }
+
+        function choose(choiceIndex){
+          if (finished) return;
+          finished = true;
+          nextBtn.disabled = false;
+
+          const q = questions[order[index]];
+          const c = q.choices[choiceIndex];
+          const ok = !!c.ok;
+
+          const buttons = Array.from(choicesEl.querySelectorAll('button.choice'));
+          buttons.forEach((btn, i) => {
+            const tag = btn.querySelector('.tag');
+            if (i === choiceIndex) {
+              btn.dataset.state = ok ? 'correct' : 'wrong';
+              if (tag) tag.textContent = ok ? '✔' : '✖';
+            }
+            const correct = q.choices[i] && q.choices[i].ok;
+            if (!ok && correct) {
+              btn.dataset.state = 'correct';
+              if (tag) tag.textContent = '✔';
+            }
+          });
+
+          disableChoices();
+          skipBtn.disabled = true;
+
+          if (ok) score += 1;
+          answered[order[index]] = { picked: choiceIndex, ok: ok };
+          scoreEl.textContent = String(score);
+
+          showFeedback(ok ? 'ok' : 'no', ok ? 'Bonne réponse' : 'À améliorer', c.why || '');
+        }
+
+        function skip(){
+          if (finished) return;
+          answered[order[index]] = { picked: null, ok: false };
+          next();
+        }
+
+        function next(){
+          if (index < qTotal - 1) {
+            index += 1;
+            renderQuestion();
+            return;
+          }
+          finish();
+        }
+
+        function finish(){
+          barEl.style.width = '100%';
+          clearFeedback();
+          nextBtn.disabled = true;
+          skipBtn.disabled = true;
+          disableChoices();
+
+          const passed = score >= PASS_MIN;
+          scoreBigEl.textContent = score + '/' + qTotal;
+          badgeEl.className = 'badge ' + (passed ? 'ok' : 'no');
+          badgeTextEl.textContent = passed ? 'Validé' : 'À refaire';
+
+          if (passed) {
+            resultTextEl.textContent = "Bravo ! Exercice validé. Vous pouvez revenir au menu.";
+            try { window.proactifMarkExerciseDone && window.proactifMarkExerciseDone(); } catch (e) { }
+          } else {
+            resultTextEl.textContent = "Encore un petit effort : recommencez pour atteindre l’objectif.";
+          }
+
+          resultEl.classList.add('show');
+          saveBest();
+        }
+
+        function review(){
+          const summary = [];
+          for (let i = 0; i < qTotal; i++) {
+            const q = questions[i];
+            const okText = q.choices.find(x => x.ok).text;
+            summary.push((i+1) + '. ' + q.title + ' — Attendu : ' + okText);
+          }
+          alert(summary.join('\n\n'));
+        }
+
+        function restart(){
+          order = shuffle([...Array(qTotal)].map((_, i) => i));
+          index = 0;
+          score = 0;
+          answered = new Array(qTotal).fill(null);
+          scoreEl.textContent = '0';
+          renderQuestion();
+        }
+
+        nextBtn.addEventListener('click', next);
+        skipBtn.addEventListener('click', skip);
+        restartBtn.addEventListener('click', restart);
+        reviewBtn.addEventListener('click', review);
+
+        restart();
+      </script>
+
+    </main>
+  </div>
+</body>
+</html>

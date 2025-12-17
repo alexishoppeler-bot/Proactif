@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Parler de mon dernier travail – Exercice interactif</title>
+
+<style>
+ body{
+   font-family:Arial, sans-serif;
+   background:#eef3f9;
+   padding:20px;
+   text-align:center;
+ }
+ #app{
+   max-width:700px;
+   margin:auto;
+   background:white;
+   padding:30px;
+   border-radius:16px;
+   box-shadow:0 4px 20px rgba(0,0,0,0.18);
+   text-align:left;
+ }
+ h1{
+   text-align:center;
+   color:#003c8f;
+ }
+ .question-box{
+   background:#f0f4ff;
+   padding:15px;
+   border-radius:10px;
+   margin-top:20px;
+   font-size:18px;
+   font-weight:bold;
+ }
+ textarea{
+   width:100%;
+   height:130px;
+   margin-top:10px;
+   padding:12px;
+   border-radius:10px;
+   border:2px solid #d0d3e2;
+   font-size:17px;
+ }
+ button{
+   padding:12px 20px;
+   border:none;
+   border-radius:10px;
+   font-size:18px;
+   margin-top:15px;
+   cursor:pointer;
+ }
+ .nextBtn{
+   background:#0a66c2;
+   color:white;
+ }
+ .resetBtn{
+   background:#d9534f;
+   color:white;
+ }
+ .progress{
+   font-size:18px;
+   font-weight:bold;
+   text-align:center;
+   color:#003c8f;
+   margin-bottom:15px;
+ }
+ .feedback{
+   margin-top:10px;
+   font-weight:bold;
+   font-size:18px;
+ }
+</style>
+  <link rel="stylesheet" href="../../exercise-layout.css">
+  <script defer src="../../exercise-layout.js"></script>
+</head>
+<body>
+
+<div class="back-home" style="max-width:1100px;margin:10px auto 0;padding:0 20px;">
+  <a class="back-home__link" href="../../index.html" style="display:inline-flex;align-items:center;gap:6px;text-decoration:none;color:#004c6d;font-weight:700;border:1px solid #cfdff0;padding:6px 14px;border-radius:999px;background:#fff;box-shadow:0 2px 4px rgba(0,0,0,0.08);">← Retour à l’index</a>
+</div>
+<script src="../shared/proactif-exercise.js"></script>
+<div class="exercise-shell">
+  <main class="exercise-card">
+
+
+<div id="app">
+  <h1>🗣️ Parler de mon dernier travail</h1>
+  <div class="progress" id="progress">1 / 10</div>
+
+  <div class="question-box" id="question">...</div>
+  
+  <textarea id="reponse" placeholder="Écrivez votre réponse ici..."></textarea>
+
+  <button class="nextBtn" onclick="suivant()">Suivant</button>
+  <div class="feedback" id="feedback"></div>
+  
+  
+
+  <div class="feedback" id="feedback"></div>
+</div>
+
+<script>
+// 10 QUESTIONS POUR PARLER DE SON DERNIER TRAVAIL (version professionnelle, données non sensibles)
+const questions = [
+  "Quel type d'activité professionnelle aviez-vous ? (ex. : nettoyage, cuisine, logistique...)",
+  "Dans quel secteur travailliez-vous ? (ex. : restauration, industrie, commerce...)",
+  "Depuis combien de temps exerciez-vous ce poste environ ?",
+  "Quelles étaient vos tâches principales dans ce rôle ?",
+  "Avec quel type d'équipe travailliez-vous ? (ex. : équipe de 3 personnes, travail en binôme...)",
+  "Quelles compétences professionnelles utilisiez-vous régulièrement ?",
+  "Qu’appréciiez-vous dans votre activité ?",
+  "Quels aspects du travail étaient plus difficiles pour vous ?",
+  "Quels changements vous ont amené à arrêter cette activité ?",
+  "Quels objectifs professionnels avez-vous pour la suite ?"
+];
+
+const STORAGE_PREFIX = "proactif_parler_dernier_travail_v1:";
+const KEY_INDEX = STORAGE_PREFIX + "index";
+const KEY_REPONSES = STORAGE_PREFIX + "reponses";
+const LEGACY_KEY_INDEX = "job_index";
+const LEGACY_KEY_REPONSES = "job_reponses";
+
+function migrateLegacyIfAny(){
+  try {
+    if (!localStorage.getItem(KEY_INDEX) && localStorage.getItem(LEGACY_KEY_INDEX)) {
+      localStorage.setItem(KEY_INDEX, localStorage.getItem(LEGACY_KEY_INDEX));
+      localStorage.removeItem(LEGACY_KEY_INDEX);
+    }
+    if (!localStorage.getItem(KEY_REPONSES) && localStorage.getItem(LEGACY_KEY_REPONSES)) {
+      localStorage.setItem(KEY_REPONSES, localStorage.getItem(LEGACY_KEY_REPONSES));
+      localStorage.removeItem(LEGACY_KEY_REPONSES);
+    }
+  } catch (e) { }
+}
+
+migrateLegacyIfAny();
+
+let index = parseInt(localStorage.getItem(KEY_INDEX) || 0, 10);
+let reponses;
+try{
+  reponses = JSON.parse(localStorage.getItem(KEY_REPONSES) || "[]");
+}catch(e){
+  reponses = [];
+}
+if(!Array.isArray(reponses) || reponses.length !== questions.length){
+  reponses = new Array(questions.length).fill("");
+}
+
+function charger(){
+  document.getElementById("question").innerText = questions[index];
+  document.getElementById("reponse").value = reponses[index] || "";
+  document.getElementById("progress").innerText = (index+1) + " / " + questions.length;
+}
+
+charger();
+
+function suivant(){
+  const rep = document.getElementById("reponse").value.trim();
+  if(rep === ""){
+    document.getElementById("feedback").innerHTML = "⚠️ Écrivez une réponse avant de continuer.";
+    return;
+  }
+
+  reponses[index] = rep;
+  localStorage.setItem(KEY_REPONSES, JSON.stringify(reponses));
+
+  index++;
+
+  if(index >= questions.length){
+    document.getElementById("app").innerHTML = `
+      <h1>🎉 Bravo !</h1>
+      <p style='font-size:20px;'>Vous avez terminé les 10 questions sur votre dernier travail.</p>
+      <p style='font-size:18px;'>Vous progressez très bien. Continuez ainsi : c’est un excellent entraînement pour vous exprimer clairement avec un conseiller ORP ou un employeur.</p>
+      <div style='margin-top:25px; text-align:center;'>
+        <button class='resetBtn' onclick='resetAll()'>Réinitialiser</button>
+      </div>
+    `;
+    localStorage.setItem(KEY_INDEX, (questions.length - 1).toString());
+    try { window.proactifMarkExerciseDone && window.proactifMarkExerciseDone(); } catch (e) { }
+    return;
+  }
+
+  localStorage.setItem(KEY_INDEX, index.toString());
+  document.getElementById("feedback").innerHTML = "";
+  charger();
+}
+
+function resetAll(){
+  if(!confirm("Effacer toutes les réponses et recommencer ?")) return;
+  index = 0;
+  reponses = new Array(questions.length).fill("");
+  localStorage.removeItem(KEY_INDEX);
+  localStorage.removeItem(KEY_REPONSES);
+  // cleanup legacy if still present
+  localStorage.removeItem(LEGACY_KEY_INDEX);
+  localStorage.removeItem(LEGACY_KEY_REPONSES);
+  charger();
+  document.getElementById("feedback").innerHTML = "";
+}
+
+</script>
+
+  </main>
+</div>
+
+</body>
+</html>

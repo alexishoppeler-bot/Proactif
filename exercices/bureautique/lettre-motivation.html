@@ -1,0 +1,722 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+  <meta charset="UTF-8">
+  <title>Lettre de candidature – Simple & Universelle</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    :root {
+      --ink: #0e192b;
+      --soft: #536580;
+      --accent: #1e6bd6;
+      --accent-soft: #eaf2ff;
+      --border: #d9e1ef;
+    }
+
+    html,
+    body {
+      margin: 0;
+      font-family: 'Open Sans', Arial, sans-serif;
+      background: linear-gradient(180deg, #eff4fb 0%, #ffffff 50%);
+      color: var(--ink);
+    }
+
+    body.print-mode {
+      background: #fff;
+    }
+
+    body.print-mode {
+      padding: 0 !important;
+    }
+
+    body.print-mode .exercise-shell {
+      max-width: none !important;
+      margin: 0 !important;
+    }
+
+    .exercise-card {
+      padding: 32px clamp(16px, 5vw, 48px);
+    }
+
+    .back-home {
+      position: fixed;
+      bottom: 24px;
+      right: clamp(12px, 4vw, 40px);
+      z-index: 90;
+    }
+
+    .back-home__link {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      text-decoration: none;
+      color: #004c6d;
+      font-weight: 700;
+      border: 1px solid #cfdff0;
+      padding: 10px 18px;
+      border-radius: 999px;
+      background: #fff;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.12);
+      backdrop-filter: blur(4px);
+    }
+
+    .wrap {
+      max-width: 1100px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+    }
+
+    .hero {
+      background: #fff;
+      border-radius: 24px;
+      border: 1px solid rgba(30, 107, 214, 0.15);
+      padding: 26px;
+      box-shadow: 0 20px 60px rgba(14, 25, 43, 0.12);
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+    }
+
+    .hero__text {
+      flex: 1 1 360px;
+    }
+
+    .hero__text h1 {
+      margin: 6px 0;
+      font-size: 1.8rem;
+    }
+
+    .hero__text p {
+      margin: 0;
+      color: var(--soft);
+      line-height: 1.6;
+    }
+
+    .hero__pill {
+      display: inline-flex;
+      background: var(--accent-soft);
+      color: var(--accent);
+      padding: 6px 14px;
+      border-radius: 999px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      margin-top: 8px;
+    }
+
+    .hero__info {
+      flex: 1 1 260px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .stat {
+      background: var(--accent-soft);
+      color: var(--ink);
+      padding: 10px 16px;
+      border-radius: 12px;
+      font-weight: 600;
+    }
+
+    .tips-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 12px;
+    }
+
+    .tips-card {
+      background: #fff;
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 16px 18px;
+      box-shadow: 0 8px 24px rgba(14, 25, 43, 0.08);
+      font-size: 0.95rem;
+      color: var(--soft);
+    }
+
+    .tips-card strong {
+      color: var(--ink);
+    }
+
+    .form-grid {
+      background: #fff;
+      border-radius: 18px;
+      border: 1px solid var(--border);
+      padding: 24px;
+      box-shadow: 0 10px 30px rgba(14, 25, 43, 0.08);
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 14px;
+    }
+
+    .form-grid h3 {
+      grid-column: 1/-1;
+      margin: 6px 0;
+      color: var(--ink);
+    }
+
+    .form-grid input {
+      width: 100%;
+      padding: 10px 12px;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--ink);
+      transition: border .2s ease, box-shadow .2s ease;
+    }
+
+    .form-grid input:focus {
+      border-color: var(--accent);
+      outline: none;
+      box-shadow: 0 0 0 3px rgba(30, 107, 214, 0.15);
+    }
+
+    .letter-shell {
+      background: #fff;
+      border-radius: 24px;
+      border: 1px solid var(--border);
+      padding: 24px;
+      box-shadow: 0 20px 60px rgba(14, 25, 43, 0.12);
+    }
+
+    .letter-container {
+      --page-padding: 25.4mm;
+      background: #fff;
+      box-shadow: 0 35px 60px rgba(0, 0, 0, 0.12);
+      border-radius: 12px;
+      border: 1px solid #f0f0f0;
+      width: 210mm;
+      max-width: 100%;
+      padding: var(--page-padding);
+      height: 297mm;
+      box-sizing: border-box;
+      margin: 0 auto;
+      font-size: 12pt;
+      line-height: 1.5;
+      overflow: auto;
+    }
+
+    .letter-paragraph {
+      margin: 0 0 12px;
+      text-align: justify;
+    }
+
+    .letter-warning {
+      margin: 0;
+      padding: 14px 16px;
+      border-radius: 12px;
+      background: #fff8ed;
+      border: 1px solid rgba(194, 118, 2, 0.35);
+      color: #7a4a00;
+      font-weight: 700;
+      text-align: left;
+    }
+
+    .letter-container:not(.letter-placeholder) .letter-warning {
+      display: none;
+    }
+
+    .letter-placeholder .letter-body {
+      display: none;
+    }
+
+    .letter-right {
+      margin-left: 10cm;
+      text-align: left;
+      max-width: calc(100% - 10cm);
+      box-sizing: border-box;
+      overflow-wrap: anywhere;
+      word-break: break-word;
+    }
+
+    .letter-left {
+      margin-left: 0;
+      text-align: left;
+      max-width: 100%;
+      box-sizing: border-box;
+      overflow-wrap: anywhere;
+      word-break: break-word;
+    }
+
+    .letter-meta {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .letter-meta-right {
+      display: grid;
+      grid-template-columns: 10cm minmax(0, 1fr);
+      align-items: start;
+    }
+
+    .letter-meta-right>* {
+      grid-column: 2;
+    }
+
+    .letter-date {
+      margin-top: 18px;
+      white-space: nowrap;
+    }
+
+    .letter-meta-right .letter-date {
+      grid-column: 1 / -1;
+      justify-self: end;
+      text-align: right;
+      max-width: 100%;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .letter-body {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+    }
+
+    .letter-sender {
+      margin-bottom: 18px;
+    }
+
+    .letter-recipient {
+      margin-top: 6px;
+    }
+
+    .letter-object {
+      margin-top: 22px;
+      text-align: left;
+    }
+
+    .letter-signature {
+      margin-top: 20px;
+    }
+
+    .letter-closing {
+      text-align: left;
+      margin-top: 20px;
+    }
+
+    .letter-signature-name {
+      margin-top: 40px;
+    }
+
+    .letter-placeholder {
+      color: #8893a3;
+    }
+
+    .actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      justify-content: flex-end;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      border: none;
+      border-radius: 12px;
+      padding: 12px 22px;
+      font-size: 1rem;
+      font-weight: 700;
+      cursor: pointer;
+      box-shadow: 0 10px 25px rgba(14, 25, 43, 0.15);
+      transition: transform 0.15s ease;
+    }
+
+    .btn:hover {
+      transform: translateY(-1px);
+    }
+
+    .btn-primary {
+      background: var(--accent);
+      color: #fff;
+    }
+
+    .btn-ghost {
+      background: #fff;
+      color: #b4002f;
+      border: 1px dashed rgba(180, 0, 47, 0.4);
+      box-shadow: none;
+    }
+
+    .btn-neutral {
+      background: #fff;
+      color: var(--ink);
+      border: 1px solid var(--border);
+      box-shadow: none;
+    }
+
+    @media screen and (max-width:900px) {
+      .letter-container {
+        width: 100%;
+        height: auto;
+      }
+
+      .hero {
+        flex-direction: column;
+      }
+    }
+
+    @media screen and (max-width:640px) {
+      .actions {
+        justify-content: center;
+      }
+
+      .form-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    body.print-mode .print-hide {
+      display: none !important;
+    }
+
+    body.print-mode .exercise-card {
+      padding: 0 !important;
+    }
+
+    body.print-mode .wrap {
+      max-width: none;
+      margin: 0;
+    }
+
+    body.print-mode .letter-shell {
+      padding: 0 !important;
+      border: none !important;
+      box-shadow: none !important;
+    }
+
+    body.print-mode .letter-container {
+      width: 210mm !important;
+      min-height: 297mm !important;
+      height: 297mm !important;
+      padding: 25.4mm !important;
+      margin: 0 auto !important;
+      overflow: visible !important;
+    }
+
+    @media print {
+      body {
+        background: #fff;
+        padding: 0 !important;
+      }
+
+      .print-hide {
+        display: none !important;
+      }
+
+      .exercise-card {
+        padding: 0 !important;
+      }
+
+      .exercise-shell {
+        max-width: none !important;
+        margin: 0 !important;
+      }
+
+      .wrap {
+        max-width: none !important;
+        margin: 0 !important;
+      }
+
+      .letter-shell {
+        padding: 0 !important;
+        border: none !important;
+        box-shadow: none !important;
+      }
+
+      .letter-container {
+        width: 210mm !important;
+        min-height: 297mm !important;
+        height: 297mm !important;
+        padding: 25.4mm !important;
+        margin: 0 auto !important;
+        overflow: visible !important;
+      }
+    }
+
+    @page {
+      size: A4;
+      margin: 0;
+    }
+  </style>
+  <link rel="stylesheet" href="../../exercise-layout.css">
+  <script defer src="../../exercise-layout.js"></script>
+</head>
+
+<body>
+
+  <div class="back-home print-hide">
+    <a class="back-home__link" href="../../index.html">← Menu</a>
+  </div>
+  <script src="../shared/proactif-exercise.js"></script>
+  <div class="exercise-shell">
+    <main class="exercise-card">
+
+
+      <div class="wrap">
+        <section class="hero print-hide">
+          <div class="hero__text">
+            <span class="hero__pill">Lettre de candidature</span>
+            <h1>Composez une lettre universelle, prête à imprimer</h1>
+            <p>Remplissez les informations essentielles pour générer une lettre structurée au format A4, respectant les
+              marges professionnelles.</p>
+          </div>
+          <div class="hero__info">
+            <div class="stat">📐 Format A4 – marges 2,54 cm</div>
+            <div class="stat">🕒 Export via impression/PDF</div>
+            <div class="stat">✍️ Texte adapté automatiquement</div>
+          </div>
+        </section>
+
+        <div class="tips-grid print-hide">
+          <div class="tips-card"><strong>1. Contexte</strong><br>Une lettre universelle met en avant votre sérieux et
+            votre disponibilité. Personnalisez chaque paragraphe.</div>
+          <div class="tips-card"><strong>2. Ton professionnel</strong><br>Restez factuel, positif et orientez-vous sur
+            l’apport que vous pouvez offrir.</div>
+          <div class="tips-card"><strong>3. Export</strong><br>Utilisez le bouton “Imprimer / PDF” pour obtenir un rendu
+            identique à l’écran.</div>
+        </div>
+
+        <div class="form-grid print-hide">
+          <h3>👤 Expéditeur</h3>
+          <input id="prenom" placeholder="Prénom" oninput="updateLetter()">
+          <input id="nom" placeholder="Nom" oninput="updateLetter()">
+          <input id="adresse" placeholder="Adresse" oninput="updateLetter()">
+          <input id="npa" placeholder="NPA" oninput="updateLetter()">
+          <input id="ville" placeholder="Ville" oninput="updateLetter()">
+          <input id="tel" placeholder="Téléphone" oninput="updateLetter()">
+          <input id="mail" placeholder="E-mail" oninput="updateLetter()">
+
+          <h3>🏢 Destinataire</h3>
+          <input id="entreprise" placeholder="Entreprise" oninput="updateLetter()">
+          <input id="adresseEnt" placeholder="Adresse entreprise" oninput="updateLetter()">
+          <input id="npaEnt" placeholder="NPA + Ville entreprise" oninput="updateLetter()">
+
+          <h3>📌 Poste</h3>
+          <input id="poste" placeholder="Poste recherché" oninput="updateLetter()">
+        </div>
+
+        <div class="letter-shell">
+          <div id="letter" class="letter-container letter-placeholder">
+            <p class="letter-warning">👉 Veuillez entrer au minimum prénom et nom pour générer la lettre.</p>
+            <div class="letter-body">
+              <div class="letter-sender">
+                <div data-field="prenomNom"></div>
+                <div data-hide-if-empty="adresse" data-field="adresse"></div>
+                <div data-hide-if-empty="npaVille" data-field="npaVille"></div>
+                <div data-hide-if-empty="tel" data-prefix="Tél. : " data-field="tel"></div>
+                <div data-hide-if-empty="mail" data-prefix="E-mail : " data-field="mail"></div>
+              </div>
+
+              <div class="letter-meta letter-meta-right">
+                <div data-hide-if-empty="entreprise" data-field="entreprise"></div>
+                <div data-hide-if-empty="adresseEnt" data-field="adresseEnt"></div>
+                <div data-hide-if-empty="npaEnt" data-field="npaEnt"></div>
+                <div class="letter-date" data-field="villeDate"></div>
+              </div>
+
+              <p class="letter-paragraph letter-object">
+                <strong>Objet : Candidature pour le poste de <span data-field="poste"></span></strong>
+              </p>
+
+              <p class="letter-paragraph">Madame, Monsieur,</p>
+
+              <p class="letter-paragraph">
+                Je vous présente ma candidature pour le poste de <span data-field="poste"></span> au sein de votre
+                entreprise.
+                Votre activité m’intéresse car votre structure est reconnue pour la qualité du travail et le sérieux de
+                l’organisation.
+              </p>
+
+              <p class="letter-paragraph">
+                Dans mon parcours, j’ai appris à travailler de manière fiable, respectueuse et consciencieuse.
+                Je m’investis dans les tâches confiées et je m’adapte facilement aux besoins du poste.
+                Je reste calme même sous pression et je veille à la qualité du travail effectué.
+              </p>
+
+              <p class="letter-paragraph">
+                Je souhaite mettre mon énergie et mon engagement au service de votre équipe,
+                et contribuer au bon fonctionnement de votre entreprise.
+                Je suis motivé à apprendre, à progresser et à m’intégrer rapidement.
+              </p>
+
+              <p class="letter-paragraph">
+                Disponible pour un entretien, je reste à votre disposition pour toute information complémentaire.
+              </p>
+
+              <p class="letter-paragraph letter-closing">Cordialement,</p>
+
+              <div class="letter-meta letter-meta-right letter-signature">
+                <div class="letter-signature-name" data-field="prenomNom"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="actions print-hide">
+          <button class="btn btn-neutral" id="sample-btn">✨ Exemple</button>
+          <button class="btn btn-ghost" onclick="resetAll()">🔄 Réinitialiser</button>
+          <button class="btn btn-primary" id="print-btn">🖨️ Imprimer / PDF</button>
+        </div>
+      </div>
+
+      <script>
+        const FORM_FIELDS = ["prenom", "nom", "adresse", "npa", "ville", "tel", "mail", "entreprise", "adresseEnt", "npaEnt", "poste"];
+        const FORM_STORAGE_KEY = 'lettre_motivation_form_v1';
+
+        function getFormData() {
+          const data = {};
+          FORM_FIELDS.forEach(id => {
+            const field = document.getElementById(id);
+            data[id] = field ? field.value : '';
+          });
+          return data;
+        }
+
+        function saveForm() {
+          try {
+            localStorage.setItem(FORM_STORAGE_KEY, JSON.stringify(getFormData()));
+          } catch (e) { }
+        }
+
+        function loadForm() {
+          try {
+            const raw = localStorage.getItem(FORM_STORAGE_KEY);
+            if (!raw) return;
+            const data = JSON.parse(raw);
+            FORM_FIELDS.forEach(id => {
+              if (data && typeof data[id] !== 'undefined') {
+                const field = document.getElementById(id);
+                if (field) field.value = data[id];
+              }
+            });
+          } catch (e) { }
+        }
+
+	        function updateLetter() {
+
+	          const val = id => document.getElementById(id).value.trim();
+	          const now = new Date();
+	          const dateStr = new Intl.DateTimeFormat('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' }).format(now);
+
+          const p = val("prenom");
+          const n = val("nom");
+          const adr = val("adresse");
+          const npa = val("npa");
+          const ville = val("ville");
+          const tel = val("tel");
+          const mail = val("mail");
+
+          const ent = val("entreprise");
+          const adrE = val("adresseEnt");
+          const npaE = val("npaEnt");
+          const poste = val("poste");
+          saveForm();
+
+          const letterContainer = document.getElementById("letter");
+
+          if (!(p && n)) {
+            letterContainer.classList.add('letter-placeholder');
+            return;
+          }
+
+          letterContainer.classList.remove('letter-placeholder');
+
+          const filled = {
+            prenomNom: `${p} ${n}`.trim(),
+            adresse: adr,
+            npaVille: [npa, ville].filter(Boolean).join(' ').trim(),
+            tel,
+            mail,
+            entreprise: ent,
+            adresseEnt: adrE,
+            npaEnt: npaE,
+            poste: poste || '[poste]',
+            villeDate: `${ville || '[ville]'}, le ${dateStr}`
+          };
+
+          letterContainer.querySelectorAll('[data-field]').forEach((node) => {
+            const key = node.getAttribute('data-field');
+            const prefix = node.getAttribute('data-prefix') || '';
+            const value = filled[key] || '';
+            node.textContent = value ? `${prefix}${value}` : '';
+          });
+
+          letterContainer.querySelectorAll('[data-hide-if-empty]').forEach((row) => {
+            const key = row.getAttribute('data-hide-if-empty');
+            const value = filled[key] || '';
+            row.style.display = value ? '' : 'none';
+          });
+        }
+
+        /*** RESET ***/
+        function resetAll() {
+          ["prenom", "nom", "adresse", "npa", "ville", "tel", "mail", "entreprise", "adresseEnt", "npaEnt", "poste"]
+            .forEach(id => document.getElementById(id).value = "");
+
+          localStorage.removeItem(FORM_STORAGE_KEY);
+          updateLetter();
+        }
+
+        function triggerPrint() {
+          document.body.classList.add('print-mode');
+          let fallback;
+          const cleanup = () => {
+            document.body.classList.remove('print-mode');
+            clearTimeout(fallback);
+            window.removeEventListener('afterprint', cleanup);
+          };
+          window.addEventListener('afterprint', cleanup);
+          fallback = setTimeout(cleanup, 1500);
+          setTimeout(() => { window.print(); }, 50);
+        }
+
+        document.getElementById('print-btn').addEventListener('click', () => {
+          if (document.getElementById('letter').classList.contains('letter-placeholder')) {
+            alert('Complétez au moins le prénom et le nom avant d’imprimer.');
+            return;
+          }
+          if (typeof window.proactifMarkExerciseDone === 'function') {
+            window.proactifMarkExerciseDone();
+          }
+          triggerPrint();
+        });
+
+        document.getElementById('sample-btn').addEventListener('click', () => {
+          const sample = {
+            prenom: 'Lina',
+            nom: 'Fernandez',
+            adresse: 'Rue des Lilas 14',
+            npa: '1200',
+            ville: 'Genève',
+            tel: '079 555 85 24',
+            mail: 'lina.fernandez@email.com',
+            entreprise: 'Ateliers Horizon',
+            adresseEnt: 'Chemin des Artisans 7',
+            npaEnt: '1213 Onex',
+            poste: 'Assistante administrative'
+          };
+          FORM_FIELDS.forEach(id => {
+            const field = document.getElementById(id);
+            if (field) field.value = sample[id] || '';
+          });
+          updateLetter();
+        });
+
+        loadForm();
+        updateLetter();
+      </script>
+
+    </main>
+  </div>
+
+</body>
+
+</html>

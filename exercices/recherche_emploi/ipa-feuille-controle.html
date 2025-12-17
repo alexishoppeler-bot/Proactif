@@ -1,0 +1,2642 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>IPA ORP – Feuille de contrôle (exercice)</title>
+  <link rel="stylesheet" href="../../exercise-layout.css">
+  <script defer src="../../exercise-layout.js"></script>
+  <style>
+    :root{
+      --ipa-text:#0f1b2c;
+      --ipa-muted:rgba(15,27,44,.72);
+      --ipa-border:rgba(12,32,63,.16);
+      --ipa-soft:rgba(14,116,255,.08);
+      --ipa-soft-2:rgba(10,155,88,.10);
+      --ipa-danger:#dc2626;
+      --ipa-warn:#b45309;
+      --ipa-ok:#15803d;
+      --ipa-focus:rgba(11,107,255,.24);
+    }
+
+    .ipa-wrap{
+      display:flex;
+      flex-direction:column;
+      gap:18px;
+      align-items:stretch;
+    }
+
+    .ipa-card{
+      border:1px solid var(--ipa-border);
+      border-radius:18px;
+      padding:16px;
+      background:rgba(255,255,255,.92);
+      box-shadow:0 12px 28px rgba(12,32,63,.08);
+    }
+
+    /* Keep the profile block visible while scrolling the form (desktop). */
+    .ipa-profile{
+      position: static;
+      max-height: none;
+      overflow: visible;
+    }
+
+    /* Mobile-only: keep profile accessible while filling */
+    .ipa-profile-dock{
+      display:none;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+      padding:10px 12px;
+      border-radius:16px;
+      border:1px solid rgba(12,32,63,.14);
+      background:rgba(255,255,255,.9);
+      box-shadow:0 10px 20px rgba(12,32,63,.10);
+      margin: 0 0 12px;
+    }
+    .ipa-profile-dock__title{
+      font-weight:950;
+      color:#0b2a4a;
+      min-width:0;
+    }
+    .ipa-profile-dock__title span{
+      font-weight:800;
+      color:rgba(15,27,44,.72);
+      display:block;
+      font-size:.92rem;
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
+    }
+    .ipa-profile-dock{
+      display:flex;
+      position: sticky;
+      top: 10px;
+      z-index: 40;
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+    }
+
+    .ipa-overlay[hidden]{ display:none !important; }
+    .ipa-overlay{
+      position: fixed;
+      inset: 0;
+      z-index: 2147483647;
+      display:grid;
+      place-items:center;
+      padding: 16px;
+    }
+    .ipa-overlay__backdrop{
+      position:absolute;
+      inset:0;
+      background: rgba(15, 23, 42, 0.55);
+      backdrop-filter: blur(6px);
+      -webkit-backdrop-filter: blur(6px);
+    }
+    .ipa-overlay__panel{
+      position:relative;
+      width: min(980px, calc(100vw - 32px));
+      max-height: min(86vh, 720px);
+      overflow: auto;
+      border-radius: 18px;
+      border: 1px solid rgba(255,255,255,.18);
+      background: rgba(255,255,255,.95);
+      box-shadow: 0 30px 80px rgba(0,0,0,.35);
+      padding: 14px;
+    }
+    .ipa-overlay__header{
+      display:flex;
+      align-items:flex-start;
+      justify-content:space-between;
+      gap: 12px;
+      margin-bottom: 10px;
+    }
+    .ipa-overlay__header h3{
+      margin:0;
+      color:#0b2a4a;
+      font-size: 1.1rem;
+    }
+    .ipa-overlay__body{
+      color: rgba(15,27,44,.78);
+      line-height: 1.6;
+    }
+
+    .ipa-card h3{
+      margin:0 0 10px;
+      font-size:1.05rem;
+      color:#0b2a4a;
+    }
+
+    .ipa-muted{ color: var(--ipa-muted); }
+    .ipa-story{
+      color: rgba(15,27,44,.82);
+      white-space: pre-line;
+      font-size: 0.98rem;
+      line-height: 1.7;
+    }
+    .ipa-story strong{ color:#0b2a4a; }
+
+	    .ipa-wizard .ipa-step,
+	    .ipa-wizard .ipa-q{
+	      display:none;
+	    }
+	    .ipa-wizard .ipa-step[data-current="1"],
+	    .ipa-wizard .ipa-q[data-current="1"]{
+	      display:block;
+	    }
+
+    .ipa-wizard-actions{
+      position: sticky;
+      bottom: 12px;
+      z-index: 35;
+      margin-top: 14px;
+      padding: 10px 12px;
+      border-radius: 18px;
+      border: 1px solid rgba(12,32,63,.14);
+      background: rgba(255,255,255,.92);
+      box-shadow: 0 14px 30px rgba(12,32,63,.16);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+      flex-wrap:wrap;
+    }
+    .ipa-wizard-actions__meta{
+      min-width: 210px;
+      display:flex;
+      flex-direction:column;
+      gap:2px;
+    }
+    .ipa-wizard-actions__title{
+      font-weight:950;
+      color:#0b2a4a;
+      line-height:1.1;
+    }
+    .ipa-wizard-actions__sub{
+      color: rgba(15,27,44,.70);
+      font-weight:700;
+      font-size:.92rem;
+      line-height:1.1;
+    }
+    .ipa-wizard-actions__btns{
+      display:flex;
+      gap:10px;
+      align-items:center;
+      flex-wrap:wrap;
+      justify-content:flex-end;
+    }
+    .ipa-wizard-feedback{
+      width:100%;
+      border-radius: 14px;
+      border: 1px solid rgba(220,38,38,.22);
+      background: rgba(254,242,242,.70);
+      padding: 10px 12px;
+      color: rgba(127,29,29,.95);
+      font-weight: 750;
+      display:none;
+    }
+    .ipa-wizard-feedback[data-show="1"]{ display:block; }
+    .ipa-wizard-feedback ul{ margin:8px 0 0 18px; }
+    .ipa-wizard-feedback li{ margin:6px 0; }
+
+    .ipa-row{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap:10px;
+    }
+    .ipa-row--3{
+      grid-template-columns: 0.9fr 1.4fr 0.7fr;
+    }
+    @media (max-width: 560px){
+      .ipa-row, .ipa-row--3{ grid-template-columns: 1fr; }
+    }
+
+    .ipa-field label{
+      display:block;
+      font-weight:800;
+      font-size:.92rem;
+      color:#0b2a4a;
+      margin-bottom:6px;
+    }
+
+    .ipa-field input[type="text"],
+    .ipa-field input[type="number"],
+    .ipa-field input[type="date"],
+    .ipa-field input[type="month"],
+    .ipa-field select,
+    .ipa-field textarea{
+      width:100%;
+      padding:10px 12px;
+      border-radius:12px;
+      border:1px solid rgba(12,32,63,.22);
+      background:#fff;
+      color:var(--ipa-text);
+      font: inherit;
+      transition:border-color .15s ease, box-shadow .15s ease;
+    }
+    .ipa-field textarea{ min-height:92px; resize:vertical; }
+    .ipa-field input:focus,
+    .ipa-field select:focus,
+    .ipa-field textarea:focus{
+      outline:none;
+      border-color: rgba(11,107,255,.7);
+      box-shadow:0 0 0 4px var(--ipa-focus);
+    }
+
+    .ipa-choice{
+      display:flex;
+      gap:12px;
+      align-items:center;
+      flex-wrap:wrap;
+      padding:10px 12px;
+      border-radius:14px;
+      background:linear-gradient(125deg,var(--ipa-soft), rgba(255,255,255,.65));
+      border:1px solid rgba(12,32,63,.12);
+    }
+    .ipa-choice label{
+      display:flex;
+      align-items:center;
+      gap:8px;
+      font-weight:800;
+      margin:0;
+    }
+
+    .ipa-help{
+      margin-top:10px;
+      border-radius:14px;
+      border:1px dashed rgba(12,32,63,.22);
+      background:rgba(255,255,255,.65);
+      padding:10px 12px;
+      color:var(--ipa-muted);
+      font-size:.95rem;
+    }
+    .ipa-help summary{
+      cursor:pointer;
+      font-weight:900;
+      color:#0b2a4a;
+    }
+    .ipa-help ul{ margin:8px 0 0 18px; }
+
+	    .ipa-q{
+	      border:1px solid rgba(12,32,63,.14);
+	      border-radius:18px;
+	      padding:14px;
+	      background:rgba(255,255,255,.9);
+	      margin-bottom:12px;
+	    }
+	    .ipa-q legend{
+	      font-weight:950;
+	      color:#0b2a4a;
+	      padding:0 8px;
+	      font-size: 1.05rem;
+	    }
+	
+	    .ipa-q-block__title{
+	      margin: 10px 0 8px;
+	      font-weight: 950;
+	      font-size: .92rem;
+	      color: rgba(11, 42, 74, .92);
+	      letter-spacing: .2px;
+	      text-transform: uppercase;
+	    }
+	    .ipa-q-block__title--first{ margin-top: 4px; }
+	
+	    .ipa-details{
+	      margin-top:12px;
+	      display:none;
+	      border-radius: 16px;
+	      border: 1px solid rgba(12,32,63,.12);
+	      background: rgba(12,32,63,.03);
+	      padding: 10px 12px;
+	    }
+	    .ipa-details[data-open="1"]{ display:block; }
+
+    .ipa-q[data-state="error"]{
+      border-color: rgba(220, 38, 38, 0.45);
+      box-shadow: 0 0 0 4px rgba(220, 38, 38, 0.10);
+      background: rgba(254, 242, 242, 0.55);
+    }
+    .ipa-q[data-state="warn"]{
+      border-color: rgba(245, 158, 11, 0.45);
+      box-shadow: 0 0 0 4px rgba(245, 158, 11, 0.10);
+      background: rgba(255, 251, 235, 0.70);
+    }
+    .ipa-q[data-state="ok"]{
+      border-color: rgba(21, 128, 61, 0.35);
+      background: rgba(240, 253, 244, 0.55);
+    }
+
+    .ipa-results details{
+      margin-top:10px;
+      border-radius:14px;
+      border:1px solid rgba(12,32,63,.14);
+      background:rgba(255,255,255,.7);
+      padding:10px 12px;
+    }
+    .ipa-results summary{
+      cursor:pointer;
+      font-weight:950;
+      color:#0b2a4a;
+    }
+
+	    .ipa-items{
+	      display:flex;
+	      flex-direction:column;
+	      gap:10px;
+	      margin-top:10px;
+	    }
+    .ipa-item{
+      border-radius:16px;
+      border:1px solid rgba(12,32,63,.16);
+      background:linear-gradient(135deg, rgba(14,116,255,.06), rgba(10,155,88,.06));
+      padding:12px;
+    }
+    .ipa-item__grid{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap:10px;
+      align-items:end;
+    }
+    .ipa-item__grid--3{
+      grid-template-columns: 1fr 1fr 1.2fr;
+    }
+    @media (max-width: 760px){
+      .ipa-item__grid, .ipa-item__grid--3{ grid-template-columns: 1fr; }
+    }
+    .ipa-item__actions{
+      display:flex;
+      justify-content:flex-end;
+      margin-top:10px;
+    }
+
+    .ipa-btns{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      margin-top:12px;
+    }
+    .ipa-btn{
+      appearance:none;
+      border:1px solid rgba(12,32,63,.2);
+      background:#fff;
+      color:#0b2a4a;
+      padding:10px 14px;
+      border-radius:999px;
+      font-weight:900;
+      cursor:pointer;
+      box-shadow:0 10px 18px rgba(12,32,63,.10);
+      transition:transform .15s ease, box-shadow .15s ease;
+    }
+    .ipa-btn:hover{ transform:translateY(-1px); box-shadow:0 14px 24px rgba(12,32,63,.14); }
+    .ipa-btn.primary{
+      background:linear-gradient(135deg, rgba(11,107,255,1), rgba(10,155,88,1));
+      border-color:transparent;
+      color:#fff;
+    }
+    .ipa-btn.danger{
+      background:rgba(220,38,38,.12);
+      border-color:rgba(220,38,38,.28);
+      color:#7f1d1d;
+    }
+    .ipa-btn.small{
+      padding:8px 12px;
+      font-weight:900;
+      box-shadow:none;
+    }
+
+    .ipa-results{
+      border-radius:18px;
+      border:1px solid rgba(12,32,63,.14);
+      background:rgba(255,255,255,.92);
+      padding:14px;
+    }
+    .ipa-results__title{
+      display:flex;
+      align-items:baseline;
+      justify-content:space-between;
+      gap:10px;
+      margin:0 0 10px;
+    }
+    .ipa-badge{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      padding:8px 12px;
+      border-radius:999px;
+      border:1px solid rgba(12,32,63,.18);
+      background:rgba(12,32,63,.06);
+      font-weight:950;
+      color:#0b2a4a;
+    }
+    .ipa-badge[data-kind="ok"]{
+      background:rgba(21,128,61,.12);
+      border-color:rgba(21,128,61,.28);
+      color:var(--ipa-ok);
+    }
+    .ipa-badge[data-kind="warn"]{
+      background:rgba(245,158,11,.16);
+      border-color:rgba(245,158,11,.34);
+      color:var(--ipa-warn);
+    }
+    .ipa-badge[data-kind="bad"]{
+      background:rgba(220,38,38,.12);
+      border-color:rgba(220,38,38,.28);
+      color:var(--ipa-danger);
+    }
+
+    .ipa-results ul{ margin:0; padding-left:18px; }
+    .ipa-results li{ margin:8px 0; }
+    .ipa-results li strong{ color:#0b2a4a; }
+
+    .ipa-divider{
+      height:1px;
+      background:rgba(12,32,63,.12);
+      margin:14px 0;
+    }
+
+    .ipa-kbd{
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      font-size:.9em;
+      padding:2px 8px;
+      border-radius:8px;
+      border:1px solid rgba(12,32,63,.18);
+      background:rgba(255,255,255,.85);
+    }
+
+	  </style>
+</head>
+<body data-exercise-subtitle="Choisissez un profil, remplissez la feuille comme au vrai formulaire, puis vérifiez votre réponse.">
+  <div class="back-home" style="max-width:1100px;margin:10px auto 0;padding:0 20px;">
+    <a class="back-home__link" href="../../index.html" style="display:inline-flex;align-items:center;gap:6px;text-decoration:none;color:#004c6d;font-weight:700;border:1px solid #cfdff0;padding:6px 14px;border-radius:999px;background:#fff;box-shadow:0 2px 4px rgba(0,0,0,0.08);">← Retour à l’index</a>
+  </div>
+
+  <script src="../shared/proactif-exercise.js"></script>
+
+  <div class="exercise-shell">
+    <main class="exercise-card">
+      <h1>🧾 IPA ORP – Feuille de contrôle (exercice)</h1>
+
+      <div class="ipa-wrap">
+        <section class="ipa-card ipa-profile" aria-label="Profil et règles">
+          <h3>1) Profil (exercice)</h3>
+
+          <div class="ipa-field">
+            <label for="profileSelect">Choisissez une situation</label>
+            <select id="profileSelect"></select>
+          </div>
+
+          <div class="ipa-divider"></div>
+
+          <h3>2) Récit du mois</h3>
+          <div class="ipa-muted" style="margin:0 0 8px">Lisez, comprenez, puis remplissez le formulaire en dessous.</div>
+          <div class="ipa-story" id="scenarioText"></div>
+
+          <details class="ipa-help" open>
+            <summary>Règles générales (à retenir)</summary>
+            <ul>
+              <li><strong>OUI</strong> = il s’est passé quelque chose.</li>
+              <li><strong>NON</strong> = rien du tout.</li>
+              <li><strong>1 case = 1 réalité</strong> (pas “oui mais…” sans détails).</li>
+              <li><strong>Dates exactes</strong> : jour → jour.</li>
+              <li><strong>Signature</strong> : sinon pas de paiement.</li>
+            </ul>
+          </details>
+
+	          <details class="ipa-help">
+	            <summary>Astuce</summary>
+	            <div style="margin-top:8px">
+	              Remplissez d’abord les <strong>Oui/Non</strong>, puis les détails. Avancez avec <span class="ipa-kbd">Valider et continuer</span>, puis terminez avec <span class="ipa-kbd">Vérifier et terminer</span>.
+	            </div>
+	          </details>
+        </section>
+
+        <section aria-label="Formulaire">
+          <form id="ipaForm" class="ipa-card ipa-wizard" autocomplete="off" novalidate>
+            <h3>3) Feuille de contrôle (à remplir)</h3>
+
+            <div class="ipa-profile-dock" id="profileDock" aria-label="Profil (raccourci)">
+              <div class="ipa-profile-dock__title">
+                Profil
+                <span id="profileDockTitle">—</span>
+              </div>
+              <button class="ipa-btn small" type="button" id="openProfileOverlayBtn">Voir le profil</button>
+            </div>
+
+            <div class="ipa-step" data-step="identity">
+              <div class="ipa-row ipa-row--3" style="margin-top:10px">
+                <div class="ipa-field">
+                  <label for="sheetAvs">N° AVS</label>
+                  <input id="sheetAvs" type="text" inputmode="numeric" placeholder="Ex : 756.1234.5678.97" />
+                </div>
+                <div class="ipa-field">
+                  <label for="sheetFullName">Nom, prénom</label>
+                  <input id="sheetFullName" type="text" placeholder="Ex : Prénom Nom" />
+                </div>
+                <div class="ipa-field">
+                  <label for="sheetMonth">Mois</label>
+                  <input id="sheetMonth" type="month" />
+                </div>
+              </div>
+              <div class="ipa-divider"></div>
+            </div>
+
+	            <fieldset class="ipa-q" data-key="work">
+	              <legend>1. Avez-vous travaillé chez un ou plusieurs employeurs ?</legend>
+	              <div class="ipa-q-block__title ipa-q-block__title--first">Décision</div>
+	              <div class="ipa-choice" role="group" aria-label="Travail">
+	                <label><input type="radio" name="workAnswer" value="Oui"> OUI</label>
+	                <label><input type="radio" name="workAnswer" value="Non"> NON</label>
+	              </div>
+	              <div class="ipa-details" data-details="work">
+	                <div class="ipa-q-block__title ipa-q-block__title--first">Détails (si OUI)</div>
+	                <div class="ipa-muted">Si oui, du → au, employeur. Joindre attestation de gain intermédiaire + fiche(s) de salaire.</div>
+	                <div class="ipa-btns">
+	                  <button class="ipa-btn small" type="button" data-add="work">+ Ajouter une période</button>
+	                </div>
+                <div class="ipa-items" id="workItems"></div>
+              </div>
+              <details class="ipa-help">
+                <summary>Aide (comment décider)</summary>
+                <ul>
+                  <li>Même 1 jour / 1 heure compte → <strong>OUI</strong>.</li>
+                  <li>Si <strong>OUI</strong> : dates + employeur.</li>
+                  <li>Joindre : attestation(s) de gain(s) intermédiaire(s) + fiche(s) de salaire.</li>
+                  <li>Si rien du tout → <strong>NON</strong>.</li>
+                </ul>
+              </details>
+            </fieldset>
+
+	            <fieldset class="ipa-q" data-key="independent">
+	              <legend>2. Avez-vous exercé une activité indépendante ?</legend>
+	              <div class="ipa-q-block__title ipa-q-block__title--first">Décision</div>
+	              <div class="ipa-choice" role="group" aria-label="Activité indépendante">
+	                <label><input type="radio" name="independentAnswer" value="Oui"> OUI</label>
+	                <label><input type="radio" name="independentAnswer" value="Non"> NON</label>
+	              </div>
+	              <div class="ipa-details" data-details="independent">
+	                <div class="ipa-q-block__title ipa-q-block__title--first">Détails (si OUI)</div>
+	                <div class="ipa-muted">Si oui, du → au. Joindre les pièces justificatives / décomptes.</div>
+	                <div class="ipa-btns">
+	                  <button class="ipa-btn small" type="button" data-add="independent">+ Ajouter une période</button>
+	                </div>
+                <div class="ipa-items" id="independentItems"></div>
+              </div>
+              <details class="ipa-help">
+                <summary>Aide (comment décider)</summary>
+                <ul>
+                  <li>Facture / cash / virement = travail → <strong>OUI</strong>.</li>
+                  <li>Si <strong>OUI</strong> : dates exactes + preuves.</li>
+                  <li>Sinon → <strong>NON</strong>.</li>
+                </ul>
+              </details>
+            </fieldset>
+
+	            <fieldset class="ipa-q" data-key="measure">
+	              <legend>3. Avez-vous suivi une mesure du marché du travail au cours de ce mois ? (par exemple : cours, programme d’occupation, stage)</legend>
+	              <div class="ipa-q-block__title ipa-q-block__title--first">Décision</div>
+	              <div class="ipa-choice" role="group" aria-label="Mesure ORP">
+	                <label><input type="radio" name="measureAnswer" value="Oui"> OUI</label>
+	                <label><input type="radio" name="measureAnswer" value="Non"> NON</label>
+	              </div>
+	              <div class="ipa-details" data-details="measure">
+	                <div class="ipa-q-block__title ipa-q-block__title--first">Détails (si OUI)</div>
+	                <div class="ipa-muted">Si oui : indiquez la mesure et les dates.</div>
+	                <div class="ipa-btns">
+	                  <button class="ipa-btn small" type="button" data-add="measure">+ Ajouter une période</button>
+	                </div>
+                <div class="ipa-items" id="measureItems"></div>
+              </div>
+              <details class="ipa-help">
+                <summary>Aide</summary>
+                <ul>
+                  <li>Cours, stage, programme → <strong>OUI</strong>.</li>
+                  <li>Si <strong>OUI</strong> : nom + dates.</li>
+                  <li>Rien ce mois → <strong>NON</strong>.</li>
+                </ul>
+              </details>
+            </fieldset>
+
+	            <fieldset class="ipa-q" data-key="incapacity">
+	              <legend>4. Avez-vous été en incapacité de travailler ?</legend>
+	              <div class="ipa-q-block__title ipa-q-block__title--first">Décision</div>
+	              <div class="ipa-choice" role="group" aria-label="Incapacité de travailler">
+	                <label><input type="radio" name="incapacityAnswer" value="Oui"> OUI</label>
+	                <label><input type="radio" name="incapacityAnswer" value="Non"> NON</label>
+	              </div>
+	              <div class="ipa-details" data-details="incapacity">
+	                <div class="ipa-q-block__title ipa-q-block__title--first">Détails (si OUI)</div>
+	                <div class="ipa-muted">Annonce de maladie / accident / autres raisons : du → au. (Veuillez joindre un certificat médical.)</div>
+	                <div class="ipa-btns">
+	                  <button class="ipa-btn small" type="button" data-add="incapacity">+ Ajouter une période</button>
+	                </div>
+                <div class="ipa-items" id="incapacityItems"></div>
+                <div class="ipa-divider"></div>
+                <div class="ipa-muted" style="margin:0 0 8px;font-weight:900;color:#0b2a4a">Avez-vous une assurance perte de gain en cas de maladie ?</div>
+                <div class="ipa-choice" role="group" aria-label="Assurance perte de gain">
+                  <label><input type="radio" name="lossInsuranceAnswer" value="Oui"> OUI</label>
+                  <label><input type="radio" name="lossInsuranceAnswer" value="Non"> NON</label>
+                </div>
+              </div>
+              <details class="ipa-help">
+                <summary>Aide</summary>
+                <ul>
+                  <li>Malade / accident même 1 jour → <strong>OUI</strong> + dates exactes.</li>
+                  <li>Joindre : certificat médical (sinon jours potentiellement non payés).</li>
+                  <li>Autres raisons : indiquez la raison + dates.</li>
+                </ul>
+              </details>
+            </fieldset>
+
+	            <fieldset class="ipa-q" data-key="service">
+	              <legend>5. Avez-vous effectué un service militaire, civil ou de protection civile ?</legend>
+	              <div class="ipa-q-block__title ipa-q-block__title--first">Décision</div>
+	              <div class="ipa-choice" role="group" aria-label="Service">
+	                <label><input type="radio" name="serviceAnswer" value="Oui"> OUI</label>
+	                <label><input type="radio" name="serviceAnswer" value="Non"> NON</label>
+	              </div>
+	              <div class="ipa-details" data-details="service">
+	                <div class="ipa-q-block__title ipa-q-block__title--first">Détails (si OUI)</div>
+	                <div class="ipa-muted">Si oui : du → au.</div>
+	                <div class="ipa-btns">
+	                  <button class="ipa-btn small" type="button" data-add="service">+ Ajouter une période</button>
+	                </div>
+                <div class="ipa-items" id="serviceItems"></div>
+              </div>
+              <details class="ipa-help">
+                <summary>Aide</summary>
+                <ul>
+                  <li>Militaire / civil / protection → <strong>OUI</strong> + dates.</li>
+                  <li>Sinon → <strong>NON</strong>.</li>
+                </ul>
+              </details>
+            </fieldset>
+
+	            <fieldset class="ipa-q" data-key="absence">
+	              <legend>6. Avez-vous pris des vacances ? / Étiez-vous absent(e) pour d’autres raisons ?</legend>
+
+	              <div data-absence-block="vacations">
+	                <div class="ipa-q-block__title ipa-q-block__title--first">Vacances — décision</div>
+	                <div class="ipa-choice" role="group" aria-label="Vacances">
+	                  <label><input type="radio" name="vacationsAnswer" value="Oui"> OUI</label>
+	                  <label><input type="radio" name="vacationsAnswer" value="Non"> NON</label>
+	                </div>
+	                <div class="ipa-details" data-details="vacations">
+	                  <div class="ipa-q-block__title ipa-q-block__title--first">Détails (si OUI)</div>
+	                  <div class="ipa-muted">Si oui, du → au.</div>
+	                  <div class="ipa-btns">
+	                    <button class="ipa-btn small" type="button" data-add="vacations">+ Ajouter une période</button>
+	                  </div>
+                  <div class="ipa-items" id="vacationsItems"></div>
+                </div>
+              </div>
+
+              <div class="ipa-divider" data-absence-block="divider"></div>
+
+	              <div data-absence-block="otherAbsence">
+	                <div class="ipa-q-block__title ipa-q-block__title--first">Absence (autres raisons) — décision</div>
+	                <div class="ipa-choice" role="group" aria-label="Absence autres raisons">
+	                  <label><input type="radio" name="otherAbsenceAnswer" value="Oui"> OUI</label>
+	                  <label><input type="radio" name="otherAbsenceAnswer" value="Non"> NON</label>
+	                </div>
+	                <div class="ipa-details" data-details="otherAbsence">
+	                  <div class="ipa-q-block__title ipa-q-block__title--first">Détails (si OUI)</div>
+	                  <div class="ipa-muted">Si oui : pourquoi ? + du → au.</div>
+	                  <div class="ipa-btns">
+	                    <button class="ipa-btn small" type="button" data-add="otherAbsence">+ Ajouter une période</button>
+	                  </div>
+                  <div class="ipa-items" id="otherAbsenceItems"></div>
+                </div>
+              </div>
+              <details class="ipa-help">
+                <summary>Aide</summary>
+                <ul>
+                  <li>Vacances → <strong>OUI</strong> + dates.</li>
+                  <li>Absence autre raison → <strong>OUI</strong> + raison + dates.</li>
+                  <li>Règle ORP (souvent) : maximum 5 jours de vacances consécutifs (si doute, demander à l’ORP).</li>
+                </ul>
+              </details>
+            </fieldset>
+
+	            <fieldset class="ipa-q" data-key="children">
+	              <legend>7a. Votre obligation d’entretien (ou celle de votre conjoint(e)/partenaire) envers des enfants (&lt;18 ans ou en formation) a-t-elle été modifiée ?</legend>
+	              <div class="ipa-q-block__title ipa-q-block__title--first">Décision</div>
+	              <div class="ipa-choice" role="group" aria-label="Enfants à charge">
+	                <label><input type="radio" name="childrenAnswer" value="Oui"> OUI</label>
+	                <label><input type="radio" name="childrenAnswer" value="Non"> NON</label>
+	              </div>
+	              <div class="ipa-details" data-details="children">
+	                <div class="ipa-q-block__title ipa-q-block__title--first">Détails (si OUI)</div>
+	                <div class="ipa-field" style="margin-top:10px">
+	                  <label for="childrenNote">Si oui : quel changement ? (acte de naissance, contrat d’apprentissage, attestation…)</label>
+	                  <input id="childrenNote" type="text" placeholder="Ex : naissance, fin formation, début apprentissage..." />
+	                </div>
+              </div>
+              <details class="ipa-help">
+                <summary>Aide</summary>
+                <ul>
+                  <li>Changement situation → <strong>OUI</strong> + justificatifs.</li>
+                  <li>Aucun changement → <strong>NON</strong>.</li>
+                </ul>
+              </details>
+            </fieldset>
+
+	            <fieldset class="ipa-q" data-key="otherParent">
+	              <legend>7b. Une autre personne (ex : conjoint(e)) a-t-elle droit à des allocations pour enfant/formation ?</legend>
+	              <div class="ipa-q-block__title ipa-q-block__title--first">Décision</div>
+	              <div class="ipa-choice" role="group" aria-label="Autre parent">
+	                <label><input type="radio" name="otherParentAnswer" value="Oui"> OUI</label>
+	                <label><input type="radio" name="otherParentAnswer" value="Non"> NON</label>
+	              </div>
+	              <div class="ipa-details" data-details="otherParent">
+	                <div class="ipa-q-block__title ipa-q-block__title--first">Détails (si OUI)</div>
+	                <div class="ipa-field" style="margin-top:10px">
+	                  <label for="otherParentNote">Si oui : précisez (allocations) — condition : revenu minimum (selon ORP)</label>
+	                  <input id="otherParentNote" type="text" placeholder="Ex : conjoint(e) touche allocations enfant" />
+	                </div>
+              </div>
+              <details class="ipa-help">
+                <summary>Aide</summary>
+                <ul>
+                  <li>Autre parent touche allocations → <strong>OUI</strong>.</li>
+                  <li>Sinon → <strong>NON</strong>.</li>
+                  <li>Doute → demander à l’ORP.</li>
+                </ul>
+              </details>
+            </fieldset>
+
+	            <fieldset class="ipa-q" data-key="insurance">
+	              <legend>8. Avez-vous revendiqué ou reçu des prestations d’une autre assurance sociale suisse ou étrangère ? (AI, SUVA, prévoyance, rente AVS anticipée…)</legend>
+	              <div class="ipa-q-block__title ipa-q-block__title--first">Décision</div>
+	              <div class="ipa-choice" role="group" aria-label="Autre assurance">
+	                <label><input type="radio" name="insuranceAnswer" value="Oui"> OUI</label>
+	                <label><input type="radio" name="insuranceAnswer" value="Non"> NON</label>
+	              </div>
+	              <div class="ipa-details" data-details="insurance">
+	                <div class="ipa-q-block__title ipa-q-block__title--first">Détails (si OUI)</div>
+	                <div class="ipa-field" style="margin-top:10px">
+	                  <label for="insuranceNote">Si oui : précisez (joindre copie de la décision et du décompte)</label>
+	                  <input id="insuranceNote" type="text" placeholder="Ex : SUVA accident, décision du ..." />
+	                </div>
+              </div>
+              <details class="ipa-help">
+                <summary>Aide</summary>
+                <ul>
+                  <li>AI / SUVA / AVS / rente → <strong>OUI</strong> + décision officielle.</li>
+                  <li>Sinon → <strong>NON</strong>.</li>
+                </ul>
+              </details>
+            </fieldset>
+
+	            <fieldset class="ipa-q" data-key="rate">
+	              <legend>9. Le pourcentage d’activité que vous recherchez est-il le même que le mois précédent ?</legend>
+	              <div class="ipa-muted" id="ratePrevText" style="margin:0 0 10px"></div>
+	              <div class="ipa-q-block__title ipa-q-block__title--first">Décision</div>
+	              <div class="ipa-choice" role="group" aria-label="Taux recherché">
+	                <label><input type="radio" name="rateAnswer" value="Oui"> OUI</label>
+	                <label><input type="radio" name="rateAnswer" value="Non"> NON</label>
+	              </div>
+	              <div class="ipa-details" data-details="rate">
+	                <div class="ipa-q-block__title ipa-q-block__title--first">Détails (si NON)</div>
+	                <div class="ipa-row" style="margin-top:10px">
+	                  <div class="ipa-field">
+	                    <label for="rateNewPercent">Si non : nouveau taux d’activité recherché (%)</label>
+	                    <input id="rateNewPercent" type="number" min="0" max="100" step="1" placeholder="Ex : 80" />
+                  </div>
+                  <div class="ipa-field">
+                    <label for="rateChangeDate">Depuis quand ?</label>
+                    <input id="rateChangeDate" type="date" />
+                  </div>
+                </div>
+              </div>
+              <details class="ipa-help">
+                <summary>Aide</summary>
+                <ul>
+                  <li>Même % que mois passé → <strong>OUI</strong>.</li>
+                  <li>Changement % → <strong>NON</strong> + nouveau % + date.</li>
+                  <li>Changer sans raison peut poser problème.</li>
+                </ul>
+              </details>
+            </fieldset>
+
+	            <fieldset class="ipa-q" data-key="unemployment">
+	              <legend>10. Êtes-vous encore au chômage ?</legend>
+	              <div class="ipa-q-block__title ipa-q-block__title--first">Décision</div>
+	              <div class="ipa-choice" role="group" aria-label="Encore au chômage">
+	                <label><input type="radio" name="unemploymentAnswer" value="Oui"> OUI</label>
+	                <label><input type="radio" name="unemploymentAnswer" value="Non"> NON</label>
+	              </div>
+	              <div class="ipa-details" data-details="unemployment">
+	                <div class="ipa-q-block__title ipa-q-block__title--first">Détails (si NON)</div>
+	                <div class="ipa-field" style="margin-top:10px">
+	                  <label for="unemploymentDate">Reprise du travail le</label>
+	                  <input id="unemploymentDate" type="date" />
+	                </div>
+	              </div>
+              <details class="ipa-help">
+                <summary>Aide</summary>
+                <ul>
+                  <li>Toujours sans travail → <strong>OUI</strong>.</li>
+                  <li>Reprise travail → <strong>NON</strong> + date exacte.</li>
+                </ul>
+              </details>
+            </fieldset>
+
+	            <div class="ipa-wizard-actions" id="wizardActions" aria-label="Progression">
+	              <div class="ipa-wizard-actions__meta">
+	                <div class="ipa-wizard-actions__title" id="wizardTitle">Étape</div>
+	                <div class="ipa-wizard-actions__sub" id="wizardSub">—</div>
+	              </div>
+              <div class="ipa-wizard-actions__btns">
+                <button class="ipa-btn" type="button" id="wizardPrevBtn">Retour</button>
+                <button class="ipa-btn primary" type="button" id="wizardNextBtn">Valider et continuer</button>
+                <button class="ipa-btn" type="button" id="showCorrectionBtn">Voir le corrigé</button>
+                <button class="ipa-btn danger" type="button" id="resetBtn">Réinitialiser (efface le brouillon)</button>
+              </div>
+              <div class="ipa-wizard-feedback" id="wizardFeedback" role="status" aria-live="polite"></div>
+            </div>
+          </form>
+
+          <div class="ipa-results" id="results" style="margin-top:14px">
+            <div class="ipa-results__title">
+              <h3 style="margin:0">4) Résultat</h3>
+              <div class="ipa-badge" id="scoreBadge">—</div>
+            </div>
+            <div class="ipa-muted" id="resultsHint">Choisissez un profil, remplissez le formulaire, puis cliquez sur “Vérifier”.</div>
+            <div id="resultsList" style="margin-top:10px"></div>
+            <div id="correctionBox" style="display:none;margin-top:12px"></div>
+          </div>
+        </section>
+      </div>
+    </main>
+  </div>
+
+  <div class="ipa-overlay" id="profileOverlay" hidden>
+    <div class="ipa-overlay__backdrop" data-overlay-close="1" aria-hidden="true"></div>
+      <div class="ipa-overlay__panel" role="dialog" aria-modal="true" aria-labelledby="profileOverlayTitle">
+        <div class="ipa-overlay__header">
+        <h3 id="profileOverlayTitle">Récit du mois</h3>
+        <button class="ipa-btn small" type="button" id="closeProfileOverlayBtn">Fermer</button>
+      </div>
+      <div class="ipa-overlay__body">
+        <div class="ipa-story" id="scenarioTextOverlay"></div>
+        <details class="ipa-help" style="margin-top:12px">
+          <summary>Rappel</summary>
+          <ul>
+            <li><strong>OUI</strong> = il s’est passé quelque chose.</li>
+            <li><strong>NON</strong> = rien du tout.</li>
+            <li><strong>Dates exactes</strong> : jour → jour.</li>
+            <li><strong>1 case = 1 réalité</strong>.</li>
+          </ul>
+        </details>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const STORAGE_PREFIX = 'proactif_ipa_feuille_controle_v1:';
+
+    function normText(s){
+      return String(s || '')
+        .toLowerCase()
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '')
+        .replace(/\s+/g, ' ')
+        .trim();
+    }
+
+    function clampInt(n, min, max){
+      const x = Number.isFinite(n) ? n : parseInt(String(n || ''), 10);
+      if (!Number.isFinite(x)) return null;
+      return Math.max(min, Math.min(max, Math.round(x)));
+    }
+
+    function parseDate(value){
+      const s = String(value || '').trim();
+      if (!/^\d{4}-\d{2}-\d{2}$/.test(s)) return null;
+      const dt = new Date(s + 'T00:00:00');
+      if (!Number.isFinite(dt.getTime())) return null;
+      return dt;
+    }
+
+    function daysBetweenInclusive(start, end){
+      const a = parseDate(start);
+      const b = parseDate(end);
+      if (!a || !b) return null;
+      const diff = Math.round((b.getTime() - a.getTime()) / (1000 * 60 * 60 * 24));
+      return diff + 1;
+    }
+
+    function monthOfDate(dateStr){
+      if (!dateStr) return null;
+      const m = String(dateStr).slice(0, 7);
+      return /^\d{4}-\d{2}$/.test(m) ? m : null;
+    }
+
+    const PROFILES = [
+      {
+        id: 'p1',
+        title: 'Profil 1 — Amina (mesure ORP Proactif)',
+        month: '2025-11',
+        previousRate: 100,
+        scenario: `En novembre 2025, Amina Diallo (N° AVS 756.1111.2222.33) complète sa feuille de contrôle.
+
+Ce mois-ci, elle ne travaille ni pour un employeur, ni en activité indépendante. En revanche, elle suit une mesure du marché du travail : Proactif, du 2025-11-04 au 2025-11-28.
+
+Elle n’a eu ni incapacité de travailler (pas de maladie, pas d’accident), ni service militaire/civil/protection civile. Elle n’a pris aucune vacances et n’a été absente pour aucune autre raison.
+
+Sa situation familiale n’a pas changé : aucune modification d’obligation d’entretien, et personne d’autre ne touche d’allocations pour enfant/formation. Elle n’a pas demandé ni reçu de prestations d’une autre assurance.
+
+Pour sa recherche d’emploi, elle garde le même taux que le mois précédent : 100%. Elle est encore au chômage pendant ce mois.`,
+        expected: {
+          month: '2025-11',
+          identity: { avs: '756.1111.2222.33', fullName: 'Amina Diallo' },
+          work: { answer: 'Non', items: [] },
+          independent: { answer: 'Non', items: [] },
+          measure: { answer: 'Oui', items: [{ start: '2025-11-04', end: '2025-11-28', name: 'Proactif' }] },
+          incapacity: { answer: 'Non', lossInsurance: null, items: [] },
+          service: { answer: 'Non', items: [] },
+          vacations: { answer: 'Non', items: [] },
+          otherAbsence: { answer: 'Non', items: [] },
+          children: { answer: 'Non', note: '' },
+          otherParent: { answer: 'Non', note: '' },
+          insurance: { answer: 'Non', note: '' },
+          rate: { answer: 'Oui', newPercent: null, changeDate: null },
+          unemployment: { answer: 'Oui', date: null }
+        }
+      },
+      {
+        id: 'p2',
+        title: 'Profil 2 — Marco (1 jour travaillé)',
+        month: '2025-11',
+        previousRate: 80,
+        scenario: `En novembre 2025, Marco Rossi (N° AVS 756.2222.3333.44) remplit sa feuille mensuelle.
+
+Il a travaillé une seule journée chez Migros, le 2025-11-12. C’est un gain intermédiaire : même si c’est court, il doit l’indiquer et joindre les documents (attestation de gain intermédiaire + fiche de salaire).
+
+Le reste du mois, Marco n’a pas eu d’activité indépendante, n’a suivi aucune mesure, et n’a été ni malade ni accidenté. Il n’a effectué aucun service, n’a pas pris de vacances et n’a eu aucune absence pour d’autres raisons.
+
+Sa situation familiale ne change pas et il n’a pas de prestations d’une autre assurance. Il cherche toujours un emploi au même taux que le mois précédent : 80%. Malgré ce petit job, il est encore au chômage ce mois-là.`,
+        expected: {
+          month: '2025-11',
+          identity: { avs: '756.2222.3333.44', fullName: 'Marco Rossi' },
+          work: { answer: 'Oui', items: [{ start: '2025-11-12', end: '2025-11-12', employer: 'Migros', attestation: true, payslip: true }] },
+          independent: { answer: 'Non', items: [] },
+          measure: { answer: 'Non', items: [] },
+          incapacity: { answer: 'Non', lossInsurance: null, items: [] },
+          service: { answer: 'Non', items: [] },
+          vacations: { answer: 'Non', items: [] },
+          otherAbsence: { answer: 'Non', items: [] },
+          children: { answer: 'Non', note: '' },
+          otherParent: { answer: 'Non', note: '' },
+          insurance: { answer: 'Non', note: '' },
+          rate: { answer: 'Oui', newPercent: null, changeDate: null },
+          unemployment: { answer: 'Oui', date: null }
+        }
+      },
+      {
+        id: 'p3',
+        title: 'Profil 3 — Sara (indépendant + maladie + vacances)',
+        month: '2025-11',
+        previousRate: 100,
+        scenario: `En novembre 2025, Sara Ben Ali (N° AVS 756.3333.4444.55) vit plusieurs situations dans le mois.
+
+Elle n’a pas travaillé chez un employeur, mais elle a effectué une petite activité indépendante : un ménage privé payé cash le 2025-11-09 (c’est du travail, donc à déclarer).
+
+Plus tard, elle a été en incapacité de travailler à la suite d’une maladie, du 2025-11-18 au 2025-11-20. Elle a un certificat médical. Elle n’a pas d’assurance perte de gain en cas de maladie.
+
+Elle n’a suivi aucune mesure du marché du travail et n’a fait aucun service. Elle a pris des vacances du 2025-11-25 au 2025-11-29, et n’a pas eu d’autre absence.
+
+Le reste de sa situation est stable : pas de changement d’obligation d’entretien, pas d’allocations touchées par une autre personne, et pas de prestations d’une autre assurance. Elle cherche un emploi à 100% comme le mois précédent, et elle est encore au chômage ce mois-là.`,
+        expected: {
+          month: '2025-11',
+          identity: { avs: '756.3333.4444.55', fullName: 'Sara Ben Ali' },
+          work: { answer: 'Non', items: [] },
+          independent: { answer: 'Oui', items: [{ start: '2025-11-09', end: '2025-11-09', description: 'menage', proof: 'cash' }] },
+          measure: { answer: 'Non', items: [] },
+          incapacity: {
+            answer: 'Oui',
+            lossInsurance: 'Non',
+            items: [{ start: '2025-11-18', end: '2025-11-20', kind: 'suite_maladie', reason: '', certificate: true }]
+          },
+          service: { answer: 'Non', items: [] },
+          vacations: { answer: 'Oui', items: [{ start: '2025-11-25', end: '2025-11-29' }] },
+          otherAbsence: { answer: 'Non', items: [] },
+          children: { answer: 'Non', note: '' },
+          otherParent: { answer: 'Non', note: '' },
+          insurance: { answer: 'Non', note: '' },
+          rate: { answer: 'Oui', newPercent: null, changeDate: null },
+          unemployment: { answer: 'Oui', date: null }
+        }
+      },
+      {
+        id: 'p4',
+        title: 'Profil 4 — Luis (service + reprise de travail)',
+        month: '2025-11',
+        previousRate: 100,
+        scenario: `En novembre 2025, Luis Pereira (N° AVS 756.4444.5555.66) a deux éléments importants.
+
+Au début du mois, il effectue un service (militaire/civil/protection civile) du 2025-11-03 au 2025-11-04.
+
+Ensuite, il reprend un emploi chez Coop du 2025-11-20 au 2025-11-30. Comme il travaille, il doit indiquer les dates exactes et joindre les documents (attestation de gain intermédiaire + fiche de salaire).
+
+Il n’a pas d’activité indépendante, ne suit aucune mesure, et n’a aucune incapacité de travail. Pas de vacances, pas d’autres absences. Sa situation familiale ne change pas et il n’a pas de prestations d’une autre assurance.
+
+Il garde le même taux de recherche d’emploi que le mois précédent : 100%. Par contre, comme il a repris le travail dès le 2025-11-20, il n’est plus « encore au chômage » pour cette reprise.`,
+        expected: {
+          month: '2025-11',
+          identity: { avs: '756.4444.5555.66', fullName: 'Luis Pereira' },
+          work: { answer: 'Oui', items: [{ start: '2025-11-20', end: '2025-11-30', employer: 'Coop', attestation: true, payslip: true }] },
+          independent: { answer: 'Non', items: [] },
+          measure: { answer: 'Non', items: [] },
+          incapacity: { answer: 'Non', lossInsurance: null, items: [] },
+          service: { answer: 'Oui', items: [{ start: '2025-11-03', end: '2025-11-04' }] },
+          vacations: { answer: 'Non', items: [] },
+          otherAbsence: { answer: 'Non', items: [] },
+          children: { answer: 'Non', note: '' },
+          otherParent: { answer: 'Non', note: '' },
+          insurance: { answer: 'Non', note: '' },
+          rate: { answer: 'Oui', newPercent: null, changeDate: null },
+          unemployment: { answer: 'Non', date: '2025-11-20' }
+        }
+      },
+      {
+        id: 'p5',
+        title: 'Profil 5 — Nadia (accident + SUVA + changement taux + enfants)',
+        month: '2025-11',
+        previousRate: 100,
+        scenario: `En novembre 2025, Nadia Fernandes (N° AVS 756.5555.6666.77) n’a pas travaillé (ni employeur, ni indépendant), et n’a suivi aucune mesure.
+
+En revanche, elle a été en incapacité de travailler à la suite d’un accident, du 2025-11-05 au 2025-11-07. Elle dispose d’un certificat médical et précise qu’elle n’a pas d’assurance perte de gain en cas de maladie.
+
+Ce mois-ci, elle a aussi un dossier avec une autre assurance : elle a des prestations liées à SUVA (il faut joindre la décision / le décompte).
+
+Côté famille, sa situation change : l’obligation d’entretien est modifiée (fin de formation) et une autre personne a droit à des allocations pour enfant/formation.
+
+Nadia ne prend pas de vacances et n’a pas d’autre absence. Pour la recherche d’emploi, elle change son taux : elle cherche désormais à 80% dès le 2025-11-15. Elle est encore au chômage pendant le mois.`,
+        expected: {
+          month: '2025-11',
+          identity: { avs: '756.5555.6666.77', fullName: 'Nadia Fernandes' },
+          work: { answer: 'Non', items: [] },
+          independent: { answer: 'Non', items: [] },
+          measure: { answer: 'Non', items: [] },
+          incapacity: {
+            answer: 'Oui',
+            lossInsurance: 'Non',
+            items: [{ start: '2025-11-05', end: '2025-11-07', kind: 'suite_accident', reason: '', certificate: true }]
+          },
+          service: { answer: 'Non', items: [] },
+          vacations: { answer: 'Non', items: [] },
+          otherAbsence: { answer: 'Non', items: [] },
+          children: { answer: 'Oui', note: 'formation' },
+          otherParent: { answer: 'Oui', note: 'alloc' },
+          insurance: { answer: 'Oui', note: 'suva' },
+          rate: { answer: 'Non', newPercent: 80, changeDate: '2025-11-15' },
+          unemployment: { answer: 'Oui', date: null }
+        }
+      },
+      {
+        id: 'p6',
+        title: 'Profil 6 — Tom (absence autre raison)',
+        month: '2025-11',
+        previousRate: 60,
+        scenario: `En novembre 2025, Tom Nguyen (N° AVS 756.6666.7777.88) n’a pas travaillé et n’a suivi aucune mesure.
+
+Il n’a été ni malade ni accidenté, et n’a effectué aucun service. En revanche, il a été absent pour une autre raison : une raison familiale, du 2025-11-14 au 2025-11-15. Il ne prend pas de vacances.
+
+Sa situation familiale ne change pas, personne d’autre ne touche d’allocations, et il n’a pas de prestations d’une autre assurance. Il cherche un emploi au même taux que le mois précédent : 60%. Il est encore au chômage pendant ce mois.`,
+        expected: {
+          month: '2025-11',
+          identity: { avs: '756.6666.7777.88', fullName: 'Tom Nguyen' },
+          work: { answer: 'Non', items: [] },
+          independent: { answer: 'Non', items: [] },
+          measure: { answer: 'Non', items: [] },
+          incapacity: { answer: 'Non', lossInsurance: null, items: [] },
+          service: { answer: 'Non', items: [] },
+          vacations: { answer: 'Non', items: [] },
+          otherAbsence: { answer: 'Oui', items: [{ start: '2025-11-14', end: '2025-11-15', reason: 'famil' }] },
+          children: { answer: 'Non', note: '' },
+          otherParent: { answer: 'Non', note: '' },
+          insurance: { answer: 'Non', note: '' },
+          rate: { answer: 'Oui', newPercent: null, changeDate: null },
+          unemployment: { answer: 'Oui', date: null }
+        }
+      },
+      {
+        id: 'p7',
+        title: 'Profil 7 — Elena (2 employeurs + absences courtes)',
+        month: '2025-12',
+        previousRate: 80,
+        scenario: `En décembre 2025, Elena Garcia (N° AVS 756.7777.8888.99) a eu des journées de travail, et quelques absences.
+
+Elle travaille d’abord chez Coop du 2025-12-02 au 2025-12-04. Plus tard, elle travaille encore une journée chez Migros le 2025-12-18. Pour ces deux employeurs, elle doit indiquer les périodes et joindre les documents (attestation de gain intermédiaire + fiche de salaire).
+
+Elle n’a pas d’activité indépendante, ne suit aucune mesure, et n’a aucune incapacité de travail. Pas de service.
+
+Elle ne prend pas de vacances, mais elle est absente pour d’autres raisons à deux reprises : le 2025-12-09 (rendez-vous) et le 2025-12-23 (famille).
+
+Pas de changement familial, pas d’allocations par une autre personne, pas d’autre assurance. Elle cherche un emploi au même taux que le mois précédent : 80%. Elle est encore au chômage sur le mois.`,
+        expected: {
+          month: '2025-12',
+          identity: { avs: '756.7777.8888.99', fullName: 'Elena Garcia' },
+          work: {
+            answer: 'Oui',
+            items: [
+              { start: '2025-12-02', end: '2025-12-04', employer: 'Coop', attestation: true, payslip: true },
+              { start: '2025-12-18', end: '2025-12-18', employer: 'Migros', attestation: true, payslip: true }
+            ]
+          },
+          independent: { answer: 'Non', items: [] },
+          measure: { answer: 'Non', items: [] },
+          incapacity: { answer: 'Non', lossInsurance: null, items: [] },
+          service: { answer: 'Non', items: [] },
+          vacations: { answer: 'Non', items: [] },
+          otherAbsence: {
+            answer: 'Oui',
+            items: [
+              { start: '2025-12-09', end: '2025-12-09', reason: 'rendez' },
+              { start: '2025-12-23', end: '2025-12-23', reason: 'famil' }
+            ]
+          },
+          children: { answer: 'Non', note: '' },
+          otherParent: { answer: 'Non', note: '' },
+          insurance: { answer: 'Non', note: '' },
+          rate: { answer: 'Oui', newPercent: null, changeDate: null },
+          unemployment: { answer: 'Oui', date: null }
+        }
+      },
+      {
+        id: 'p8',
+        title: 'Profil 8 — Youssef (indépendant virement + mesure)',
+        month: '2025-12',
+        previousRate: 100,
+        scenario: `En décembre 2025, Youssef El Mansouri (N° AVS 756.8888.9999.00) fait un petit travail pour lui-même et suit une mesure.
+
+Il n’a pas travaillé chez un employeur, mais il a aidé à un déménagement en activité indépendante, payé par virement, le 2025-12-06 (il faut le déclarer et garder une preuve).
+
+Ensuite, il suit Proactif du 2025-12-09 au 2025-12-20 (mesure du marché du travail).
+
+Il n’a pas eu d’incapacité de travail, pas de service, pas de vacances, pas d’autre absence. Sa situation familiale ne change pas et il n’a pas de prestations d’une autre assurance.
+
+Il cherche toujours à 100%, comme le mois précédent, et il est encore au chômage durant le mois.`,
+        expected: {
+          month: '2025-12',
+          identity: { avs: '756.8888.9999.00', fullName: 'Youssef El Mansouri' },
+          work: { answer: 'Non', items: [] },
+          independent: { answer: 'Oui', items: [{ start: '2025-12-06', end: '2025-12-06', description: 'demenagement', proof: 'virement' }] },
+          measure: { answer: 'Oui', items: [{ start: '2025-12-09', end: '2025-12-20', name: 'Proactif' }] },
+          incapacity: { answer: 'Non', lossInsurance: null, items: [] },
+          service: { answer: 'Non', items: [] },
+          vacations: { answer: 'Non', items: [] },
+          otherAbsence: { answer: 'Non', items: [] },
+          children: { answer: 'Non', note: '' },
+          otherParent: { answer: 'Non', note: '' },
+          insurance: { answer: 'Non', note: '' },
+          rate: { answer: 'Oui', newPercent: null, changeDate: null },
+          unemployment: { answer: 'Oui', date: null }
+        }
+      },
+      {
+        id: 'p9',
+        title: 'Profil 9 — Chiara (maladie sans certificat + taux)',
+        month: '2026-01',
+        previousRate: 100,
+        scenario: `En janvier 2026, Chiara Bianchi (N° AVS 756.9999.0000.11) n’a pas travaillé, n’a pas d’activité indépendante et n’a suivi aucune mesure.
+
+Elle a cependant été en incapacité de travailler à la suite d’une maladie, du 2026-01-13 au 2026-01-14. Elle n’a pas de certificat médical pour ces jours et n’a pas d’assurance perte de gain en cas de maladie.
+
+Elle n’a pas fait de service, n’a pris aucune vacances et n’a pas eu d’autre absence. Sa situation familiale ne change pas et elle n’a pas de prestations d’une autre assurance.
+
+Pour sa recherche, elle change son taux : à partir du 2026-01-20, elle cherche à 80%. Elle reste encore au chômage sur le mois.`,
+        expected: {
+          month: '2026-01',
+          identity: { avs: '756.9999.0000.11', fullName: 'Chiara Bianchi' },
+          work: { answer: 'Non', items: [] },
+          independent: { answer: 'Non', items: [] },
+          measure: { answer: 'Non', items: [] },
+          incapacity: {
+            answer: 'Oui',
+            lossInsurance: 'Non',
+            items: [{ start: '2026-01-13', end: '2026-01-14', kind: 'suite_maladie', reason: '', certificate: false }]
+          },
+          service: { answer: 'Non', items: [] },
+          vacations: { answer: 'Non', items: [] },
+          otherAbsence: { answer: 'Non', items: [] },
+          children: { answer: 'Non', note: '' },
+          otherParent: { answer: 'Non', note: '' },
+          insurance: { answer: 'Non', note: '' },
+          rate: { answer: 'Non', newPercent: 80, changeDate: '2026-01-20' },
+          unemployment: { answer: 'Oui', date: null }
+        }
+      },
+      {
+        id: 'p10',
+        title: 'Profil 10 — Mila (reprise + AI + vacances + enfants)',
+        month: '2026-01',
+        previousRate: 60,
+        scenario: `En janvier 2026, Mila Novak (N° AVS 756.1212.3434.56) commence le mois avec des vacances, puis reprend un emploi.
+
+Elle prend des vacances du 2026-01-06 au 2026-01-10, sans autre absence.
+
+À partir du 2026-01-15, elle reprend un poste à l’Hôtel Riviera et travaille jusqu’au 2026-01-31. Elle devra indiquer ces dates et joindre les pièces (attestation de gain intermédiaire + fiche de salaire).
+
+Elle n’a pas d’activité indépendante, ne suit aucune mesure et n’a aucune incapacité de travail. Pas de service.
+
+Sa situation familiale change avec une naissance : l’obligation d’entretien est modifiée et une autre personne a droit à des allocations. Par ailleurs, Mila a des prestations d’une autre assurance : AI (décision / décompte à joindre).
+
+Elle garde le même taux de recherche d’emploi que le mois précédent : 60%. Comme elle reprend le travail le 2026-01-15, elle n’est plus « encore au chômage » à partir de cette reprise.`,
+        expected: {
+          month: '2026-01',
+          identity: { avs: '756.1212.3434.56', fullName: 'Mila Novak' },
+          work: { answer: 'Oui', items: [{ start: '2026-01-15', end: '2026-01-31', employer: 'Hotel Riviera', attestation: true, payslip: true }] },
+          independent: { answer: 'Non', items: [] },
+          measure: { answer: 'Non', items: [] },
+          incapacity: { answer: 'Non', lossInsurance: null, items: [] },
+          service: { answer: 'Non', items: [] },
+          vacations: { answer: 'Oui', items: [{ start: '2026-01-06', end: '2026-01-10' }] },
+          otherAbsence: { answer: 'Non', items: [] },
+          children: { answer: 'Oui', note: 'naissance' },
+          otherParent: { answer: 'Oui', note: 'alloc' },
+          insurance: { answer: 'Oui', note: 'ai' },
+          rate: { answer: 'Oui', newPercent: null, changeDate: null },
+          unemployment: { answer: 'Non', date: '2026-01-15' }
+        }
+      }
+    ];
+
+    const ITEM_TEMPLATES = {
+      work: () => `
+        <div class="ipa-item" data-item="work">
+          <div class="ipa-item__grid ipa-item__grid--3">
+            <div class="ipa-field">
+              <label>Du</label>
+              <input type="date" data-field="start" />
+            </div>
+            <div class="ipa-field">
+              <label>Au</label>
+              <input type="date" data-field="end" />
+            </div>
+            <div class="ipa-field">
+              <label>Employeur</label>
+              <input type="text" data-field="employer" placeholder="Ex : Migros, Coop..." />
+            </div>
+          </div>
+          <div class="ipa-row" style="margin-top:10px">
+            <div class="ipa-field">
+              <label>Pièces jointes</label>
+              <div class="ipa-choice">
+                <label><input type="checkbox" data-field="attestation"> Attestation gain intermédiaire jointe</label>
+                <label><input type="checkbox" data-field="payslip"> Fiche de salaire jointe</label>
+              </div>
+            </div>
+          </div>
+          <div class="ipa-item__actions">
+            <button class="ipa-btn small danger" type="button" data-action="remove">Supprimer</button>
+          </div>
+        </div>
+      `,
+      independent: () => `
+        <div class="ipa-item" data-item="independent">
+          <div class="ipa-item__grid ipa-item__grid--3">
+            <div class="ipa-field">
+              <label>Du</label>
+              <input type="date" data-field="start" />
+            </div>
+            <div class="ipa-field">
+              <label>Au</label>
+              <input type="date" data-field="end" />
+            </div>
+            <div class="ipa-field">
+              <label>Activité (quoi ?)</label>
+              <input type="text" data-field="description" placeholder="Ex : ménage privé, baby-sitting..." />
+            </div>
+          </div>
+          <div class="ipa-row" style="margin-top:10px">
+            <div class="ipa-field">
+              <label>Preuve / paiement</label>
+              <select data-field="proof">
+                <option value="">Choisir...</option>
+                <option value="facture">Facture</option>
+                <option value="cash">Cash</option>
+                <option value="virement">Virement</option>
+              </select>
+            </div>
+          </div>
+          <div class="ipa-item__actions">
+            <button class="ipa-btn small danger" type="button" data-action="remove">Supprimer</button>
+          </div>
+        </div>
+      `,
+      measure: () => `
+        <div class="ipa-item" data-item="measure">
+          <div class="ipa-item__grid ipa-item__grid--3">
+            <div class="ipa-field">
+              <label>Du</label>
+              <input type="date" data-field="start" />
+            </div>
+            <div class="ipa-field">
+              <label>Au</label>
+              <input type="date" data-field="end" />
+            </div>
+            <div class="ipa-field">
+              <label>Nom de la mesure</label>
+              <input type="text" data-field="name" placeholder="Ex : Proactif, cours..." />
+            </div>
+          </div>
+          <div class="ipa-item__actions">
+            <button class="ipa-btn small danger" type="button" data-action="remove">Supprimer</button>
+          </div>
+        </div>
+      `,
+      incapacity: () => `
+        <div class="ipa-item" data-item="incapacity">
+          <div class="ipa-item__grid ipa-item__grid--3">
+            <div class="ipa-field">
+              <label>Du</label>
+              <input type="date" data-field="start" />
+            </div>
+            <div class="ipa-field">
+              <label>Au</label>
+              <input type="date" data-field="end" />
+            </div>
+            <div class="ipa-field">
+              <label>Type (question 4)</label>
+              <select data-field="kind">
+                <option value="">Choisir...</option>
+                <option value="annonce_maladie">Annonce de maladie</option>
+                <option value="suite_maladie">À la suite d’une maladie</option>
+                <option value="suite_accident">À la suite d’un accident</option>
+                <option value="autre">Autre raison</option>
+              </select>
+            </div>
+          </div>
+          <div class="ipa-row" style="margin-top:10px">
+            <div class="ipa-field">
+              <label>Lesquelles ? (si autre)</label>
+              <input type="text" data-field="reason" placeholder="Ex : rendez-vous médical, famille..." />
+            </div>
+          </div>
+          <div class="ipa-row" style="margin-top:10px">
+            <div class="ipa-field">
+              <label>Certificat médical</label>
+              <div class="ipa-choice">
+                <label><input type="checkbox" data-field="certificate"> Certificat médical joint</label>
+              </div>
+            </div>
+          </div>
+          <div class="ipa-item__actions">
+            <button class="ipa-btn small danger" type="button" data-action="remove">Supprimer</button>
+          </div>
+        </div>
+      `,
+      service: () => `
+        <div class="ipa-item" data-item="service">
+          <div class="ipa-item__grid">
+            <div class="ipa-field">
+              <label>Du</label>
+              <input type="date" data-field="start" />
+            </div>
+            <div class="ipa-field">
+              <label>Au</label>
+              <input type="date" data-field="end" />
+            </div>
+          </div>
+          <div class="ipa-item__actions">
+            <button class="ipa-btn small danger" type="button" data-action="remove">Supprimer</button>
+          </div>
+        </div>
+      `,
+      vacations: () => `
+        <div class="ipa-item" data-item="vacations">
+          <div class="ipa-item__grid">
+            <div class="ipa-field">
+              <label>Du</label>
+              <input type="date" data-field="start" />
+            </div>
+            <div class="ipa-field">
+              <label>Au</label>
+              <input type="date" data-field="end" />
+            </div>
+          </div>
+          <div class="ipa-item__actions">
+            <button class="ipa-btn small danger" type="button" data-action="remove">Supprimer</button>
+          </div>
+        </div>
+      `,
+      otherAbsence: () => `
+        <div class="ipa-item" data-item="otherAbsence">
+          <div class="ipa-item__grid ipa-item__grid--3">
+            <div class="ipa-field">
+              <label>Du</label>
+              <input type="date" data-field="start" />
+            </div>
+            <div class="ipa-field">
+              <label>Au</label>
+              <input type="date" data-field="end" />
+            </div>
+            <div class="ipa-field">
+              <label>Pourquoi ?</label>
+              <input type="text" data-field="reason" placeholder="Ex : rendez-vous, famille..." />
+            </div>
+          </div>
+          <div class="ipa-item__actions">
+            <button class="ipa-btn small danger" type="button" data-action="remove">Supprimer</button>
+          </div>
+        </div>
+      `
+    };
+
+    function $(sel){ return document.querySelector(sel); }
+    function $$ (sel){ return Array.from(document.querySelectorAll(sel)); }
+
+    function storageKey(profileId){
+      const key = (window.ProactifProgress && typeof window.ProactifProgress.getCurrentKey === 'function')
+        ? window.ProactifProgress.getCurrentKey()
+        : 'exercice';
+      return STORAGE_PREFIX + String(key || 'exercice') + ':' + String(profileId || 'unknown');
+    }
+
+    function syncProfileDock(profile){
+      try {
+        const title = document.getElementById('profileDockTitle');
+        if (title) title.textContent = (profile && profile.title) ? profile.title : '—';
+      } catch (e) {}
+    }
+
+    function setOverlayOpen(open){
+      const overlay = document.getElementById('profileOverlay');
+      if (!overlay) return;
+      if (!open) {
+        overlay.setAttribute('hidden', '');
+        return;
+      }
+      overlay.removeAttribute('hidden');
+      try {
+        const btn = document.getElementById('closeProfileOverlayBtn');
+        if (btn) btn.focus({ preventScroll: true });
+      } catch (e) {}
+    }
+
+    function syncProfileOverlay(profile){
+      try {
+        const title = document.getElementById('profileOverlayTitle');
+        if (title) title.textContent = (profile && profile.title) ? profile.title : 'Profil';
+      } catch (e) {}
+      try {
+        const text = document.getElementById('scenarioTextOverlay');
+        if (text) text.textContent = (profile && profile.scenario) ? profile.scenario : '';
+      } catch (e) {}
+    }
+
+    function saveDraft(profileId, data){
+      try { localStorage.setItem(storageKey(profileId), JSON.stringify(data || {})); } catch (e) {}
+    }
+    function loadDraft(profileId){
+      try { return JSON.parse(localStorage.getItem(storageKey(profileId)) || '{}'); } catch (e) { return {}; }
+    }
+
+    function setDetailsOpen(key, open){
+      const node = document.querySelector('.ipa-details[data-details="' + key + '"]');
+      if (!node) return;
+      node.dataset.open = open ? '1' : '0';
+    }
+
+    function ensureAtLeastOneItem(key){
+      const host = document.getElementById(key + 'Items');
+      if (!host) return;
+      if (host.querySelector('.ipa-item')) return;
+      addItem(key);
+    }
+
+    function addItem(key, initial){
+      const host = document.getElementById(key + 'Items');
+      if (!host) return;
+      const tplFn = ITEM_TEMPLATES[key];
+      if (!tplFn) return;
+      const tmp = document.createElement('div');
+      tmp.innerHTML = tplFn().trim();
+      const el = tmp.firstElementChild;
+      if (!el) return;
+      host.appendChild(el);
+
+      if (initial && typeof initial === 'object'){
+        Object.keys(initial).forEach(field => {
+          const input = el.querySelector('[data-field="' + field + '"]');
+          if (!input) return;
+          if (input.type === 'checkbox') input.checked = !!initial[field];
+          else input.value = String(initial[field] ?? '');
+        });
+      }
+      syncRemoveButtons();
+      hookAutoSave();
+      return el;
+    }
+
+    function syncRemoveButtons(){
+      $$('.ipa-item [data-action="remove"]').forEach(btn => {
+        if (btn.dataset.bound === '1') return;
+        btn.dataset.bound = '1';
+        btn.addEventListener('click', () => {
+          const item = btn.closest('.ipa-item');
+          if (!item) return;
+          item.remove();
+          hookAutoSave();
+        });
+      });
+    }
+
+    function getRadioValue(name){
+      const checked = document.querySelector('input[name="' + name + '"]:checked');
+      return checked ? checked.value : '';
+    }
+
+    function getItems(key){
+      const host = document.getElementById(key + 'Items');
+      if (!host) return [];
+      return Array.from(host.querySelectorAll('.ipa-item')).map(item => {
+        const out = {};
+        Array.from(item.querySelectorAll('[data-field]')).forEach(input => {
+          const field = input.getAttribute('data-field');
+          if (!field) return;
+          if (input.type === 'checkbox') out[field] = !!input.checked;
+          else out[field] = String(input.value || '').trim();
+        });
+        return out;
+      });
+    }
+
+    function setRadioValue(name, value){
+      const inputs = $$('input[name="' + name + '"]');
+      inputs.forEach(input => { input.checked = (input.value === value); });
+    }
+
+    function clearItems(key){
+      const host = document.getElementById(key + 'Items');
+      if (host) host.innerHTML = '';
+    }
+
+    function setItems(key, items){
+      clearItems(key);
+      (items || []).forEach(it => addItem(key, it));
+    }
+
+    function collectState(){
+      return {
+        profileId: $('#profileSelect').value,
+        identity: {
+          avs: String($('#sheetAvs').value || '').trim(),
+          fullName: String($('#sheetFullName').value || '').trim()
+        },
+        month: $('#sheetMonth').value,
+        work: { answer: getRadioValue('workAnswer'), items: getItems('work') },
+        independent: { answer: getRadioValue('independentAnswer'), items: getItems('independent') },
+        measure: { answer: getRadioValue('measureAnswer'), items: getItems('measure') },
+        incapacity: {
+          answer: getRadioValue('incapacityAnswer'),
+          lossInsurance: getRadioValue('lossInsuranceAnswer'),
+          items: getItems('incapacity')
+        },
+        service: { answer: getRadioValue('serviceAnswer'), items: getItems('service') },
+        vacations: { answer: getRadioValue('vacationsAnswer'), items: getItems('vacations') },
+        otherAbsence: { answer: getRadioValue('otherAbsenceAnswer'), items: getItems('otherAbsence') },
+        children: { answer: getRadioValue('childrenAnswer'), note: String($('#childrenNote').value || '').trim() },
+        otherParent: { answer: getRadioValue('otherParentAnswer'), note: String($('#otherParentNote').value || '').trim() },
+        insurance: { answer: getRadioValue('insuranceAnswer'), note: String($('#insuranceNote').value || '').trim() },
+        rate: {
+          answer: getRadioValue('rateAnswer'),
+          newPercent: String($('#rateNewPercent').value || '').trim(),
+          changeDate: String($('#rateChangeDate').value || '').trim()
+        },
+        unemployment: {
+          answer: getRadioValue('unemploymentAnswer'),
+          date: String($('#unemploymentDate').value || '').trim()
+        }
+      };
+    }
+
+    function applyState(state){
+      if (!state || typeof state !== 'object') return;
+      if (state.identity?.avs != null) $('#sheetAvs').value = state.identity.avs;
+      if (state.identity?.fullName != null) $('#sheetFullName').value = state.identity.fullName;
+      if (state.month) $('#sheetMonth').value = state.month;
+
+      setRadioValue('workAnswer', state.work?.answer || '');
+      setRadioValue('independentAnswer', state.independent?.answer || '');
+      setRadioValue('measureAnswer', state.measure?.answer || '');
+      setRadioValue('incapacityAnswer', state.incapacity?.answer || '');
+      setRadioValue('lossInsuranceAnswer', state.incapacity?.lossInsurance || '');
+      setRadioValue('serviceAnswer', state.service?.answer || '');
+      setRadioValue('vacationsAnswer', state.vacations?.answer || '');
+      setRadioValue('otherAbsenceAnswer', state.otherAbsence?.answer || '');
+      setRadioValue('childrenAnswer', state.children?.answer || '');
+      setRadioValue('otherParentAnswer', state.otherParent?.answer || '');
+      setRadioValue('insuranceAnswer', state.insurance?.answer || '');
+      setRadioValue('rateAnswer', state.rate?.answer || '');
+      setRadioValue('unemploymentAnswer', state.unemployment?.answer || '');
+
+      setItems('work', state.work?.items || []);
+      setItems('independent', state.independent?.items || []);
+      setItems('measure', state.measure?.items || []);
+      setItems('incapacity', state.incapacity?.items || []);
+      setItems('service', state.service?.items || []);
+      setItems('vacations', state.vacations?.items || []);
+      setItems('otherAbsence', state.otherAbsence?.items || []);
+
+      $('#childrenNote').value = state.children?.note || '';
+      $('#otherParentNote').value = state.otherParent?.note || '';
+      $('#insuranceNote').value = state.insurance?.note || '';
+      $('#rateNewPercent').value = state.rate?.newPercent || '';
+      $('#rateChangeDate').value = state.rate?.changeDate || '';
+      $('#unemploymentDate').value = state.unemployment?.date || '';
+
+      syncConditionalDetails();
+      syncRemoveButtons();
+    }
+
+    function syncConditionalDetails(){
+      const mapping = [
+        ['work', 'workAnswer'],
+        ['independent', 'independentAnswer'],
+        ['measure', 'measureAnswer'],
+        ['incapacity', 'incapacityAnswer'],
+        ['service', 'serviceAnswer'],
+        ['vacations', 'vacationsAnswer'],
+        ['otherAbsence', 'otherAbsenceAnswer'],
+        ['children', 'childrenAnswer'],
+        ['otherParent', 'otherParentAnswer'],
+        ['insurance', 'insuranceAnswer'],
+        ['rate', 'rateAnswer'],
+        ['unemployment', 'unemploymentAnswer']
+      ];
+      mapping.forEach(([key, name]) => {
+        const v = getRadioValue(name);
+        const open = (key === 'rate' || key === 'unemployment') ? (v === 'Non') : (v === 'Oui');
+        setDetailsOpen(key, open);
+        if ((key === 'work' || key === 'independent' || key === 'measure' || key === 'incapacity' || key === 'service' || key === 'vacations' || key === 'otherAbsence') && v === 'Oui') {
+          ensureAtLeastOneItem(key);
+        }
+        if ((key === 'children' || key === 'otherParent' || key === 'insurance') && v === 'Oui') {
+          // no-op, fields already visible
+        }
+      });
+    }
+
+    function validateRequiredYesNo(state, key, label, errors){
+      const v = state[key]?.answer;
+      if (v !== 'Oui' && v !== 'Non') errors.push({ key, label, msg: 'Choisissez OUI ou NON.' });
+    }
+
+    function validateYesNoValue(value, key, label, errors){
+      const v = String(value || '');
+      if (v !== 'Oui' && v !== 'Non') errors.push({ key, label, msg: 'Choisissez OUI ou NON.' });
+    }
+
+    function normalizeAvs(value){
+      return String(value || '').replace(/[^\d]/g, '');
+    }
+
+    function isValidSwissAvs(value){
+      const digits = normalizeAvs(value);
+      return digits.length === 13 && digits.startsWith('756');
+    }
+
+    function validateDates(items, key, label, errors){
+      (items || []).forEach((it, idx) => {
+        const start = it.start;
+        const end = it.end;
+        if (!start || !end) {
+          errors.push({ key, label, msg: `Période ${idx + 1}: dates incomplètes.` });
+          return;
+        }
+        const a = parseDate(start);
+        const b = parseDate(end);
+        if (!a || !b) {
+          errors.push({ key, label, msg: `Période ${idx + 1}: format de date invalide.` });
+          return;
+        }
+        if (b.getTime() < a.getTime()) {
+          errors.push({ key, label, msg: `Période ${idx + 1}: “Au” doit être après “Du”.` });
+        }
+      });
+    }
+
+    function findMatch(actualItems, expectedItem, fields){
+      const expectedNorm = {};
+      fields.forEach(f => { expectedNorm[f] = normText(expectedItem[f]); });
+      return (actualItems || []).some(actual => {
+        return fields.every(f => {
+          if (f === 'start' || f === 'end') return String(actual[f] || '') === String(expectedItem[f] || '');
+          const expectedValue = expectedItem[f];
+          if (typeof expectedValue === 'boolean') return !!actual[f] === !!expectedValue;
+          const exp = expectedNorm[f];
+          if (!exp) return true;
+          return normText(actual[f]).includes(exp);
+        });
+      });
+    }
+
+	    function validateAgainstProfile(state, profile){
+	      const errors = [];
+	      const warnings = [];
+	      const expected = profile.expected;
+	      const WHY = {
+	        work: 'Règle: ≥ 1h travaillée → OUI (dates + employeur + fiche de salaire).',
+	        independent: 'Règle: travail pour soi / ménage privé payé (facture/cash/virement) → OUI + preuves.',
+	        measure: 'Règle: cours / stage / programme ORP (ex: Proactif) → OUI (nom + dates).',
+	        incapacity: 'Règle: malade/accident même 1 jour → OUI (dates exactes + certificat).',
+	        service: 'Règle: militaire / civil / protection → OUI (dates).',
+	        vacations: 'Règle: vacances → OUI (dates).',
+	        otherAbsence: 'Règle: absence autre raison → OUI (raison + dates).',
+	        children: 'Règle: changement situation enfants → OUI + justificatifs.',
+	        otherParent: 'Règle: autre parent touche allocations → OUI (sinon NON).',
+	        insurance: 'Règle: AI/SUVA/AVS/rente → OUI + décision officielle.',
+	        rate: 'Règle: même % que mois passé → OUI; changement → NON + nouveau % + date.',
+	        unemployment: 'Règle: toujours sans travail → OUI; reprise → NON + date exacte.'
+	      };
+
+      function expectedShort(sectionKey){
+        const sec = expected[sectionKey];
+        if (!sec || sec.answer !== 'Oui') return '';
+        const items = sec.items || [];
+        if (!items.length) return '';
+        const first = items[0] || {};
+        if (sectionKey === 'work') return ` Exemple: ${first.start} → ${first.end} (${first.employer || 'employeur'}).`;
+        if (sectionKey === 'measure') return ` Exemple: ${first.start} → ${first.end} (${first.name || 'mesure'}).`;
+        return ` Exemple: ${first.start} → ${first.end}.`;
+      }
+
+      if (!state.identity?.fullName) errors.push({ key: 'identity', label: 'Identité', msg: 'Indiquez “Nom, prénom”.' });
+      if (!state.identity?.avs) errors.push({ key: 'identity', label: 'Identité', msg: 'Indiquez le N° AVS.' });
+      if (state.identity?.avs && !isValidSwissAvs(state.identity.avs)) {
+        warnings.push({ key: 'identity', label: 'Identité', msg: 'N° AVS: format inhabituel (attendu: 13 chiffres, commence par 756).' });
+      }
+
+      if (!state.month) errors.push({ key: 'month', label: 'Mois', msg: 'Choisissez le mois.' });
+      if (state.month && expected.month && state.month !== expected.month) {
+        errors.push({ key: 'month', label: 'Mois', msg: `Le profil est pour ${expected.month}.` });
+      }
+
+	      const labels = {
+	        identity: 'Identité',
+	        work: '1. Travail',
+	        independent: '2. Activité indépendante',
+	        measure: '3. Mesure ORP',
+	        incapacity: '4. Incapacité',
+	        service: '5. Service',
+	        vacations: '6. Vacances',
+	        otherAbsence: '6. Absence (autres raisons)',
+	        children: '7a. Obligation d’entretien',
+	        otherParent: '7b. Allocations (autre personne)',
+	        insurance: '8. Autre assurance',
+	        rate: '9. Taux recherché',
+	        unemployment: '10. Chômage'
+	      };
+
+      validateRequiredYesNo(state, 'work', labels.work, errors);
+      validateRequiredYesNo(state, 'independent', labels.independent, errors);
+      validateRequiredYesNo(state, 'measure', labels.measure, errors);
+	      validateRequiredYesNo(state, 'incapacity', labels.incapacity, errors);
+	      validateRequiredYesNo(state, 'service', labels.service, errors);
+	      validateYesNoValue(state.vacations?.answer, 'vacations', labels.vacations, errors);
+	      validateYesNoValue(state.otherAbsence?.answer, 'otherAbsence', labels.otherAbsence, errors);
+	      validateRequiredYesNo(state, 'children', labels.children, errors);
+	      validateRequiredYesNo(state, 'otherParent', labels.otherParent, errors);
+	      validateRequiredYesNo(state, 'insurance', labels.insurance, errors);
+	      validateRequiredYesNo(state, 'rate', labels.rate, errors);
+      validateRequiredYesNo(state, 'unemployment', labels.unemployment, errors);
+      if (state.incapacity?.answer === 'Oui') {
+        validateYesNoValue(state.incapacity?.lossInsurance, 'incapacity', '4. Assurance perte de gain', errors);
+      }
+
+      // Basic internal validations
+      validateDates(state.work.items, 'work', labels.work, errors);
+      validateDates(state.independent.items, 'independent', labels.independent, errors);
+	      validateDates(state.measure.items, 'measure', labels.measure, errors);
+	      validateDates(state.incapacity.items, 'incapacity', labels.incapacity, errors);
+	      validateDates(state.service.items, 'service', labels.service, errors);
+	      validateDates(state.vacations.items, 'vacations', labels.vacations, errors);
+	      validateDates(state.otherAbsence.items, 'otherAbsence', labels.otherAbsence, errors);
+
+      // Consistency: items vs Oui/Non
+      ['work','independent','measure','incapacity','service'].forEach(sectionKey => {
+        const got = state[sectionKey]?.answer;
+        const items = state[sectionKey]?.items || [];
+        if (got === 'Oui' && !items.length) {
+          errors.push({ key: sectionKey, label: labels[sectionKey], msg: 'Vous avez coché OUI, mais aucune période n’est remplie (ajoutez une période ou cochez NON).' });
+        }
+        if (got === 'Non' && items.length) {
+          errors.push({ key: sectionKey, label: labels[sectionKey], msg: 'Incohérence: vous avez coché NON, mais vous avez rempli une période.' });
+        }
+      });
+
+	      const vacAns = state.vacations?.answer;
+	      const vacItems = state.vacations?.items || [];
+	      if (vacAns === 'Oui' && !vacItems.length) errors.push({ key: 'vacations', label: labels.vacations, msg: 'Vous avez coché OUI, mais aucune période n’est remplie.' });
+	      if (vacAns === 'Non' && vacItems.length) errors.push({ key: 'vacations', label: labels.vacations, msg: 'Incohérence: vous avez coché NON, mais vous avez rempli une période.' });
+
+	      const absAns = state.otherAbsence?.answer;
+	      const absItems = state.otherAbsence?.items || [];
+	      if (absAns === 'Oui' && !absItems.length) errors.push({ key: 'otherAbsence', label: labels.otherAbsence, msg: 'Vous avez coché OUI, mais aucune période n’est remplie.' });
+	      if (absAns === 'Non' && absItems.length) errors.push({ key: 'otherAbsence', label: labels.otherAbsence, msg: 'Incohérence: vous avez coché NON, mais vous avez rempli une période.' });
+
+      function requireItemField(sectionKey, idx, field, human){
+        const items = state[sectionKey]?.items || [];
+        const it = items[idx];
+        if (!it) return;
+        if (typeof it[field] === 'boolean') return;
+        if (!String(it[field] || '').trim()) {
+          errors.push({ key: sectionKey, label: labels[sectionKey], msg: `Période ${idx + 1}: champ “${human}” manquant.` });
+        }
+      }
+
+      // Required item fields (when user filled items)
+      (state.work.items || []).forEach((it, idx) => {
+        requireItemField('work', idx, 'employer', 'Employeur');
+        if (state.work.answer === 'Oui' && !it.attestation) warnings.push({ key: 'work', label: labels.work, msg: `Période ${idx + 1}: attestation de gain intermédiaire non cochée.` });
+        if (state.work.answer === 'Oui' && !it.payslip) warnings.push({ key: 'work', label: labels.work, msg: `Période ${idx + 1}: fiche de salaire non cochée.` });
+      });
+      (state.independent.items || []).forEach((it, idx) => {
+        requireItemField('independent', idx, 'description', 'Activité');
+        requireItemField('independent', idx, 'proof', 'Preuve / paiement');
+      });
+      (state.measure.items || []).forEach((it, idx) => {
+        requireItemField('measure', idx, 'name', 'Nom de la mesure');
+      });
+      (state.incapacity.items || []).forEach((it, idx) => {
+        requireItemField('incapacity', idx, 'kind', 'Type (annonce/suite maladie/suite accident/autre)');
+        if (String(it.kind || '').trim() === 'autre' && !String(it.reason || '').trim()) {
+          errors.push({ key: 'incapacity', label: labels.incapacity, msg: `Période ${idx + 1}: indiquez “Lesquelles ?” (autre raison).` });
+        }
+      });
+	      (state.otherAbsence.items || []).forEach((it, idx) => {
+	        if (!String(it.reason || '').trim()) {
+	          errors.push({ key: 'otherAbsence', label: labels.otherAbsence, msg: `Période ${idx + 1}: indiquez “Pourquoi ?”.` });
+	        }
+	      });
+
+      // Notes vs Oui/Non (optional but helpful)
+      if (state.children.answer === 'Non' && String(state.children.note || '').trim()) {
+        warnings.push({ key: 'children', label: labels.children, msg: 'Note remplie alors que vous avez coché NON.' });
+      }
+      if (state.otherParent.answer === 'Non' && String(state.otherParent.note || '').trim()) {
+        warnings.push({ key: 'otherParent', label: labels.otherParent, msg: 'Note remplie alors que vous avez coché NON.' });
+      }
+      if (state.insurance.answer === 'Non' && String(state.insurance.note || '').trim()) {
+        warnings.push({ key: 'insurance', label: labels.insurance, msg: 'Note remplie alors que vous avez coché NON.' });
+      }
+
+      // Month consistency warnings
+      const checkMonth = (reportKey, labelText, items) => {
+        (items || []).forEach((it, idx) => {
+          const ms = monthOfDate(it.start);
+          const me = monthOfDate(it.end);
+          if (state.month && (ms && ms !== state.month || me && me !== state.month)) {
+            warnings.push({ key: reportKey, label: labelText, msg: `Période ${idx + 1}: la date n’est pas dans le mois ${state.month}.` });
+          }
+        });
+      };
+      checkMonth('work', labels.work, state.work.items);
+      checkMonth('independent', labels.independent, state.independent.items);
+	      checkMonth('measure', labels.measure, state.measure.items);
+	      checkMonth('incapacity', labels.incapacity, state.incapacity.items);
+	      checkMonth('service', labels.service, state.service.items);
+	      checkMonth('vacations', labels.vacations, state.vacations.items);
+	      checkMonth('otherAbsence', labels.otherAbsence, state.otherAbsence.items);
+
+      // Absence rules
+	      (state.vacations.items || []).forEach((it, idx) => {
+	        const length = daysBetweenInclusive(it.start, it.end);
+	        if (length != null && length > 5) {
+	          warnings.push({ key: 'vacations', label: labels.vacations, msg: `Période ${idx + 1}: vacances > 5 jours consécutifs (à vérifier avec l’ORP).` });
+	        }
+	      });
+
+      // Incapacity: certificate reminder
+      (state.incapacity.items || []).forEach((it, idx) => {
+        const hasDates = String(it.start || '').trim() && String(it.end || '').trim();
+        if (!hasDates) return;
+        if (!it.certificate) {
+          warnings.push({ key: 'incapacity', label: labels.incapacity, msg: `Période ${idx + 1}: sans certificat médical, ces jours peuvent être non payés.` });
+        }
+      });
+
+      // Rate rules
+      if (state.rate.answer === 'Oui') {
+        if (String(state.rate.newPercent || '').trim() || String(state.rate.changeDate || '').trim()) {
+          warnings.push({ key: 'rate', label: labels.rate, msg: 'Vous avez mis des détails alors que vous avez coché “OUI (même %)”.' });
+        }
+      } else if (state.rate.answer === 'Non') {
+        const pct = clampInt(parseInt(state.rate.newPercent, 10), 0, 100);
+        if (pct == null) errors.push({ key: 'rate', label: labels.rate, msg: 'Indiquez un nouveau % (0–100).' });
+        if (!parseDate(state.rate.changeDate)) errors.push({ key: 'rate', label: labels.rate, msg: 'Indiquez la date du changement.' });
+      }
+
+      // Unemployment date rules
+      if (state.unemployment.answer === 'Oui') {
+        if (String(state.unemployment.date || '').trim()) {
+          warnings.push({ key: 'unemployment', label: labels.unemployment, msg: 'Date remplie alors que vous avez coché “OUI”.' });
+        }
+      } else if (state.unemployment.answer === 'Non') {
+        if (!parseDate(state.unemployment.date)) errors.push({ key: 'unemployment', label: labels.unemployment, msg: 'Indiquez la date exacte de reprise.' });
+      }
+
+      // Compare with profile expected
+      function expectAnswer(sectionKey){
+        const exp = expected[sectionKey]?.answer;
+        const got = state[sectionKey]?.answer;
+        if (exp && got && exp !== got) {
+          const why = WHY[sectionKey] ? (' ' + WHY[sectionKey]) : '';
+          const ex = expectedShort(sectionKey);
+          errors.push({ key: sectionKey, label: labels[sectionKey], msg: `Dans le profil, la bonne réponse est “${exp}”.${why}${ex}` });
+        }
+      }
+      [
+        'work','independent','measure','incapacity','service','children','otherParent','insurance','rate','unemployment'
+      ].forEach(expectAnswer);
+
+      function requireYesItems(sectionKey, reportKey, labelText, fields, itemLabel){
+        if (expected[sectionKey]?.answer !== 'Oui') return;
+        const expItems = expected[sectionKey]?.items || [];
+        const gotItems = state[sectionKey]?.items || [];
+        if (!gotItems.length) errors.push({ key: reportKey, label: labelText, msg: 'Vous avez coché OUI mais aucune période n’est remplie.' });
+        expItems.forEach((expItem, idx) => {
+          const ok = findMatch(gotItems, expItem, fields);
+          if (!ok) errors.push({ key: reportKey, label: labelText, msg: `${itemLabel} attendue manquante (période ${idx + 1}).` });
+        });
+      }
+
+      requireYesItems('work', 'work', labels.work, ['start','end','employer','attestation','payslip'], 'Période de travail');
+      requireYesItems('independent', 'independent', labels.independent, ['start','end','description','proof'], 'Période indépendante');
+      requireYesItems('measure', 'measure', labels.measure, ['start','end','name'], 'Mesure ORP');
+      requireYesItems('incapacity', 'incapacity', labels.incapacity, ['start','end','kind','reason','certificate'], 'Incapacité');
+      requireYesItems('service', 'service', labels.service, ['start','end'], 'Service');
+	      requireYesItems('vacations', 'vacations', labels.vacations, ['start','end'], 'Période de vacances');
+	      requireYesItems('otherAbsence', 'otherAbsence', labels.otherAbsence, ['start','end','reason'], 'Période d’absence');
+
+      if (expected.children?.answer === 'Oui') {
+        if (!normText(state.children.note).includes(normText(expected.children.note))) {
+          errors.push({ key: 'children', label: labels.children, msg: 'Décrivez le changement (au moins un mot-clé).' });
+        }
+      }
+      if (expected.otherParent?.answer === 'Oui') {
+        if (!normText(state.otherParent.note).includes(normText(expected.otherParent.note))) {
+          errors.push({ key: 'otherParent', label: labels.otherParent, msg: 'Note manquante (allocations).' });
+        }
+      }
+      if (expected.insurance?.answer === 'Oui') {
+        if (!normText(state.insurance.note).includes(normText(expected.insurance.note))) {
+          errors.push({ key: 'insurance', label: labels.insurance, msg: 'Indiquez l’assurance (ex : SUVA) / décision.' });
+        }
+      }
+
+      // Identity exact match (training)
+      if (expected.identity?.avs) {
+        const exp = normalizeAvs(expected.identity.avs);
+        const got = normalizeAvs(state.identity?.avs);
+        if (exp && got && exp !== got) errors.push({ key: 'identity', label: labels.identity, msg: 'N° AVS différent de celui du profil.' });
+      }
+      if (expected.identity?.fullName) {
+        const exp = normText(expected.identity.fullName);
+        const got = normText(state.identity?.fullName);
+        if (exp && got && got !== exp) errors.push({ key: 'identity', label: labels.identity, msg: 'Nom/prénom différent de celui du profil.' });
+      }
+
+      // Question 6 expected yes/no (two lines)
+	      if (expected.vacations?.answer && state.vacations?.answer && expected.vacations.answer !== state.vacations.answer) {
+	        errors.push({ key: 'vacations', label: labels.vacations, msg: `Dans le profil, la bonne réponse est “${expected.vacations.answer}”. ${WHY.vacations}` });
+	      }
+	      if (expected.otherAbsence?.answer && state.otherAbsence?.answer && expected.otherAbsence.answer !== state.otherAbsence.answer) {
+	        errors.push({ key: 'otherAbsence', label: labels.otherAbsence, msg: `Dans le profil, la bonne réponse est “${expected.otherAbsence.answer}”. ${WHY.otherAbsence}` });
+	      }
+
+      // Question 4 insurance loss-of-earnings expected (when applicable)
+      if (expected.incapacity?.answer === 'Oui' && expected.incapacity?.lossInsurance) {
+        if (state.incapacity?.lossInsurance && state.incapacity.lossInsurance !== expected.incapacity.lossInsurance) {
+          errors.push({ key: 'incapacity', label: '4. Assurance perte de gain', msg: `Dans le profil, la bonne réponse est “${expected.incapacity.lossInsurance}”.` });
+        }
+      }
+
+      if (expected.rate?.answer === 'Non') {
+        const pct = clampInt(parseInt(state.rate.newPercent, 10), 0, 100);
+        if (pct !== expected.rate.newPercent) {
+          errors.push({ key: 'rate', label: labels.rate, msg: `Le profil attend ${expected.rate.newPercent}%.` });
+        }
+        if (String(state.rate.changeDate || '') !== String(expected.rate.changeDate || '')) {
+          errors.push({ key: 'rate', label: labels.rate, msg: `Le profil attend la date ${expected.rate.changeDate}.` });
+        }
+      }
+
+      if (expected.unemployment?.answer === 'Non') {
+        if (String(state.unemployment.date || '') !== String(expected.unemployment.date || '')) {
+          errors.push({ key: 'unemployment', label: labels.unemployment, msg: `Le profil attend la date ${expected.unemployment.date}.` });
+        }
+      }
+
+      const totalChecks = 12; // used only for display
+      const score = Math.max(0, totalChecks - errors.length);
+      const isPerfect = errors.length === 0;
+
+      return { errors, warnings, score, totalChecks, isPerfect };
+    }
+
+    function renderResults(report){
+      const badge = $('#scoreBadge');
+      const hint = $('#resultsHint');
+      const list = $('#resultsList');
+      const correction = $('#correctionBox');
+
+      correction.style.display = 'none';
+      correction.innerHTML = '';
+
+	      if (!report) {
+	        badge.textContent = '—';
+	        badge.removeAttribute('data-kind');
+	        hint.textContent = 'Choisissez un profil, remplissez le formulaire étape par étape, puis cliquez sur “Vérifier et terminer”.';
+	        try { $$('.ipa-q').forEach(fs => fs.removeAttribute('data-state')); } catch (e) {}
+	        list.innerHTML = '';
+	        return;
+	      }
+
+      const { errors, warnings, isPerfect } = report;
+
+	      const sectionOrder = [
+	        { key: 'identity', label: 'Identité (N° AVS / Nom)' },
+	        { key: 'month', label: 'Mois' },
+	        { key: 'work', label: '1. Travail' },
+	        { key: 'independent', label: '2. Activité indépendante' },
+	        { key: 'measure', label: '3. Mesure ORP' },
+	        { key: 'incapacity', label: '4. Incapacité' },
+	        { key: 'service', label: '5. Service' },
+	        { key: 'vacations', label: '6. Vacances' },
+	        { key: 'otherAbsence', label: '6. Absence (autres raisons)' },
+	        { key: 'children', label: '7a. Obligation d’entretien' },
+	        { key: 'otherParent', label: '7b. Allocations (autre personne)' },
+	        { key: 'insurance', label: '8. Autre assurance' },
+	        { key: 'rate', label: '9. Taux recherché' },
+	        { key: 'unemployment', label: '10. Chômage' }
+	      ];
+
+      const errorsByKey = {};
+      const warningsByKey = {};
+      (errors || []).forEach(e => {
+        const k = String(e.key || 'unknown');
+        (errorsByKey[k] ||= []).push(e);
+      });
+      (warnings || []).forEach(w => {
+        const k = String(w.key || 'unknown');
+        (warningsByKey[k] ||= []).push(w);
+      });
+
+	      // Highlight sections (upgrade-only: ok -> warn -> error)
+	      try { $$('.ipa-q').forEach(fs => fs.removeAttribute('data-state')); } catch (e) {}
+	      const rank = (state) => (state === 'error' ? 2 : state === 'warn' ? 1 : 0);
+	      const desiredStateForKey = (key) => {
+	        if (errorsByKey[key]?.length) return 'error';
+	        if (warningsByKey[key]?.length) return 'warn';
+	        return 'ok';
+	      };
+	      sectionOrder.forEach(sec => {
+	        if (!sec.key || sec.key === 'month' || sec.key === 'identity') return;
+	        const fieldsetKey = (sec.key === 'vacations' || sec.key === 'otherAbsence') ? 'absence' : sec.key;
+	        const fs = document.querySelector('.ipa-q[data-key="' + fieldsetKey + '"]');
+	        if (!fs) return;
+	        const desired = desiredStateForKey(sec.key);
+	        const current = String(fs.dataset.state || '');
+	        if (!current || rank(desired) > rank(current)) fs.dataset.state = desired;
+	      });
+
+      const totalSections = sectionOrder.length - 1; // exclude month from score
+      const okSections = sectionOrder
+        .filter(s => s.key !== 'month')
+        .filter(s => !(errorsByKey[s.key]?.length))
+        .length;
+
+      if (isPerfect) {
+        badge.textContent = `✔ Juste (${okSections}/${totalSections})`;
+        badge.dataset.kind = 'ok';
+        hint.textContent = 'Bravo : votre feuille correspond au profil.';
+      } else if (errors.length) {
+        badge.textContent = `À corriger (${okSections}/${totalSections})`;
+        badge.dataset.kind = 'bad';
+        hint.textContent = 'Corrigez d’abord les sections en rouge, puis revérifiez.';
+      } else if (warnings.length) {
+        badge.textContent = `OK + infos (${okSections}/${totalSections})`;
+        badge.dataset.kind = 'warn';
+        hint.textContent = 'C’est cohérent, mais lisez les infos pour éviter des erreurs au vrai dossier.';
+      } else {
+        badge.textContent = `OK (${okSections}/${totalSections})`;
+        badge.dataset.kind = 'ok';
+        hint.textContent = 'Tout est cohérent.';
+      }
+
+      const html = [];
+      html.push('<details open>');
+      html.push('<summary>Résumé (cliquez “Aller” pour corriger)</summary>');
+      html.push('<ul>');
+      sectionOrder.forEach(sec => {
+        const eCount = (errorsByKey[sec.key] || []).length;
+        const wCount = (warningsByKey[sec.key] || []).length;
+        let kind = 'ok';
+        let text = 'OK';
+        if (eCount) { kind = 'bad'; text = `${eCount} erreur(s)`; }
+        else if (wCount) { kind = 'warn'; text = `${wCount} info(s)`; }
+        html.push(
+          `<li><strong>${sec.label} :</strong> ` +
+          `<span class="ipa-badge" data-kind="${kind}" style="padding:4px 10px;margin-left:6px">${text}</span>` +
+          ` <button type="button" class="ipa-btn small" data-jump="${sec.key}">Aller</button></li>`
+        );
+      });
+      html.push('</ul>');
+      html.push('</details>');
+
+      if (errors.length) {
+        html.push('<details open>');
+        html.push('<summary>Erreurs (détails)</summary>');
+        html.push('<ul>');
+        errors.forEach(e => html.push(`<li><strong>${e.label} :</strong> ${e.msg}</li>`));
+        html.push('</ul>');
+        html.push('</details>');
+      }
+      if (warnings.length) {
+        html.push('<details>');
+        html.push('<summary>Infos / avertissements</summary>');
+        html.push('<ul>');
+        warnings.forEach(w => html.push(`<li><strong>${w.label} :</strong> ${w.msg}</li>`));
+        html.push('</ul>');
+        html.push('</details>');
+      }
+
+      list.innerHTML = html.join('');
+    }
+
+	    function jumpTo(key){
+	      if (!key) return;
+	      const k = String(key || '');
+	      if (k === 'absence') return wizardGoTo('vacations');
+	      return wizardGoTo(k);
+	    }
+
+    function focusFirstIssue(report){
+      if (!report || !report.errors || !report.errors.length) return;
+      const first = report.errors.find(e => e && e.key && e.key !== 'month') || report.errors[0];
+      if (first && first.key) jumpTo(first.key);
+    }
+
+    function buildCorrection(profile){
+      const expected = profile.expected;
+      function incapacityKindLabel(kind){
+        const k = String(kind || '');
+        if (k === 'annonce_maladie') return 'Annonce de maladie';
+        if (k === 'suite_maladie') return 'À la suite d’une maladie';
+        if (k === 'suite_accident') return 'À la suite d’un accident';
+        if (k === 'autre') return 'Autre raison';
+        return k || '—';
+      }
+      function fmtItems(items, formatter){
+        if (!items || !items.length) return '';
+        return '<ul style="margin:8px 0 0 18px">' + items.map(formatter).join('') + '</ul>';
+      }
+
+      const lines = [];
+      lines.push('<div class="ipa-badge" data-kind="ok" style="margin-bottom:10px">Corrigé (profil sélectionné)</div>');
+
+      lines.push('<div class="ipa-card" style="padding:12px;border-radius:14px;border:1px solid rgba(12,32,63,.14);box-shadow:none;background:rgba(255,255,255,.75)">');
+      if (expected.identity?.avs) lines.push(`<div><strong>N° AVS :</strong> ${expected.identity.avs}</div>`);
+      if (expected.identity?.fullName) lines.push(`<div><strong>Nom, prénom :</strong> ${expected.identity.fullName}</div>`);
+      lines.push(`<div><strong>Mois :</strong> ${expected.month}</div>`);
+      lines.push('</div>');
+
+      lines.push('<div style="margin-top:10px">');
+      lines.push(`<div><strong>1) Travail :</strong> ${expected.work.answer}</div>`);
+      lines.push(fmtItems(expected.work.items, it =>
+        `<li>Du ${it.start} au ${it.end} — employeur: ${it.employer} — attestation: ${it.attestation ? 'oui' : 'non'} — fiche de salaire: ${it.payslip ? 'oui' : 'non'}</li>`
+      ));
+
+      lines.push(`<div style="margin-top:10px"><strong>2) Activité indépendante :</strong> ${expected.independent.answer}</div>`);
+      lines.push(fmtItems(expected.independent.items, it =>
+        `<li>Du ${it.start} au ${it.end} — activité: ${it.description} — preuve: ${it.proof}</li>`
+      ));
+
+      lines.push(`<div style="margin-top:10px"><strong>3) Mesure ORP :</strong> ${expected.measure.answer}</div>`);
+      lines.push(fmtItems(expected.measure.items, it =>
+        `<li>Du ${it.start} au ${it.end} — mesure: ${it.name}</li>`
+      ));
+
+      lines.push(`<div style="margin-top:10px"><strong>4) Incapacité :</strong> ${expected.incapacity.answer}</div>`);
+      if (expected.incapacity.answer === 'Oui' && expected.incapacity.lossInsurance) {
+        lines.push(`<div class="ipa-muted" style="margin-top:6px">Assurance perte de gain (maladie) : <strong>${expected.incapacity.lossInsurance}</strong></div>`);
+      }
+      lines.push(fmtItems(expected.incapacity.items, it =>
+        `<li>Du ${it.start} au ${it.end} — ${incapacityKindLabel(it.kind)}${it.kind === 'autre' ? ` — lesquelles: ${it.reason}` : ''} — certificat: ${it.certificate ? 'oui' : 'non'}</li>`
+      ));
+
+      lines.push(`<div style="margin-top:10px"><strong>5) Service :</strong> ${expected.service.answer}</div>`);
+      lines.push(fmtItems(expected.service.items, it =>
+        `<li>Du ${it.start} au ${it.end}</li>`
+      ));
+
+      lines.push(`<div style="margin-top:10px"><strong>6) Vacances :</strong> ${expected.vacations.answer}</div>`);
+      lines.push(fmtItems(expected.vacations.items, it => `<li>Du ${it.start} au ${it.end}</li>`));
+      lines.push(`<div style="margin-top:10px"><strong>6) Absence (autres raisons) :</strong> ${expected.otherAbsence.answer}</div>`);
+      lines.push(fmtItems(expected.otherAbsence.items, it => `<li>Du ${it.start} au ${it.end} — pourquoi: ${it.reason}</li>`));
+
+      lines.push(`<div style="margin-top:10px"><strong>7a) Obligation d’entretien :</strong> ${expected.children.answer}${expected.children.answer === 'Oui' ? ` — note: ${expected.children.note}` : ''}</div>`);
+      lines.push(`<div style="margin-top:10px"><strong>7b) Allocations (autre personne) :</strong> ${expected.otherParent.answer}${expected.otherParent.answer === 'Oui' ? ` — note: ${expected.otherParent.note}` : ''}</div>`);
+      lines.push(`<div style="margin-top:10px"><strong>8) Autre assurance :</strong> ${expected.insurance.answer}${expected.insurance.answer === 'Oui' ? ` — note: ${expected.insurance.note}` : ''}</div>`);
+
+      lines.push(`<div style="margin-top:10px"><strong>9) Taux recherché :</strong> ${expected.rate.answer}${expected.rate.answer === 'Non' ? ` — ${expected.rate.newPercent}% dès ${expected.rate.changeDate}` : ''}</div>`);
+      lines.push(`<div style="margin-top:10px"><strong>10) Chômage :</strong> ${expected.unemployment.answer}${expected.unemployment.answer === 'Non' ? ` — reprise le ${expected.unemployment.date}` : ''}</div>`);
+
+      lines.push('</div>');
+
+      lines.push('<div class="ipa-muted" style="margin-top:10px">Astuce : lisez le corrigé seulement après avoir essayé. Ensuite passez à un autre profil.</div>');
+      return lines.join('');
+    }
+
+	    let currentProfile = PROFILES[0];
+	    let autosaveBound = false;
+	    let autosaveTimer = null;
+	    const WIZARD_STEPS = [
+	      { key: 'identity', label: 'Identité + Mois' },
+	      { key: 'work', label: 'Q1 — Travail' },
+	      { key: 'independent', label: 'Q2 — Activité indépendante' },
+	      { key: 'measure', label: 'Q3 — Mesure ORP' },
+	      { key: 'incapacity', label: 'Q4 — Incapacité' },
+	      { key: 'service', label: 'Q5 — Service' },
+	      { key: 'vacations', label: 'Q6 — Vacances' },
+	      { key: 'otherAbsence', label: 'Q6 — Absence (autres raisons)' },
+	      { key: 'children', label: 'Q7a — Enfants à charge' },
+	      { key: 'otherParent', label: 'Q7b — Autre parent' },
+	      { key: 'insurance', label: 'Q8 — Autre assurance' },
+	      { key: 'rate', label: 'Q9 — Taux recherché' },
+	      { key: 'unemployment', label: 'Q10 — Statut chômage' }
+	    ];
+	    let wizardIndex = 0;
+
+	    function wizardIndexByKey(key){
+	      const k = String(key || '');
+	      return WIZARD_STEPS.findIndex(s => s.key === k);
+	    }
+
+	    function wizardCurrentKey(){
+	      return WIZARD_STEPS[wizardIndex]?.key || 'identity';
+	    }
+
+	    function saveCurrentDraft(){
+	      const state = collectState();
+	      state.wizardStep = wizardCurrentKey();
+	      state.wizardIndex = wizardIndex;
+	      saveDraft(state.profileId, state);
+	      return state;
+	    }
+
+	    function wizardClearFeedback(){
+	      const fb = document.getElementById('wizardFeedback');
+	      if (!fb) return;
+	      fb.removeAttribute('data-show');
+	      fb.innerHTML = '';
+	    }
+
+	    function wizardShowFeedback(errors){
+	      const fb = document.getElementById('wizardFeedback');
+	      if (!fb) return;
+	      const list = (errors || []).filter(Boolean);
+	      if (!list.length) return wizardClearFeedback();
+	      fb.dataset.show = '1';
+	      fb.innerHTML = '<div>À corriger pour continuer :</div>' +
+	        '<ul>' + list.map(e => `<li>${e.msg}</li>`).join('') + '</ul>';
+	    }
+
+	    function wizardSetAbsenceMode(mode){
+	      const fs = document.querySelector('.ipa-q[data-key="absence"]');
+	      if (!fs) return;
+	      const vac = fs.querySelector('[data-absence-block="vacations"]');
+	      const div = fs.querySelector('[data-absence-block="divider"]');
+	      const other = fs.querySelector('[data-absence-block="otherAbsence"]');
+	      const show = (el, on) => { if (el) el.style.display = on ? '' : 'none'; };
+
+	      if (mode === 'vacations') {
+	        show(vac, true); show(div, false); show(other, false);
+	      } else if (mode === 'otherAbsence') {
+	        show(vac, false); show(div, false); show(other, true);
+	      } else {
+	        show(vac, true); show(div, true); show(other, true);
+	      }
+	    }
+
+	    function wizardUpdateBar(){
+	      const title = document.getElementById('wizardTitle');
+	      const sub = document.getElementById('wizardSub');
+	      const prevBtn = document.getElementById('wizardPrevBtn');
+	      const nextBtn = document.getElementById('wizardNextBtn');
+	      if (title) title.textContent = `Étape ${wizardIndex + 1}/${WIZARD_STEPS.length}`;
+	      if (sub) sub.textContent = WIZARD_STEPS[wizardIndex]?.label || '—';
+	      if (prevBtn) prevBtn.disabled = wizardIndex <= 0;
+	      if (nextBtn) nextBtn.textContent = (wizardIndex >= WIZARD_STEPS.length - 1) ? 'Vérifier et terminer' : 'Valider et continuer';
+	    }
+
+	    function wizardShowStepByKey(stepKey, opts = {}){
+	      const key = String(stepKey || 'identity');
+	      const idx = wizardIndexByKey(key);
+	      wizardIndex = idx >= 0 ? idx : 0;
+
+	      wizardClearFeedback();
+	      wizardSetAbsenceMode(null);
+
+	      try { $$('#ipaForm .ipa-step[data-current], #ipaForm .ipa-q[data-current]').forEach(el => el.removeAttribute('data-current')); } catch (e) {}
+
+	      let currentEl = null;
+	      if (key === 'identity') {
+	        currentEl = document.querySelector('.ipa-step[data-step="identity"]');
+	        if (currentEl) currentEl.dataset.current = '1';
+	      } else if (key === 'vacations' || key === 'otherAbsence') {
+	        currentEl = document.querySelector('.ipa-q[data-key="absence"]');
+	        if (currentEl) currentEl.dataset.current = '1';
+	        wizardSetAbsenceMode(key);
+	      } else {
+	        currentEl = document.querySelector('.ipa-q[data-key="' + key + '"]');
+	        if (currentEl) currentEl.dataset.current = '1';
+	      }
+
+	      wizardUpdateBar();
+	      try { syncConditionalDetails(); } catch (e) {}
+
+	      if (opts.scroll !== false && currentEl) {
+	        try { currentEl.scrollIntoView({ behavior: 'smooth', block: 'start' }); } catch (e) {}
+	      }
+	    }
+
+	    function wizardValidationKeysForStep(stepKey){
+	      const key = String(stepKey || '');
+	      if (key === 'identity') return ['identity', 'month'];
+	      if (key === 'vacations') return ['vacations'];
+	      if (key === 'otherAbsence') return ['otherAbsence'];
+	      return [key];
+	    }
+
+	    function wizardFirstFailingStepIndex(report){
+	      const errs = (report && report.errors) ? report.errors : [];
+	      let best = null;
+	      errs.forEach(e => {
+	        const raw = String(e?.key || '');
+	        const stepKey = (raw === 'month' || raw === 'identity') ? 'identity' : raw;
+	        const idx = wizardIndexByKey(stepKey);
+	        if (idx < 0) return;
+	        if (best == null || idx < best) best = idx;
+	      });
+	      return best;
+	    }
+
+	    function wizardFocusFirstField(){
+	      const scope = document.querySelector('#ipaForm [data-current=\"1\"]');
+	      if (!scope) return;
+	      const target =
+	        scope.querySelector('input:not([type=\"hidden\"]):not([disabled]), select:not([disabled]), textarea:not([disabled])') ||
+	        scope.querySelector('button:not([disabled])');
+	      if (!target) return;
+	      try { target.focus({ preventScroll: true }); } catch (e) {}
+	    }
+
+	    function wizardGoTo(key){
+	      const k = String(key || '');
+	      const stepKey = (k === 'month' || k === 'identity') ? 'identity' : k;
+	      wizardShowStepByKey(stepKey, { scroll: true });
+	      if (k === 'month') {
+	        try { document.getElementById('sheetMonth')?.focus({ preventScroll: true }); } catch (e) {}
+	      } else if (k === 'identity') {
+	        try { document.getElementById('sheetAvs')?.focus({ preventScroll: true }); } catch (e) {}
+	      } else {
+	        wizardFocusFirstField();
+	      }
+	    }
+
+	    function hookAutoSave(){
+	      if (autosaveBound) return;
+	      autosaveBound = true;
+	      const form = $('#ipaForm');
+	      if (!form) return;
+	      form.addEventListener('input', () => {
+	        if (autosaveTimer) clearTimeout(autosaveTimer);
+	        autosaveTimer = setTimeout(() => {
+	          saveCurrentDraft();
+	        }, 220);
+	      });
+	      form.addEventListener('change', () => {
+	        if (autosaveTimer) clearTimeout(autosaveTimer);
+	        autosaveTimer = setTimeout(() => {
+	          saveCurrentDraft();
+	        }, 120);
+	      });
+	    }
+
+	    function loadProfile(profileId){
+	      const found = PROFILES.find(p => p.id === profileId) || PROFILES[0];
+	      currentProfile = found;
+
+      $('#scenarioText').textContent = found.scenario;
+      $('#sheetMonth').value = found.month;
+      $('#ratePrevText').textContent = `Mois passé (dans le profil) : ${found.previousRate}%`;
+	      syncProfileDock(found);
+	      syncProfileOverlay(found);
+
+	      $('#showCorrectionBtn').disabled = true;
+	      try {
+	        $('#correctionBox').style.display = 'none';
+	        $('#correctionBox').innerHTML = '';
+	      } catch (e) {}
+
+	      // Reset + load draft if exists
+	      resetForm(false);
+	      const draft = loadDraft(found.id);
+	      if (draft && typeof draft === 'object' && draft.profileId === found.id) {
+	        applyState(draft);
+	        if (draft.wizardStep) wizardShowStepByKey(draft.wizardStep, { scroll: false });
+	        else wizardShowStepByKey('identity', { scroll: false });
+	      } else {
+	        // Start with month prefilled + hide details
+	        syncConditionalDetails();
+	        wizardShowStepByKey('identity', { scroll: false });
+	      }
+
+	      renderResults(null);
+	      $('#resultsList').innerHTML = '';
+	      $('#resultsHint').textContent = 'Remplissez la feuille étape par étape, puis cliquez sur “Vérifier et terminer”.';
+	    }
+
+	    function resetForm(alsoClearDraft){
+	      const profileId = $('#profileSelect').value;
+	      if (alsoClearDraft) {
+	        try { localStorage.removeItem(storageKey(profileId)); } catch (e) {}
+	      }
+
+      $('#ipaForm').reset();
+      $('#sheetAvs').value = '';
+      $('#sheetFullName').value = '';
+      $('#sheetMonth').value = currentProfile.month;
+      clearItems('work');
+      clearItems('independent');
+      clearItems('measure');
+      clearItems('incapacity');
+      clearItems('service');
+      clearItems('vacations');
+      clearItems('otherAbsence');
+      $('#childrenNote').value = '';
+      $('#otherParentNote').value = '';
+      $('#insuranceNote').value = '';
+      $('#rateNewPercent').value = '';
+	      $('#rateChangeDate').value = '';
+	      $('#unemploymentDate').value = '';
+	      syncConditionalDetails();
+	      wizardShowStepByKey('identity', { scroll: false });
+	      wizardClearFeedback();
+	      try { $('#showCorrectionBtn').disabled = true; } catch (e) {}
+	      renderResults(null);
+	    }
+
+	    document.addEventListener('DOMContentLoaded', () => {
+	      const select = $('#profileSelect');
+	      select.innerHTML = PROFILES.map(p => `<option value="${p.id}">${p.title}</option>`).join('');
+
+      // Initial profile
+      select.value = PROFILES[0].id;
+      $('#showCorrectionBtn').disabled = true;
+      loadProfile(select.value);
+
+      select.addEventListener('change', () => {
+        loadProfile(select.value);
+      });
+
+      // toggle details on radio change
+	      $$('#ipaForm input[type="radio"]').forEach(r => {
+	        r.addEventListener('change', () => {
+	          syncConditionalDetails();
+	          saveCurrentDraft();
+	        });
+	      });
+
+      // add item buttons
+	      $$('[data-add]').forEach(btn => {
+	        btn.addEventListener('click', () => {
+	          const key = btn.getAttribute('data-add');
+	          addItem(key);
+	          hookAutoSave();
+	        });
+	      });
+
+	      // Wizard navigation (progressif)
+	      try {
+	        $('#wizardPrevBtn').addEventListener('click', () => {
+	          if (wizardIndex <= 0) return;
+	          wizardShowStepByKey(WIZARD_STEPS[wizardIndex - 1].key);
+	          saveCurrentDraft();
+	        });
+	        $('#wizardNextBtn').addEventListener('click', () => {
+	          const stepKey = wizardCurrentKey();
+	          const state = saveCurrentDraft();
+	          const report = validateAgainstProfile(state, currentProfile);
+	          const keys = wizardValidationKeysForStep(stepKey);
+	          const stepErrors = (report.errors || []).filter(e => keys.includes(String(e.key || '')));
+
+	          if (stepErrors.length) {
+	            wizardShowFeedback(stepErrors);
+	            wizardFocusFirstField();
+	            return;
+	          }
+
+	          wizardClearFeedback();
+
+	          const isLast = wizardIndex >= (WIZARD_STEPS.length - 1);
+	          if (!isLast) {
+	            wizardShowStepByKey(WIZARD_STEPS[wizardIndex + 1].key);
+	            saveCurrentDraft();
+	            return;
+	          }
+
+	          // Final: full validation
+	          renderResults(report);
+	          try { $('#showCorrectionBtn').disabled = false; } catch (e) {}
+
+	          if (report && report.isPerfect) {
+	            try {
+	              if (window.ProactifProgress && typeof window.ProactifProgress.markDone === 'function') {
+	                window.ProactifProgress.markDone();
+	              } else if (typeof window.proactifMarkExerciseDone === 'function') {
+	                window.proactifMarkExerciseDone();
+	              }
+	            } catch (e) {}
+	            return;
+	          }
+
+	          const firstIdx = wizardFirstFailingStepIndex(report);
+	          if (firstIdx != null) {
+	            wizardShowStepByKey(WIZARD_STEPS[firstIdx].key);
+	            const failKeys = wizardValidationKeysForStep(WIZARD_STEPS[firstIdx].key);
+	            const failErrors = (report.errors || []).filter(e => failKeys.includes(String(e.key || '')));
+	            wizardShowFeedback(failErrors.length ? failErrors : report.errors);
+	            wizardFocusFirstField();
+	          }
+	        });
+	      } catch (e) {}
+
+      $('#showCorrectionBtn').addEventListener('click', () => {
+        const box = $('#correctionBox');
+        box.style.display = 'block';
+        box.innerHTML = buildCorrection(currentProfile);
+      });
+
+	      $('#resetBtn').addEventListener('click', () => {
+	        const ok = window.confirm('Réinitialiser ce profil ? Cela efface votre brouillon enregistré.');
+	        if (!ok) return;
+	        resetForm(true);
+	      });
+
+      // Allow “Aller” buttons in the results summary
+      try {
+        $('#resultsList').addEventListener('click', (e) => {
+          const btn = e && e.target ? e.target.closest('[data-jump]') : null;
+          if (!btn) return;
+          jumpTo(btn.getAttribute('data-jump'));
+        });
+      } catch (e) {}
+
+      // Profile overlay (mobile helper)
+      try {
+        const openBtn = document.getElementById('openProfileOverlayBtn');
+        const closeBtn = document.getElementById('closeProfileOverlayBtn');
+        const overlay = document.getElementById('profileOverlay');
+        let lastFocus = null;
+
+        function openOverlay(){
+          lastFocus = document.activeElement;
+          syncProfileOverlay(currentProfile);
+          setOverlayOpen(true);
+        }
+        function closeOverlay(){
+          setOverlayOpen(false);
+          try {
+            if (lastFocus && typeof lastFocus.focus === 'function') lastFocus.focus({ preventScroll: true });
+          } catch (e) {}
+        }
+
+        if (openBtn) openBtn.addEventListener('click', openOverlay);
+        if (closeBtn) closeBtn.addEventListener('click', closeOverlay);
+        if (overlay) {
+          overlay.addEventListener('click', (e) => {
+            const target = e && e.target ? e.target : null;
+            if (!target) return;
+            if (target.getAttribute && target.getAttribute('data-overlay-close') === '1') closeOverlay();
+          });
+        }
+        window.addEventListener('keydown', (e) => {
+          if (!e || e.key !== 'Escape') return;
+          const isOpen = overlay && !overlay.hasAttribute('hidden');
+          if (isOpen) closeOverlay();
+        });
+      } catch (e) {}
+
+      hookAutoSave();
+    });
+  </script>
+</body>
+</html>

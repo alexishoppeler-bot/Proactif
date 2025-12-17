@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>Examen écrit </title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+body{
+  font-family:Arial, sans-serif;
+  background:#eef3f9;
+  margin:0; padding:20px;
+}
+.app{
+  max-width:900px;
+  margin:auto;
+  background:#fff;
+  padding:30px;
+  border-radius:18px;
+  box-shadow:0 6px 25px rgba(0,0,0,.15);
+}
+h1,h2{
+  color:#004c97;
+}
+h1{text-align:center;margin-top:0}
+.section{margin-top:30px}
+.box{
+  background:#f4f7ff;
+  padding:15px;
+  border-radius:12px;
+  margin:15px 0;
+}
+.question{margin:12px 0}
+textarea, input[type=text]{
+  width:100%;
+  padding:10px;
+  margin-top:6px;
+  border-radius:8px;
+  border:1px solid #ccc;
+  font-family:Arial,sans-serif;
+}
+textarea{min-height:80px}
+label{display:block;margin:6px 0}
+.buttons{
+  display:flex;
+  gap:15px;
+  justify-content:center;
+  margin-top:30px
+}
+button{
+  padding:12px 20px;
+  border:none;
+  border-radius:10px;
+  cursor:pointer;
+  font-size:15px;
+}
+.reset{background:#ff7675;color:white}
+.info{text-align:center;color:#555;font-size:14px;margin-top:15px}
+</style>
+  <link rel="stylesheet" href="../../exercise-layout.css">
+  <script defer src="../../exercise-layout.js"></script>
+</head>
+<body>
+
+<div class="back-home" style="max-width:1100px;margin:10px auto 0;padding:0 20px;">
+  <a class="back-home__link" href="../../index.html" style="display:inline-flex;align-items:center;gap:6px;text-decoration:none;color:#004c6d;font-weight:700;border:1px solid #cfdff0;padding:6px 14px;border-radius:999px;background:#fff;box-shadow:0 2px 4px rgba(0,0,0,0.08);">← Retour à l’index</a>
+</div>
+<script src="../shared/proactif-exercise.js"></script>
+<div class="exercise-shell">
+  <main class="exercise-card">
+
+
+<div class="app" id="exam">
+
+<h1>📝 Examen écrit</h1>
+<p style="text-align:center">Durée conseillée : 60 minutes</p>
+
+<div class="section">
+<h2>PARTIE 1 – Compréhension écrite</h2>
+<div class="box">
+<strong>Texte 1 – Message professionnel</strong><br><br>
+Objet : Changement d’équipe – dès lundi<br><br>
+À partir de lundi prochain, l’organisation des équipes change. Vous travaillerez désormais dans l’équipe du matin, de 7h30 à 16h00, avec une pause de 30 minutes à midi. Merci de confirmer la réception de ce message.
+</div>
+
+<div class="question">1. Qu’est-ce qui change dans ce travail ?<textarea data-id="q1"></textarea></div>
+<div class="question">2. À quelle heure commence le travail ?<textarea data-id="q2"></textarea></div>
+<div class="question">3. Combien de temps dure la pause ?<textarea data-id="q3"></textarea></div>
+<div class="question">4. Que doit faire la personne après avoir lu le message ?<textarea data-id="q4"></textarea></div>
+
+<div class="box">
+<strong>Texte 2 – Annonce</strong><br><br>
+Entreprise cherche une personne sérieuse pour le nettoyage de bureaux. Horaires du lundi au vendredi, tôt le matin. L’expérience est un avantage, mais pas obligatoire. La ponctualité et la fiabilité sont importantes.
+</div>
+
+<div class="question">5. Quel est le domaine du travail ?<textarea data-id="q5"></textarea></div>
+<div class="question">6. L’expérience est-elle obligatoire ?<textarea data-id="q6"></textarea></div>
+<div class="question">7. Quelles qualités sont demandées ?<textarea data-id="q7"></textarea></div>
+</div>
+
+<div class="section">
+<h2>PARTIE 2 – Vocabulaire</h2>
+<div class="question">8. Ponctuel veut dire :<br>
+<label><input type="radio" name="q8" value="avance"> Arriver en avance</label>
+<label><input type="radio" name="q8" value="heure"> Arriver à l’heure</label>
+<label><input type="radio" name="q8" value="vite"> Travailler vite</label>
+</div>
+
+<div class="question">9. Confirmer un message, c’est :<br>
+<label><input type="radio" name="q9" value="repondre"> Répondre pour dire que j’ai reçu</label>
+<label><input type="radio" name="q9" value="effacer"> Effacer le message</label>
+<label><input type="radio" name="q9" value="appeler"> Appeler un collègue</label>
+</div>
+
+<div class="question">10. Fiable signifie :<br>
+<label><input type="radio" name="q10" value="gentil"> Quelqu’un de gentil</label>
+<label><input type="radio" name="q10" value="compter"> Quelqu’un sur qui on peut compter</label>
+<label><input type="radio" name="q10" value="parle"> Quelqu’un qui parle beaucoup</label>
+</div>
+</div>
+
+<div class="section">
+<h2>PARTIE 3 – Message professionnel</h2>
+<p>Tu es en retard demain. Écris un message professionnel à ton responsable.</p>
+<textarea data-id="q11" placeholder="5–6 lignes"></textarea>
+</div>
+
+<div class="section">
+<h2>PARTIE 4 – Expression écrite</h2>
+<p>Pourquoi la ponctualité est-elle importante au travail ?</p>
+<textarea data-id="q12" placeholder="8–10 lignes"></textarea>
+</div>
+
+<div class="buttons">
+<button class="reset" onclick="resetAll()">🔄 Réinitialiser</button>
+</div>
+
+<p class="info">Les réponses sont sauvegardées automatiquement.</p>
+</div>
+
+<script>
+const STORAGE_PREFIX = 'proactif_examen_ecrit_v1:';
+
+function migrateLegacyKeysIfAny() {
+  try {
+    // Textareas (legacy: q1..q12)
+    document.querySelectorAll('textarea[data-id]').forEach((t) => {
+      const id = t.getAttribute('data-id');
+      const legacyKey = id;
+      const nextKey = STORAGE_PREFIX + 'text:' + id;
+      if (!localStorage.getItem(nextKey) && localStorage.getItem(legacyKey)) {
+        localStorage.setItem(nextKey, localStorage.getItem(legacyKey));
+        localStorage.removeItem(legacyKey);
+      }
+    });
+
+    // Radios (legacy: q8heure etc. storing "true"/"false")
+    ['q8', 'q9', 'q10'].forEach((name) => {
+      const nextKey = STORAGE_PREFIX + 'radio:' + name;
+      if (localStorage.getItem(nextKey)) return;
+      const radios = document.querySelectorAll('input[type=radio][name="' + name + '"]');
+      for (let i = 0; i < radios.length; i++) {
+        const r = radios[i];
+        const legacyKey = name + r.value;
+        if (localStorage.getItem(legacyKey) === 'true') {
+          localStorage.setItem(nextKey, r.value);
+          break;
+        }
+      }
+    });
+  } catch (e) { }
+}
+
+function restore() {
+  // Textareas
+  document.querySelectorAll('textarea[data-id]').forEach((t) => {
+    const id = t.getAttribute('data-id');
+    const key = STORAGE_PREFIX + 'text:' + id;
+    const saved = localStorage.getItem(key);
+    if (saved != null) t.value = saved;
+  });
+
+  // Radios
+  ['q8', 'q9', 'q10'].forEach((name) => {
+    const key = STORAGE_PREFIX + 'radio:' + name;
+    const savedValue = localStorage.getItem(key);
+    if (!savedValue) return;
+    const radio = document.querySelector('input[type=radio][name="' + name + '"][value="' + savedValue + '"]');
+    if (radio) radio.checked = true;
+  });
+}
+
+let doneOnce = false;
+function checkCompletion() {
+  if (doneOnce) return;
+
+  const textsOk = Array.from(document.querySelectorAll('textarea[data-id]')).every((t) => (t.value || '').trim().length > 0);
+  const radiosOk = ['q8', 'q9', 'q10'].every((name) => !!localStorage.getItem(STORAGE_PREFIX + 'radio:' + name));
+
+  if (textsOk && radiosOk) {
+    doneOnce = true;
+    try { window.proactifMarkExerciseDone && window.proactifMarkExerciseDone(); } catch (e) { }
+  }
+}
+
+function installAutosave() {
+  // Textareas
+  document.querySelectorAll('textarea[data-id]').forEach((t) => {
+    const id = t.getAttribute('data-id');
+    const key = STORAGE_PREFIX + 'text:' + id;
+    t.addEventListener('input', () => {
+      try { localStorage.setItem(key, t.value); } catch (e) { }
+      checkCompletion();
+    });
+  });
+
+  // Radios
+  ['q8', 'q9', 'q10'].forEach((name) => {
+    const radios = document.querySelectorAll('input[type=radio][name="' + name + '"]');
+    radios.forEach((r) => {
+      r.addEventListener('change', () => {
+        if (!r.checked) return;
+        try { localStorage.setItem(STORAGE_PREFIX + 'radio:' + name, r.value); } catch (e) { }
+        checkCompletion();
+      });
+    });
+  });
+}
+
+function resetAll(){
+  if(!confirm('Effacer toutes les réponses ?')) return;
+  try {
+    for (let i = localStorage.length - 1; i >= 0; i--) {
+      const k = localStorage.key(i);
+      if (k && k.indexOf(STORAGE_PREFIX) === 0) localStorage.removeItem(k);
+    }
+  } catch (e) { }
+  location.reload();
+}
+
+migrateLegacyKeysIfAny();
+restore();
+installAutosave();
+checkCompletion();
+</script>
+  </main>
+</div>
+
+</body>
+</html>

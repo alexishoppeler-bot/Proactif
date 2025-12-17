@@ -1,0 +1,645 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tu → Vous – validation professionnelle</title>
+
+<style>
+.tu-vous {
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+.tu-vous__intro {
+  text-align: center;
+  margin-bottom: 18px;
+}
+
+.tu-vous__intro h1,
+.tu-vous__intro h2 {
+  margin: 0 0 10px;
+  color: #004c97;
+}
+
+.tu-vous__intro .exercise-section-title {
+  margin: 0 0 10px;
+}
+
+.tu-vous__consigne {
+  margin: 0 auto;
+  padding: 16px 18px;
+  max-width: 760px;
+  background: #f3f7ff;
+  border-radius: 16px;
+  border: 1px solid rgba(0, 76, 151, 0.18);
+  box-shadow: 0 10px 24px rgba(12, 32, 63, 0.08);
+}
+
+.tu-vous__toolbar {
+  margin: 18px 0 22px;
+  padding: 14px 16px;
+  border-radius: 18px;
+  border: 1px solid rgba(12, 32, 63, 0.12);
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(6px);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+
+.tu-vous__score {
+  font-weight: 800;
+  color: #0b2a4a;
+}
+
+.tu-vous__saved {
+  font-size: 0.95rem;
+  color: rgba(15, 27, 44, 0.7);
+}
+
+.tu-vous__buttons {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.btn {
+  border: 1px solid rgba(12, 32, 63, 0.2);
+  background: #fff;
+  color: #0b2a4a;
+  padding: 10px 14px;
+  border-radius: 999px;
+  cursor: pointer;
+  font-weight: 700;
+  font-size: 0.95rem;
+  box-shadow: 0 8px 16px rgba(12, 32, 63, 0.1);
+  transition: transform 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
+}
+
+.btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 12px 24px rgba(12, 32, 63, 0.14);
+}
+
+.btn:active {
+  transform: translateY(0px);
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, rgba(11, 107, 255, 0.12), rgba(11, 107, 255, 0.04));
+  border-color: rgba(11, 107, 255, 0.35);
+}
+
+.btn-ghost {
+  background: rgba(255, 255, 255, 0.5);
+}
+
+.btn-dark {
+  background: linear-gradient(135deg, rgba(15, 27, 44, 0.16), rgba(15, 27, 44, 0.06));
+}
+
+.btn-small {
+  padding: 8px 12px;
+  font-size: 0.9rem;
+  box-shadow: none;
+}
+
+.btn-link {
+  background: transparent;
+  border: 0;
+  box-shadow: none;
+  padding: 8px 10px;
+  text-decoration: underline;
+  color: #0b6bff;
+}
+
+.btn[disabled] {
+  opacity: 0.55;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+.tu-vous__list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  gap: 14px;
+}
+
+.tu-vous-item {
+  border-radius: 18px;
+  border: 1px solid rgba(12, 32, 63, 0.12);
+  background: linear-gradient(135deg, rgba(255, 233, 187, 0.45), rgba(255, 255, 255, 0.9));
+  padding: 14px 14px 12px;
+  box-shadow: 0 12px 26px rgba(12, 32, 63, 0.09);
+}
+
+.tu-vous-item__prompt {
+  font-weight: 800;
+  color: #0b2a4a;
+  margin-bottom: 8px;
+}
+
+.tu-vous-item textarea {
+  width: 100%;
+  min-height: 58px;
+  padding: 12px 12px;
+  font-size: 1rem;
+  border-radius: 14px;
+  border: 1px solid rgba(12, 32, 63, 0.22);
+  resize: vertical;
+  background: rgba(255, 255, 255, 0.95);
+  outline: none;
+}
+
+.tu-vous-item textarea:focus {
+  border-color: rgba(11, 107, 255, 0.65);
+  box-shadow: 0 0 0 4px rgba(11, 107, 255, 0.12);
+}
+
+.tu-vous-item__footer {
+  margin-top: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.tu-vous-item__feedback {
+  font-weight: 800;
+  font-size: 0.95rem;
+}
+
+.tu-vous-item__feedback.ok {
+  color: #0a9b58;
+}
+
+.tu-vous-item__feedback.ko {
+  color: #b21d22;
+}
+
+.tu-vous-item__actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+@media (max-width: 640px) {
+  .tu-vous__toolbar {
+    justify-content: center;
+    text-align: center;
+  }
+}
+</style>
+  <link rel="stylesheet" href="../../exercise-layout.css">
+  <script defer src="../../exercise-layout.js"></script>
+</head>
+
+<body data-exercise-subtitle="Transformez chaque phrase de « tu » en « vous » (professionnel).">
+
+<div class="back-home" style="max-width:1100px;margin:10px auto 0;padding:0 20px;">
+  <a class="back-home__link" href="../../index.html" style="display:inline-flex;align-items:center;gap:6px;text-decoration:none;color:#004c6d;font-weight:700;border:1px solid #cfdff0;padding:6px 14px;border-radius:999px;background:#fff;box-shadow:0 2px 4px rgba(0,0,0,0.08);">← Retour à l’index</a>
+</div>
+<script src="../shared/proactif-exercise.js"></script>
+<div class="exercise-shell">
+  <main class="exercise-card">
+
+<section class="tu-vous" aria-label="Exercice Tu → Vous">
+  <div class="tu-vous__intro">
+    <h1>🗣️ Passer de « tu » à « vous »</h1>
+    <p class="tu-vous__consigne">
+      <strong>Consigne – mode examen :</strong><br>
+      Transformez chaque phrase avec <strong>tu</strong> en phrase professionnelle avec <strong>vous</strong>.<br>
+      Changez seulement le pronom et le verbe.
+    </p>
+  </div>
+
+  <div class="tu-vous__toolbar">
+    <div class="tu-vous__score" id="score">Score : 0 / 0</div>
+    <div class="tu-vous__saved" id="savedMsg" aria-live="polite"></div>
+    <div class="tu-vous__buttons" aria-label="Actions">
+      <button type="button" class="btn btn-primary" id="validateAllBtn">Valider tout</button>
+      <button type="button" class="btn btn-ghost" id="resetBtn">Réinitialiser</button>
+      <button type="button" class="btn btn-dark" id="formateurBtn">Formateur</button>
+    </div>
+  </div>
+
+  <ol class="tu-vous__list" id="liste"></ol>
+</section>
+
+<script>
+  const CODE_FORMATEUR = '1984';
+
+  const phrases = [
+    "Tu peux venir demain.","Tu es disponible cet après-midi.","Tu arrives en retard.","Tu peux m’appeler.",
+    "Tu confirmes le rendez-vous.","Tu es bien arrivé.","Tu commences à quelle heure.","Tu peux envoyer le document.",
+    "Tu es libre demain matin.","Tu as compris le message.","Tu peux travailler demain.","Tu viens à l’entretien.",
+    "Tu es prêt.","Tu peux changer l’horaire.","Tu termines à quelle heure.","Tu es absent aujourd’hui.",
+    "Tu peux me répondre.","Tu es disponible cette semaine.","Tu peux confirmer ta présence.","Tu peux attendre un moment.",
+    "Tu as reçu mon message.","Tu es d’accord.","Tu peux commencer lundi.","Tu es en route.",
+    "Tu es intéressé par le poste.","Tu peux me dire quand.","Tu es déjà passé.","Tu peux venir plus tôt.",
+    "Tu es motivé.","Tu peux signer le document.","Tu es disponible demain.","Tu as terminé la tâche.",
+    "Tu peux rester un peu.","Tu es en pause.","Tu peux revenir plus tard.","Tu es malade aujourd’hui.",
+    "Tu peux confirmer l’heure.","Tu es bien inscrit.","Tu peux participer à la réunion.",
+    "Tu es libre cet après-midi.","Tu réponds au message.","Tu peux expliquer la situation.",
+    "Tu es absent demain.","Tu peux prévenir en cas de retard.",
+    "Tu es disponible lundi.","Tu peux envoyer un email.",
+    "Tu es à l’heure.","Tu peux modifier la date.",
+    "Tu es d’accord avec la proposition.","Tu confirmes ta disponibilité."
+  ];
+
+  const verbMap = {
+    'peux': 'pouvez',
+    'es': 'êtes',
+    'arrives': 'arrivez',
+    'confirmes': 'confirmez',
+    'commences': 'commencez',
+    'termines': 'terminez',
+    'as': 'avez',
+    'viens': 'venez',
+    'réponds': 'répondez',
+  };
+
+  function stripDiacritics(value) {
+    try {
+      return value.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+    } catch (e) {
+      return value;
+    }
+  }
+
+  function normalizeForCompare(value) {
+    const raw = String(value || '')
+      .replace(/[’‘`´]/g, "'")
+      .replace(/[‐-–—−]/g, "-");
+
+    const lowered = stripDiacritics(raw.toLowerCase());
+
+    return lowered
+      .replace(/\s+/g, ' ')
+      .replace(/\s*([,;:.!?])\s*/g, '$1')
+      .replace(/[.?!…]+$/g, '')
+      .replace(/\b([ldjmstcn])\s+([aeiouyh])/g, "$1'$2")
+      .trim();
+  }
+
+  function toVousPhrase(tuPhrase) {
+    const trimmed = String(tuPhrase || '').trim();
+    const match = trimmed.match(/^Tu\s+(.+)$/i);
+    if (!match) return trimmed;
+
+    const rest = match[1];
+    const firstSpace = rest.indexOf(' ');
+    const verb = (firstSpace === -1 ? rest : rest.slice(0, firstSpace)).trim();
+    const afterVerb = (firstSpace === -1 ? '' : rest.slice(firstSpace + 1));
+
+    const mapped = verbMap[verb] || verbMap[stripDiacritics(verb.toLowerCase())] || null;
+    if (!mapped) {
+      return 'Vous ' + rest;
+    }
+    return 'Vous ' + mapped + (afterVerb ? ' ' + afterVerb : '');
+  }
+
+  const items = phrases.map((phrase, index) => {
+    const expected = toVousPhrase(phrase);
+    const expectedVerb = expected.replace(/^Vous\s+/i, '').split(/\s+/)[0] || '';
+    return { index, phrase, expected, expectedVerb };
+  });
+
+  function getExerciseStorageKey() {
+    const path = String(window.location.pathname || '').replace(/^\/+/, '');
+    return 'proactif_answers_v1:' + (path || 'exercice').replace(/[^a-z0-9]+/gi, '_').toLowerCase();
+  }
+
+  const STORAGE_KEY = getExerciseStorageKey();
+
+  function loadState() {
+    try {
+      const saved = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}');
+      if (!saved || typeof saved !== 'object') return { answers: [], statuses: [] };
+      return {
+        answers: Array.isArray(saved.answers) ? saved.answers : [],
+        statuses: Array.isArray(saved.statuses) ? saved.statuses : [],
+      };
+    } catch (e) {
+      return { answers: [], statuses: [] };
+    }
+  }
+
+  function saveState(state) {
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify({
+        answers: state.answers,
+        statuses: state.statuses,
+        updatedAt: Date.now(),
+      }));
+    } catch (e) { }
+  }
+
+  const ui = {
+    list: document.getElementById('liste'),
+    score: document.getElementById('score'),
+    saved: document.getElementById('savedMsg'),
+    validateAllBtn: document.getElementById('validateAllBtn'),
+    resetBtn: document.getElementById('resetBtn'),
+    formateurBtn: document.getElementById('formateurBtn'),
+  };
+
+  const state = loadState();
+  while (state.answers.length < items.length) state.answers.push('');
+  while (state.statuses.length < items.length) state.statuses.push(null);
+
+  function setSavedMessage(message) {
+    ui.saved.textContent = message || '';
+    if (!message) return;
+    window.clearTimeout(setSavedMessage._t);
+    setSavedMessage._t = window.setTimeout(() => {
+      ui.saved.textContent = '';
+    }, 1100);
+  }
+
+  function migrateLegacyAnswersIfNeeded() {
+    const hasAny = state.answers.some(v => String(v || '').trim().length > 0);
+    if (hasAny) return;
+
+    let migrated = false;
+    for (let i = 0; i < items.length; i++) {
+      try {
+        const legacy = localStorage.getItem('r' + i);
+        if (legacy && String(legacy).trim().length) {
+          state.answers[i] = legacy;
+          migrated = true;
+        }
+      } catch (e) { }
+    }
+
+    if (migrated) {
+      saveState(state);
+      setSavedMessage('Ancienne sauvegarde importée.');
+    }
+  }
+
+  migrateLegacyAnswersIfNeeded();
+
+  function analyzeAnswer(item, userValue) {
+    const user = normalizeForCompare(userValue);
+    const expected = normalizeForCompare(item.expected);
+
+    if (!user) return { status: 'empty', message: 'À compléter.' };
+    if (user === expected) return { status: 'correct', message: '✅ Correct.' };
+
+    const rawUser = normalizeForCompare(userValue).replace(/[.?!…]+$/g, '');
+    if (!/^vous\b/.test(rawUser)) {
+      return { status: 'incorrect', message: 'Commencez par « Vous ».' };
+    }
+
+    const afterVous = rawUser.replace(/^vous\s+/i, '');
+    const userVerb = (afterVous.split(/\s+/)[0] || '').trim();
+    const expectedVerb = normalizeForCompare(item.expectedVerb);
+
+    if (userVerb && expectedVerb && userVerb !== expectedVerb) {
+      return { status: 'incorrect', message: `Verbe attendu : « ${item.expectedVerb} ».` };
+    }
+
+    return { status: 'incorrect', message: 'À corriger (seulement le pronom + le verbe).' };
+  }
+
+  function updateScore() {
+    const correct = state.statuses.filter(v => v === 'correct').length;
+    const total = items.length;
+    const remaining = total - correct;
+    ui.score.textContent = `Score : ${correct} / ${total} — Restants : ${remaining}`;
+
+    if (correct === total && window.proactifMarkExerciseDone) {
+      try { window.proactifMarkExerciseDone(); } catch (e) { }
+    }
+  }
+
+  function syncRow(index) {
+    const textarea = document.getElementById('r' + index);
+    const feedback = document.getElementById('res' + index);
+    if (!textarea || !feedback) return;
+
+    textarea.value = state.answers[index] || '';
+    const status = state.statuses[index];
+    if (!status) {
+      feedback.textContent = '';
+      feedback.className = 'tu-vous-item__feedback';
+      return;
+    }
+    if (status === 'correct') {
+      feedback.textContent = '✅ Correct.';
+      feedback.className = 'tu-vous-item__feedback ok';
+    } else if (status === 'incorrect') {
+      feedback.textContent = '❌ À corriger.';
+      feedback.className = 'tu-vous-item__feedback ko';
+    }
+  }
+
+  function validateOne(index, { showMessage = true, silent = false } = {}) {
+    const item = items[index];
+    const textarea = document.getElementById('r' + index);
+    const feedback = document.getElementById('res' + index);
+    if (!item || !textarea || !feedback) return;
+
+    const analysis = analyzeAnswer(item, textarea.value);
+
+    if (silent && analysis.status !== 'correct') {
+      return;
+    }
+
+    if (analysis.status === 'correct') {
+      state.statuses[index] = 'correct';
+      feedback.textContent = analysis.message;
+      feedback.className = 'tu-vous-item__feedback ok';
+    } else if (analysis.status === 'empty') {
+      state.statuses[index] = null;
+      if (showMessage) {
+        feedback.textContent = analysis.message;
+        feedback.className = 'tu-vous-item__feedback ko';
+      } else {
+        feedback.textContent = '';
+        feedback.className = 'tu-vous-item__feedback';
+      }
+    } else {
+      state.statuses[index] = 'incorrect';
+      feedback.textContent = showMessage ? analysis.message : '❌ À corriger.';
+      feedback.className = 'tu-vous-item__feedback ko';
+    }
+
+    saveState(state);
+    updateScore();
+  }
+
+  function render() {
+    ui.list.innerHTML = '';
+
+    items.forEach((item) => {
+      const li = document.createElement('li');
+      li.className = 'tu-vous-item';
+
+      const prompt = document.createElement('div');
+      prompt.className = 'tu-vous-item__prompt';
+      prompt.textContent = `${item.index + 1}. ${item.phrase}`;
+
+      const label = document.createElement('label');
+      label.className = 'sr-only';
+      label.setAttribute('for', 'r' + item.index);
+      label.textContent = `Réponse ${item.index + 1}`;
+
+      const textarea = document.createElement('textarea');
+      textarea.id = 'r' + item.index;
+      textarea.placeholder = 'Version avec « vous »...';
+      textarea.autocomplete = 'off';
+      textarea.spellcheck = true;
+      textarea.value = state.answers[item.index] || '';
+
+      const footer = document.createElement('div');
+      footer.className = 'tu-vous-item__footer';
+
+      const feedback = document.createElement('div');
+      feedback.id = 'res' + item.index;
+      feedback.className = 'tu-vous-item__feedback';
+      feedback.setAttribute('aria-live', 'polite');
+
+      const actions = document.createElement('div');
+      actions.className = 'tu-vous-item__actions';
+
+      const validateBtn = document.createElement('button');
+      validateBtn.type = 'button';
+      validateBtn.className = 'btn btn-small btn-primary';
+      validateBtn.textContent = 'Valider';
+      validateBtn.addEventListener('click', () => validateOne(item.index));
+
+      const hintBtn = document.createElement('button');
+      hintBtn.type = 'button';
+      hintBtn.className = 'btn btn-small btn-link';
+      hintBtn.textContent = 'Indice';
+      hintBtn.addEventListener('click', () => {
+        feedback.textContent = `Indice : « Vous ${item.expectedVerb} … »`;
+        feedback.className = 'tu-vous-item__feedback';
+      });
+
+      const clearBtn = document.createElement('button');
+      clearBtn.type = 'button';
+      clearBtn.className = 'btn btn-small btn-ghost';
+      clearBtn.textContent = 'Effacer';
+      clearBtn.addEventListener('click', () => {
+        textarea.value = '';
+        state.answers[item.index] = '';
+        state.statuses[item.index] = null;
+        saveState(state);
+        syncRow(item.index);
+        updateScore();
+        setSavedMessage('Réponse effacée.');
+        textarea.focus();
+      });
+
+      actions.appendChild(validateBtn);
+      actions.appendChild(clearBtn);
+      actions.appendChild(hintBtn);
+
+      footer.appendChild(feedback);
+      footer.appendChild(actions);
+
+      li.appendChild(prompt);
+      li.appendChild(label);
+      li.appendChild(textarea);
+      li.appendChild(footer);
+
+      ui.list.appendChild(li);
+
+      textarea.addEventListener('input', () => {
+        state.answers[item.index] = textarea.value;
+        if (state.statuses[item.index] === 'correct') {
+          state.statuses[item.index] = null;
+          feedback.textContent = '';
+          feedback.className = 'tu-vous-item__feedback';
+        }
+        saveState(state);
+        setSavedMessage('💾 Sauvegarde automatique');
+      });
+
+      textarea.addEventListener('keydown', (event) => {
+        if ((event.ctrlKey || event.metaKey) && event.key === 'Enter') {
+          event.preventDefault();
+          validateOne(item.index);
+        }
+      });
+    });
+
+    // Validation silencieuse (si des réponses sont déjà présentes)
+    items.forEach((item) => {
+      if (state.answers[item.index] && !state.statuses[item.index]) {
+        validateOne(item.index, { silent: true, showMessage: false });
+      } else {
+        syncRow(item.index);
+      }
+    });
+
+    updateScore();
+  }
+
+  function validateAll() {
+    items.forEach(item => validateOne(item.index));
+    const firstBad = state.statuses.findIndex(v => v !== 'correct');
+    if (firstBad !== -1) {
+      const el = document.getElementById('r' + firstBad);
+      if (el) el.focus();
+    }
+  }
+
+  function resetAll() {
+    if (!confirm('Tout effacer ?')) return;
+    try { localStorage.removeItem(STORAGE_KEY); } catch (e) { }
+    state.answers = Array(items.length).fill('');
+    state.statuses = Array(items.length).fill(null);
+    render();
+    setSavedMessage('Réponses réinitialisées.');
+  }
+
+  function accesFormateur() {
+    const code = prompt('Code formateur :');
+    if (code !== CODE_FORMATEUR) {
+      alert('Code incorrect');
+      return;
+    }
+    items.forEach(item => {
+      state.answers[item.index] = item.expected;
+      state.statuses[item.index] = 'correct';
+    });
+    saveState(state);
+    render();
+    setSavedMessage('Corrections appliquées.');
+  }
+
+  ui.validateAllBtn.addEventListener('click', validateAll);
+  ui.resetBtn.addEventListener('click', resetAll);
+  ui.formateurBtn.addEventListener('click', accesFormateur);
+
+  render();
+</script>
+
+  </main>
+</div>
+
+</body>
+</html>

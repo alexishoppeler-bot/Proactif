@@ -1,0 +1,641 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+  <meta charset="UTF-8" />
+  <title>Plateforme – Autonomie</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <meta name="description"
+    content="Plateforme d'exercices pour autonomie : bureautique, français, emploi, compréhension et jeux.">
+  <meta property="og:title" content="Plateforme – Autonomie">
+  <meta property="og:description"
+    content="Exercices pratiques pour améliorer l'autonomie professionnelle et linguistique.">
+  <meta property="og:type" content="website">
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="styles.css">
+  <!-- Inline SVG sprite for icons (inlined to avoid extra requests/CORS issues) -->
+  <!-- sprite start -->
+  <svg xmlns="http://www.w3.org/2000/svg" style="display:none">
+    <symbol id="email" viewBox="0 0 24 24">
+      <path d="M4 7h16v10H4z" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round" />
+      <path d="M4 8l8 6 8-6" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" />
+    </symbol>
+
+    <symbol id="doc" viewBox="0 0 24 24">
+      <path d="M7 3h7l3 3v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2z" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round" />
+      <path d="M14 3v4h4" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round" />
+      <path d="M8 12h8M8 15h8M8 18h6" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" />
+    </symbol>
+
+    <symbol id="folder" viewBox="0 0 24 24">
+      <path d="M3.5 7.5A2.5 2.5 0 0 1 6 5h4l2 2h6a2.5 2.5 0 0 1 2.5 2.5V18A3 3 0 0 1 17.5 21h-11A3 3 0 0 1 3.5 18z" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round" />
+    </symbol>
+
+    <symbol id="audio" viewBox="0 0 24 24">
+      <path d="M6.5 12a3.5 3.5 0 0 1 3.5-3.5h2A3.5 3.5 0 0 1 15.5 12v6.2a1.8 1.8 0 0 1-1.8 1.8h-.7V13h-2v7h-.7a1.8 1.8 0 0 1-1.8-1.8z" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round" />
+      <path d="M8 12V7.8A4 4 0 0 1 12 3.8a4 4 0 0 1 4 4V12" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" />
+    </symbol>
+
+    <symbol id="quiz" viewBox="0 0 24 24">
+      <path d="M12 21a9 9 0 1 1 9-9 9 9 0 0 1-9 9z" fill="none" stroke="currentColor" stroke-width="1.7" />
+      <path d="M10.5 9.2a2.2 2.2 0 1 1 3.8 1.5c-.8.8-1.6 1.1-1.6 2.3" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" />
+      <path d="M12 16.8h.01" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" />
+    </symbol>
+
+    <symbol id="game" viewBox="0 0 24 24">
+      <path d="M7 11h10a4 4 0 0 1 4 4v1.2A3.8 3.8 0 0 1 17.2 20H6.8A3.8 3.8 0 0 1 3 16.2V15a4 4 0 0 1 4-4z" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round" />
+      <path d="M8.2 14.2h3.2M9.8 12.6v3.2" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" />
+      <path d="M15.7 13.9h.01M17.6 15.1h.01" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" />
+    </symbol>
+
+    <symbol id="match" viewBox="0 0 24 24">
+      <path d="M7.5 3.8h2.6a2.6 2.6 0 0 1 2.6 2.6V9H10.1a2.6 2.6 0 0 0-2.6 2.6v.8H4.8A2.6 2.6 0 0 1 2.2 9.8V6.4a2.6 2.6 0 0 1 2.6-2.6z" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round" />
+      <path d="M16.5 20.2h-2.6a2.6 2.6 0 0 1-2.6-2.6V15h2.6a2.6 2.6 0 0 0 2.6-2.6v-.8h2.6a2.6 2.6 0 0 1 2.6 2.6v3.4a2.6 2.6 0 0 1-2.6 2.6z" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round" />
+    </symbol>
+
+    <symbol id="keyboard" viewBox="0 0 24 24">
+      <path d="M4 8a3 3 0 0 1 3-3h10a3 3 0 0 1 3 3v8a3 3 0 0 1-3 3H7a3 3 0 0 1-3-3z" fill="none" stroke="currentColor" stroke-width="1.7" />
+      <path d="M7.2 10.2h.01M10 10.2h.01M12.8 10.2h.01M15.6 10.2h.01M7.2 13h.01M10 13h.01M12.8 13h.01M15.6 13h.01" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" />
+      <path d="M8 16h8" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" />
+    </symbol>
+
+    <symbol id="search" viewBox="0 0 24 24">
+      <path d="M10.8 18.6a7.8 7.8 0 1 1 7.8-7.8 7.8 7.8 0 0 1-7.8 7.8z" fill="none" stroke="currentColor" stroke-width="1.7" />
+      <path d="M16.6 16.6 21 21" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" />
+    </symbol>
+
+    <symbol id="clock" viewBox="0 0 24 24">
+      <path d="M12 21a9 9 0 1 1 9-9 9 9 0 0 1-9 9z" fill="none" stroke="currentColor" stroke-width="1.7" />
+      <path d="M12 7v5l3 2" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" />
+    </symbol>
+
+    <symbol id="mouse" viewBox="0 0 24 24">
+      <path d="M12 2a7 7 0 0 1 7 7v6a7 7 0 0 1-14 0V9a7 7 0 0 1 7-7z" fill="none" stroke="currentColor" stroke-width="1.7" />
+      <path d="M12 6v3" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" />
+    </symbol>
+
+    <symbol id="compass" viewBox="0 0 24 24">
+      <path d="M12 21a9 9 0 1 1 9-9 9 9 0 0 1-9 9z" fill="none" stroke="currentColor" stroke-width="1.7" />
+      <path d="M14.8 9.2 13 13l-3.8 1.8L11 11z" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round" />
+    </symbol>
+
+    <symbol id="image" viewBox="0 0 24 24">
+      <path d="M5 6a3 3 0 0 1 3-3h8a3 3 0 0 1 3 3v12a3 3 0 0 1-3 3H8a3 3 0 0 1-3-3z" fill="none" stroke="currentColor" stroke-width="1.7" />
+      <path d="M8 16l3-3 2 2 3-3 2 2" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" />
+      <path d="M9.2 9.2h.01" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" />
+    </symbol>
+
+    <symbol id="building" viewBox="0 0 24 24">
+      <path d="M6 21V5a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v16" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round" />
+      <path d="M9 7h.01M12 7h.01M15 7h.01M9 11h.01M12 11h.01M15 11h.01M9 15h.01M12 15h.01M15 15h.01" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" />
+      <path d="M4 21h16" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" />
+    </symbol>
+
+    <symbol id="check" viewBox="0 0 24 24">
+      <path d="M12 21a9 9 0 1 1 9-9 9 9 0 0 1-9 9z" fill="none" stroke="currentColor" stroke-width="1.7" />
+      <path d="M8.2 12.1 11 14.9 16 9.9" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" />
+    </symbol>
+
+    <symbol id="sparkles" viewBox="0 0 24 24">
+      <path d="M12 2l1.4 6.1L20 9.5l-6.1 1.4L12 17l-1.9-6.1L4 9.5l6.6-1.4z" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round" />
+      <path d="M19 3.5l.6 2.3 2.3.6-2.3.6-.6 2.3-.6-2.3-2.3-.6 2.3-.6z" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round" />
+    </symbol>
+
+    <symbol id="chat" viewBox="0 0 24 24">
+      <path d="M6 18.5a6.8 6.8 0 0 1-3 1V17a7.8 7.8 0 0 1-1-3.8C2 8.1 6.4 4 12 4s10 4.1 10 9.2S17.6 22.4 12 22.4a12.7 12.7 0 0 1-6-1.9z" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round" />
+      <path d="M7.8 12h8.4" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" />
+    </symbol>
+
+    <symbol id="form" viewBox="0 0 24 24">
+      <path d="M7 3h10a3 3 0 0 1 3 3v12a3 3 0 0 1-3 3H7a3 3 0 0 1-3-3V6a3 3 0 0 1 3-3z" fill="none" stroke="currentColor" stroke-width="1.7" />
+      <path d="M8 8h8M8 12h8M8 16h5" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" />
+      <path d="M16.5 15.5l1 1 2-2" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" />
+    </symbol>
+
+    <symbol id="factory" viewBox="0 0 24 24">
+      <path d="M4 21V10l5 3V10l5 3V9l6 3v9" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round" />
+      <path d="M6 21V5h4v16" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round" />
+      <path d="M14 21v-4h3v4" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round" />
+    </symbol>
+
+    <symbol id="wand" viewBox="0 0 24 24">
+      <path d="M4 20 16.5 7.5" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" />
+      <path d="M14.5 5.5 18.5 9.5" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" />
+      <path d="M18 4.2l.6 2.1 2.1.6-2.1.6-.6 2.1-.6-2.1-2.1-.6 2.1-.6zM8.2 6.8l.5 1.6 1.6.5-1.6.5-.5 1.6-.5-1.6-1.6-.5 1.6-.5z" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round" />
+    </symbol>
+
+    <symbol id="link" viewBox="0 0 24 24">
+      <path d="M10 13.9l-1 1a4 4 0 1 1-5.7-5.6l1.8-1.8A4 4 0 0 1 10.8 6" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" />
+      <path d="M14 10.1l1-1a4 4 0 1 1 5.7 5.6l-1.8 1.8A4 4 0 0 1 13.2 18" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" />
+      <path d="M9.5 12.5h5" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" />
+    </symbol>
+
+    <symbol id="cards" viewBox="0 0 24 24">
+      <path d="M7 7h12a3 3 0 0 1 3 3v8a3 3 0 0 1-3 3H7a3 3 0 0 1-3-3V10a3 3 0 0 1 3-3z" fill="none" stroke="currentColor" stroke-width="1.7" />
+      <path d="M6 5h12" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" />
+      <path d="M7.8 12.2h.01M11 12.2h.01M14.2 12.2h.01" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" />
+    </symbol>
+
+    <symbol id="mic" viewBox="0 0 24 24">
+      <path d="M12 14a3 3 0 0 0 3-3V7a3 3 0 0 0-6 0v4a3 3 0 0 0 3 3z" fill="none" stroke="currentColor" stroke-width="1.7" />
+      <path d="M6 11a6 6 0 0 0 12 0" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" />
+      <path d="M12 17v4" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" />
+      <path d="M9 21h6" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" />
+    </symbol>
+
+    <symbol id="theater" viewBox="0 0 24 24">
+      <path d="M5 4h14v7a7 7 0 0 1-14 0z" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round" />
+      <path d="M8 9c.6-.7 1.4-1 2.2-1s1.6.3 2.2 1" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" />
+      <path d="M10 12c.6.6 1.4.9 2.2.9s1.6-.3 2.2-.9" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" />
+      <path d="M8 20h8" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" />
+    </symbol>
+
+    <symbol id="tools" viewBox="0 0 24 24">
+      <path d="M14.2 7.3a4.6 4.6 0 0 0-6 6L3.7 17.8a2 2 0 1 0 2.8 2.8l4.5-4.5a4.6 4.6 0 0 0 6-6l-2.2 2.2-2.6-2.6z" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round" />
+    </symbol>
+
+    <symbol id="book" viewBox="0 0 24 24">
+      <path d="M4.5 6.2A3.2 3.2 0 0 1 7.7 3H20v17.5H7.7a3.2 3.2 0 0 0-3.2 3.2z" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round" />
+      <path d="M4.5 6.2V21" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" />
+      <path d="M9 7h7" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" />
+    </symbol>
+
+    <symbol id="pen" viewBox="0 0 24 24">
+      <path d="M4 20l4.6-1 10.8-10.8a2.2 2.2 0 0 0 0-3.1l-.5-.5a2.2 2.2 0 0 0-3.1 0L5 15.4z" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round" />
+      <path d="M14.2 5.8l4 4" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" />
+    </symbol>
+
+    <symbol id="default" viewBox="0 0 24 24">
+      <path d="M12 21a9 9 0 1 1 9-9 9 9 0 0 1-9 9z" fill="none" stroke="currentColor" stroke-width="1.7" />
+      <path d="M10 10.5h2.3a2.7 2.7 0 0 1 0 5.4H10V8.1h2.3" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" />
+    </symbol>
+  </svg>
+  <!-- sprite end -->
+</head>
+
+<body>
+
+  <header>
+    <div class="hero-top">
+      <div class="hero-intro">
+        <h1>📚 Plateforme autonomie</h1>
+        <p>Exercices de bureautique, français, emploi, compréhension, jeux…</p>
+      </div>
+
+      <div class="header-actions" aria-label="Actions rapides">
+        <div id="progress-indicator">
+          <div class="progress-text">Progression : <strong id="progress-percent">0%</strong></div>
+          <div class="progress-wrap" aria-hidden="true">
+            <div class="progress-bar" id="progress-bar" style="width:0%"></div>
+          </div>
+        </div>
+        <div class="header-buttons">
+          <button id="reset-prog" type="button">Réinitialiser la progression</button>
+        </div>
+      </div>
+    </div>
+
+  </header>
+
+  <main class="grid" aria-label="Liste des exercices" id="exercise-grid">
+
+    <!-- BUREAUTIQUE -->
+    <section class="card" data-category="bureautique">
+      <span class="tag">Bureautique</span>
+      <h2>🖥️ Exercices Bureautique</h2>
+
+      <a class="exercise-btn" href="exercices/bureautique/editeur-a4.html"><span class="icon">📝</span> Éditeur A4</a>
+      <a class="exercise-btn" href="exercices/bureautique/emails-professionnels.html"><span class="icon">📧</span>
+        E-mails</a>
+      <a class="exercise-btn" href="exercices/bureautique/lettre-motivation.html"><span class="icon">📄</span> Lettre de
+        motivation</a>
+      <a class="exercise-btn" href="exercices/bureautique/miniwindows-mise-en-forme.html"><span class="icon">🗂️</span>
+        Mise en forme</a>
+      <a class="exercise-btn" href="exercices/bureautique/organiser-documents-dossiers.html"><span
+          class="icon">📁</span> Organiser dossiers</a>
+    </section>
+
+    <!-- QUIZ -->
+    <section class="card" data-category="quiz">
+      <span class="tag">Quiz</span>
+      <h2>❓ Quiz</h2>
+
+      <a class="exercise-btn" href="exercices/quiz/100quiz_html.html"><span class="icon">💯</span> 100 questions</a>
+      <a class="exercise-btn" href="exercices/quiz/comprehension-1.html"><span class="icon">📘</span> Compréhension 1</a>
+      <a class="exercise-btn" href="exercices/quiz/comprehension-2.html"><span class="icon">📗</span> Compréhension 2</a>
+      <a class="exercise-btn" href="exercices/quiz/communication-3.html"><span class="icon">💬</span> Communication</a>
+      <a class="exercise-btn" href="exercices/quiz/phrases-pro.html"><span class="icon">💬</span> Phrases pro</a>
+      <a class="exercise-btn" href="exercices/quiz/phrases-pro-2.html"><span class="icon">💬</span> Phrases pro 2</a>
+      <a class="exercise-btn" href="exercices/quiz/examen-ecrit.html"><span class="icon">📝</span> Examen écrit</a>
+    </section>
+
+    <!-- RETAPER -->
+    <section class="card" data-category="reecriture">
+      <span class="tag">Réécriture</span>
+      <h2>⌨️ Re-taper</h2>
+
+      <a class="exercise-btn" href="exercices/retaper/clavier-reecriture.html"><span class="icon">⌨️</span> 100
+        phrases</a>
+    </section>
+
+    <!-- REPONSES OUVERTES -->
+    <section class="card" data-category="expression">
+      <span class="tag">Expression écrite</span>
+      <h2>📝 Réponses ouvertes</h2>
+
+      <a class="exercise-btn" href="exercices/reponses_ouvertes/competences-pro.html"><span class="icon">🛠️</span>
+        Savoir‑faire</a>
+      <a class="exercise-btn"
+        href="exercices/reponses_ouvertes/ecrire-en-francais-situations-professionnelle.html"><span
+          class="icon">🏢</span> Situations pro</a>
+      <a class="exercise-btn" href="exercices/reponses_ouvertes/les-bonnes-attitudes-au-travail.html"><span
+          class="icon">✅</span> Attitudes</a>
+      <a class="exercise-btn" href="exercices/reponses_ouvertes/simulation-de-situations-professionnelles.html"><span
+          class="icon">🎭</span> Simulation</a>
+      <a class="exercise-btn" href="exercices/reponses_ouvertes/debats/debats.html"><span class="icon">🙋‍♀️</span>
+        Débats</a>
+    </section>
+
+    <!-- RECHERCHE EMPLOI -->
+    <section class="card" data-category="emploi">
+      <span class="tag">Recherche d’emploi</span>
+      <h2>🔎 Recherche d’emploi</h2>
+
+      <a class="exercise-btn" href="exercices/recherche_emploi/formulaire-profil.html"><span class="icon">📋</span>
+        Profils (50)</a>
+      <a class="exercise-btn" href="exercices/recherche_emploi/parler-de-mon-dernier-travail.html"><span
+          class="icon">🏭</span> Dernier travail</a>
+      <a class="exercise-btn" href="exercices/recherche_emploi/qualites-personnelles.html"><span class="icon">🌟</span>
+        Qualités</a>
+      <a class="exercise-btn" href="exercices/recherche_emploi/questions-entretien.html"><span class="icon">❓</span>
+        Entretien (50)</a>
+      <a class="exercise-btn" href="exercices/recherche_emploi/annonces.html"><span class="icon">🔍</span> Annonces</a>
+      <a class="exercise-btn" href="exercices/recherche_emploi/site-recherche-emploi.html"><span class="icon">🔍</span>
+        Site recherche</a>
+      <a class="exercise-btn" href="exercices/recherche_emploi/ipa-feuille-controle.html"><span class="icon">🧾</span>
+        IPA ORP – feuille de contrôle</a>
+    </section>
+
+    <!-- AUDIO -->
+    <section class="card" data-category="audio">
+      <span class="tag">Audio</span>
+      <h2>🎧 Compréhension orale</h2>
+
+      <a class="exercise-btn" href="exercices/audio/audio-fabrice.html"><span class="icon">🎧</span> Entretien
+        (audio)</a>
+    </section>
+
+    <!-- APPARIER -->
+    <section class="card" data-category="apparier">
+      <span class="tag">Apparier</span>
+      <h2>🔗 Apparier</h2>
+
+      <a class="exercise-btn" href="exercices/apparier/apparier-metiers-outils.html"><span class="icon">🔧</span>
+        Métiers ↔ outils</a>
+      <a class="exercise-btn" href="exercices/apparier/apparier100.html"><span class="icon">👀</span> Vocabulaire</a>
+    </section>
+
+    <!-- JEUX -->
+    <section class="card" data-category="jeux">
+      <span class="tag">Jeux</span>
+      <h2>🎮 Jeux</h2>
+
+      <a class="exercise-btn" href="exercices/jeux/heure.html"><span class="icon">🕒</span> L’heure</a>
+      <a class="exercise-btn" href="exercices/jeux/jeu-clics.html"><span class="icon">🖱️</span> Clics</a>
+      <a class="exercise-btn" href="exercices/jeux/jeu-directions.html"><span class="icon">🧭</span> Directions</a>
+      <a class="exercise-btn" href="exercices/jeux/mot-image-metiers.html"><span class="icon">👷</span> Mot ↔ image :
+        métiers</a>
+    </section>
+
+  </main>
+
+  <!-- SCRIPTS -->
+  <script>
+
+    /* MODE SOMBRE (Touche M) */
+    if (localStorage.getItem("darkMode") === "true") {
+      document.body.classList.add("dark");
+    }
+
+    document.addEventListener("keydown", e => {
+      const tag = (e.target && e.target.tagName) ? String(e.target.tagName).toLowerCase() : '';
+      const isTyping = tag === 'input' || tag === 'textarea' || tag === 'select' || (e.target && e.target.isContentEditable);
+      if (isTyping) return;
+      if (e.ctrlKey || e.metaKey || e.altKey) return;
+      if (e.key === "m" || e.key === "M") {
+        document.body.classList.toggle("dark");
+        localStorage.setItem("darkMode", document.body.classList.contains("dark"));
+      }
+    });
+
+    // Staggered entrance for category cards
+    document.querySelectorAll('.card').forEach((card, idx) => {
+      try { card.style.setProperty('--i', String(idx)); } catch (e) { }
+    });
+
+
+    /* PROGRESSION : À FAIRE / EN COURS / TERMINÉ */
+    // stockage versionné + migration depuis ancienne clé 'progression'
+    const STORAGE_KEY = 'proactif_progress_v1';
+
+    function normalizeKey(key) {
+      if (!key) return null;
+      let out = String(key);
+      out = out.split('#')[0].split('?')[0];
+      out = out.replace(/^\/+/, '').replace(/^\.\//, '');
+      try { out = decodeURIComponent(out); } catch (e) { }
+      return out || null;
+    }
+
+    function saveProgression(next) {
+      try { localStorage.setItem(STORAGE_KEY, JSON.stringify(next)); } catch (e) { }
+    }
+
+    function loadProgression() {
+      let progression = {};
+      let migrated = false;
+
+      try {
+        const raw = localStorage.getItem(STORAGE_KEY);
+        const legacy = localStorage.getItem('progression');
+        const saved = raw || legacy;
+        progression = JSON.parse(saved || '{}');
+        if (!raw && legacy) migrated = true;
+      } catch (e) {
+        progression = {};
+      }
+
+      if (!progression || typeof progression !== 'object') progression = {};
+
+      const normalized = {};
+      Object.keys(progression).forEach(key => {
+        const normalizedKey = normalizeKey(key);
+        let value = progression[key];
+
+        if (value === true) {
+          value = 'done';
+          migrated = true;
+        }
+
+        if (value !== 'done' && value !== 'in_progress') {
+          migrated = true;
+          return;
+        }
+
+        if (!normalizedKey) {
+          migrated = true;
+          return;
+        }
+
+        const current = normalized[normalizedKey];
+        if (current === 'done') return;
+        if (value === 'done' || !current) normalized[normalizedKey] = value;
+        else if (current !== 'in_progress' && value === 'in_progress') normalized[normalizedKey] = value;
+        if (normalizedKey !== key) migrated = true;
+      });
+
+      progression = normalized;
+
+      if (migrated) saveProgression(progression);
+      return progression;
+    }
+
+    let progression = loadProgression();
+    const syncers = [];
+
+    function setState(key, state) {
+      const normalizedKey = normalizeKey(key);
+      if (!normalizedKey) return;
+      if (state === 'todo' || state == null) delete progression[normalizedKey];
+      else progression[normalizedKey] = (state === 'done' ? 'done' : 'in_progress');
+      saveProgression(progression);
+    }
+
+    document.querySelectorAll('.exercise-btn').forEach(btn => {
+	
+      const url = btn.getAttribute('href');
+      const key = normalizeKey(url);
+	
+	      // Créer bouton de statut (en dehors du lien pour respecter l'accessibilité)
+	      const statusBtn = document.createElement('button');
+	      statusBtn.className = 'status-btn';
+	      statusBtn.type = 'button';
+	      statusBtn.disabled = true;
+	      statusBtn.setAttribute('aria-pressed', 'false');
+	      statusBtn.setAttribute('aria-label', 'Statut de réalisation');
+
+      // Insérer le bouton dans un conteneur commun avec le lien
+      const row = document.createElement('div');
+      row.className = 'exercise-row';
+      if (btn.parentNode) {
+        btn.parentNode.insertBefore(row, btn);
+        row.appendChild(btn);
+        row.appendChild(statusBtn);
+      }
+
+      // Applique l'état visuel et ARIA
+	      function sync() {
+	        const state = (key && progression[key]) ? progression[key] : 'todo';
+	        const done = state === 'done';
+	        const inProgress = state === 'in_progress';
+
+	        row.dataset.state = state;
+
+        let label = 'Exercice à faire';
+        if (done) {
+          statusBtn.textContent = '✔ Terminé';
+          label = 'Exercice terminé';
+        } else if (inProgress) {
+          statusBtn.textContent = 'En cours';
+          label = 'Exercice en cours';
+        } else {
+          statusBtn.textContent = 'À faire';
+        }
+
+	        statusBtn.setAttribute('aria-pressed', done ? 'true' : 'false');
+	        statusBtn.setAttribute('aria-label', label);
+	        statusBtn.setAttribute('title', label);
+	      }
+
+      sync(); // initialisation
+      syncers.push(sync);
+
+	      btn.addEventListener('click', () => {
+	        if (key && progression[key] !== 'done') {
+	          setState(key, 'in_progress');
+	          sync();
+	          if (window.updateProgress) window.updateProgress();
+	        }
+	      }, { once: false });
+
+    });
+
+    window.addEventListener('storage', e => {
+      if (!e) return;
+      if (e.key !== STORAGE_KEY && e.key !== 'progression') return;
+      progression = loadProgression();
+      syncers.forEach(fn => { try { fn(); } catch (err) { } });
+      if (window.updateProgress) window.updateProgress();
+    });
+
+    /* REMPLACER EMOJIS PAR SVG VIA mapping.json (avec fallback) */
+    function enhanceIcons() {
+      const hardcoded = {
+        'exercices/bureautique/editeur-a4.html': 'doc',
+        'exercices/bureautique/emails-professionnels.html': 'email',
+        'exercices/bureautique/lettre-motivation.html': 'pen',
+        'exercices/bureautique/miniwindows-mise-en-forme.html': 'wand',
+        'exercices/bureautique/organiser-documents-dossiers.html': 'folder',
+
+        'exercices/quiz/100quiz_html.html': 'quiz',
+        'exercices/quiz/comprehension-1.html': 'book',
+        'exercices/quiz/comprehension-2.html': 'book',
+        'exercices/quiz/communication-3.html': 'chat',
+        'exercices/quiz/phrases-pro.html': 'chat',
+        'exercices/quiz/phrases-pro-2.html': 'chat',
+        'exercices/quiz/examen-ecrit.html': 'form',
+
+        'exercices/retaper/clavier-reecriture.html': 'keyboard',
+
+        'exercices/reponses_ouvertes/competences-pro.html': 'tools',
+        'exercices/reponses_ouvertes/ecrire-en-francais-situations-professionnelle.html': 'building',
+        'exercices/reponses_ouvertes/les-bonnes-attitudes-au-travail.html': 'check',
+        'exercices/reponses_ouvertes/simulation-de-situations-professionnelles.html': 'theater',
+        'exercices/reponses_ouvertes/debats/debats.html': 'mic',
+
+        'exercices/recherche_emploi/formulaire-profil.html': 'form',
+        'exercices/recherche_emploi/parler-de-mon-dernier-travail.html': 'factory',
+        'exercices/recherche_emploi/qualites-personnelles.html': 'sparkles',
+        'exercices/recherche_emploi/questions-entretien.html': 'quiz',
+        'exercices/recherche_emploi/annonces.html': 'search',
+        'exercices/recherche_emploi/site-recherche-emploi.html': 'search',
+        'exercices/recherche_emploi/ipa-feuille-controle.html': 'form',
+
+        'exercices/audio/audio-fabrice.html': 'audio',
+
+        'exercices/apparier/apparier-metiers-outils.html': 'link',
+        'exercices/apparier/apparier100.html': 'cards',
+
+        'exercices/jeux/heure.html': 'clock',
+        'exercices/jeux/jeu-clics.html': 'mouse',
+        'exercices/jeux/jeu-directions.html': 'compass',
+        'exercices/jeux/mot-image-metiers.html': 'image'
+      };
+
+      // try to fetch external mapping.json, otherwise use hardcoded
+      // (relative path so it also works when served from a subpath)
+      fetch('icons/mapping.json').then(r => {
+        if (!r.ok) throw new Error('no mapping');
+        return r.json();
+      }).catch(() => hardcoded).then(mapping => {
+        document.querySelectorAll('.exercise-btn').forEach(link => {
+          const iconSpan = link.querySelector('.icon');
+          if (!iconSpan) return;
+
+          const href = (link.getAttribute('href') || '').toLowerCase();
+          const label = link.textContent.replace(iconSpan.textContent, '').trim();
+
+          let kind = mapping[href];
+          if (!kind) {
+            // fallback heuristique
+            if (/emails?-|email|mail/.test(href)) kind = 'email';
+            else if (/lettre|motivation/.test(href)) kind = 'pen';
+            else if (/mise-en-forme|format/.test(href)) kind = 'wand';
+            else if (/editeur|doc|texte/.test(href)) kind = 'doc';
+            else if (/organiser|dossier|documents/.test(href)) kind = 'folder';
+            else if (/audio|entretien|ecoute/.test(href)) kind = 'audio';
+            else if (/communication/.test(href)) kind = 'chat';
+            else if (/comprehension/.test(href)) kind = 'book';
+            else if (/quiz|question|examen/.test(href)) kind = 'quiz';
+            else if (/heure/.test(href)) kind = 'clock';
+            else if (/clics/.test(href)) kind = 'mouse';
+            else if (/directions/.test(href)) kind = 'compass';
+            else if (/mot-image|image/.test(href)) kind = 'image';
+            else if (/apparier-metiers-outils/.test(href)) kind = 'link';
+            else if (/apparier/.test(href)) kind = 'cards';
+            else if (/debats/.test(href)) kind = 'mic';
+            else if (/simulation/.test(href)) kind = 'theater';
+            else if (/competences/.test(href)) kind = 'tools';
+            else if (/qualites/.test(href)) kind = 'sparkles';
+            else if (/profil|formulaire/.test(href)) kind = 'form';
+            else if (/dernier-travail/.test(href)) kind = 'factory';
+            else if (/annonces/.test(href)) kind = 'search';
+            else if (/retaper|clavier/.test(href)) kind = 'keyboard';
+            else kind = 'default';
+          }
+
+          link.setAttribute('data-icon', kind);
+          // use inlined sprite via <use> referencing the symbol id
+          const ns = 'http://www.w3.org/2000/svg';
+          const svg = document.createElementNS(ns, 'svg');
+          svg.setAttribute('class', 'icon-img');
+          svg.setAttribute('aria-hidden', 'true');
+          svg.setAttribute('focusable', 'false');
+          svg.setAttribute('width', '20');
+          svg.setAttribute('height', '20');
+          const use = document.createElementNS(ns, 'use');
+          // reference the inlined symbol
+          use.setAttribute('href', '#' + kind);
+          use.setAttributeNS('http://www.w3.org/1999/xlink', 'xlink:href', '#' + kind);
+          svg.appendChild(use);
+
+          iconSpan.innerHTML = '';
+          iconSpan.appendChild(svg);
+        });
+      });
+    }
+
+    enhanceIcons();
+
+    /* BOUTON RÉINITIALISER */
+    const resetBtn = document.getElementById('reset-prog');
+    if (resetBtn) {
+      resetBtn.addEventListener('click', () => {
+        if (!confirm('Réinitialiser toutes les progressions ?')) return;
+        try { localStorage.removeItem('proactif_progress_v1'); localStorage.removeItem('progression'); } catch (e) { }
+        // recharge pour réinitialiser l'UI proprement
+        location.reload();
+      });
+    }
+
+    /* INDICATEUR DE PROGRESSION */
+	    window.updateProgress = function () {
+	      try {
+	        const urls = Array.from(document.querySelectorAll('.exercise-btn'))
+	          .map(a => normalizeKey(a.getAttribute('href')))
+	          .filter(Boolean);
+	        const all = urls.length || 0;
+	        const done = urls.filter(url => progression && progression[url] === 'done').length || 0;
+          const inProgress = urls.filter(url => progression && progression[url] === 'in_progress').length || 0;
+	        const pct = all === 0 ? 0 : Math.min(100, Math.round((done / all) * 100));
+	        const el = document.getElementById('progress-percent');
+	        const bar = document.getElementById('progress-bar');
+	        if (el) el.textContent = pct + '%';
+	        if (bar) bar.style.width = pct + '%';
+
+          const indicator = document.querySelector('#progress-indicator .progress-text');
+          if (indicator) {
+            let breakdown = document.getElementById('progress-breakdown');
+            if (!breakdown) {
+              breakdown = document.createElement('span');
+              breakdown.id = 'progress-breakdown';
+              breakdown.className = 'progress-breakdown';
+              indicator.appendChild(document.createTextNode(' · '));
+              indicator.appendChild(breakdown);
+            }
+            breakdown.textContent = done + ' terminé(s) · ' + inProgress + ' en cours';
+          }
+	      } catch (e) { }
+	    };
+
+    // initial update
+    if (window.updateProgress) window.updateProgress();
+  </script>
+
+</body>
+
+</html>

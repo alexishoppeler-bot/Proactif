@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>Jeu de Directions – Niveaux</title>
+    <style>
+        .arrow { font-size:5.6em; margin:4px 0 0; line-height:1; color: rgba(11,42,74,0.92); }
+        .hint{font-size:0.95em;color:rgba(15,27,44,0.7);line-height:1.35;margin:10px 0 0;}
+        .kbd{display:inline-block;padding:2px 8px;border-radius:10px;border:1px solid rgba(12,32,63,0.14);background:#fff;color:#0b2a4a;font-weight:800;font-size:0.9em;box-shadow:0 10px 18px rgba(12,32,63,0.10);}
+        .controls {
+            display:grid; grid-template-columns:repeat(3,1fr);
+            gap:12px; padding:0; margin-top:14px;
+        }
+        .control-btn {
+            background: linear-gradient(135deg, rgba(11, 107, 255, 0.95), rgba(11, 107, 255, 0.78));
+            color:white; border:1px solid rgba(11,107,255,0.45); border-radius:18px;
+            font-size:2.4em; cursor:pointer; transition:0.18s var(--exercise-ease, ease);
+            font-weight:950; aspect-ratio:1; display:flex; align-items:center;
+            justify-content:center; min-height:78px; user-select:none;
+            box-shadow:0 14px 30px rgba(12,32,63,0.14);
+        }
+        .control-btn:hover{transform:translateY(-1px);box-shadow:0 18px 40px rgba(12,32,63,0.18);}
+        .control-btn:active{transform:translateY(0);}
+        .control-btn:focus-visible{outline:3px solid rgba(11,107,255,0.35);outline-offset:2px;}
+        .control-btn.correct { background:#4caf50; animation:correctFlash 0.5s; }
+        .control-btn.wrong { background:#f44336; animation:shake 0.5s; }
+        @keyframes correctFlash { 0%,100%{background:#4caf50;} 50%{background:#66bb6a;} }
+        @keyframes shake {
+            0%,100%{transform:translateX(0);}
+            25%{transform:translateX(-10px);} 75%{transform:translateX(10px);}
+        }
+        .game-over-stats{margin-top:10px;color:rgba(15,27,44,0.72);font-weight:700;}
+    </style>
+	  <link rel="stylesheet" href="../../exercise-layout.css">
+	  <link rel="stylesheet" href="../shared/game-modern.css">
+	  <script defer src="../../exercise-layout.js"></script>
+	  <script defer src="../shared/game-modern.js"></script>
+</head>
+
+<body>
+
+<div class="back-home" style="max-width:1100px;margin:10px auto 0;padding:0 20px;">
+  <a class="back-home__link" href="../../index.html" style="display:inline-flex;align-items:center;gap:6px;text-decoration:none;color:#004c6d;font-weight:700;border:1px solid #cfdff0;padding:6px 14px;border-radius:999px;background:#fff;box-shadow:0 2px 4px rgba(0,0,0,0.08);">← Retour à l’index</a>
+</div>
+	<script src="../shared/proactif-exercise.js"></script>
+<div class="exercise-shell">
+  <main class="exercise-card">
+
+
+    <div class="game-app" id="game-app">
+        <div class="game-topbar">
+            <div class="game-topbar__title">
+                <span class="game-badge">🧭 Jeu de Directions</span>
+            </div>
+            <div class="game-actions">
+                <label class="game-badge" style="gap:10px;">
+                    Mode
+                    <select id="mode" class="gselect" aria-label="Mode">
+                        <option value="training">Entraînement</option>
+                        <option value="challenge" selected>Challenge</option>
+                    </select>
+                </label>
+                <button id="sound-toggle" type="button" class="gbtn" aria-pressed="true">🔊 Son</button>
+                <button id="pause-btn" type="button" class="gbtn" aria-pressed="false" aria-label="Mettre en pause">⏸ Pause</button>
+            </div>
+        </div>
+
+        <h1 style="margin:0 0 12px;">Jeu de directions</h1>
+
+        <div class="game-stats" aria-label="Statistiques">
+            <div class="gstat"><div class="gstat__label">Score</div><div class="gstat__value" id="score">0</div></div>
+            <div class="gstat"><div class="gstat__label">Meilleur</div><div class="gstat__value" id="best-score">0</div></div>
+            <div class="gstat"><div class="gstat__label">Niveau</div><div class="gstat__value" id="level">1</div></div>
+            <div class="gstat"><div class="gstat__label">Réaction</div><div class="gstat__value" id="reaction">—</div></div>
+        </div>
+
+        <div class="game-stage">
+            <div id="start-screen" class="game-screen is-active">
+                <p class="game-instruction">Suis la consigne le plus vite possible.</p>
+                <p id="key-hint" class="hint"></p>
+                <div class="game-center" style="margin-top:14px;">
+                    <button id="start-btn" type="button" class="gbtn gbtn--primary">Commencer</button>
+                </div>
+            </div>
+
+            <div id="game-screen" class="game-screen">
+                <div class="timer-bar" aria-hidden="true"><div class="timer-fill" id="timer-fill"></div></div>
+                <div class="game-center" style="margin-top:12px;">
+                    <div id="direction-text" class="game-big" aria-live="polite"></div>
+                    <div class="arrow" id="arrow" aria-hidden="true"></div>
+                </div>
+            </div>
+
+            <div id="game-over-screen" class="game-screen">
+                <h2 style="color:#ef4444;margin:0 0 10px;">Partie terminée</h2>
+                <div id="final-score" style="font-size:2em;color:#0b6bff;font-weight:950;"></div>
+                <p id="final-details" class="game-over-stats"></p>
+                <div class="game-center" style="margin-top:10px;">
+                    <button id="restart-btn" type="button" class="gbtn gbtn--primary">Rejouer</button>
+                    <button id="back" type="button" class="gbtn">Retour au menu</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="controls" id="controls" aria-label="Contrôles">
+            <div></div>
+            <button type="button" class="control-btn" data-direction="up" aria-label="Haut">↑</button>
+            <div></div>
+            <button type="button" class="control-btn" data-direction="left" aria-label="Gauche">←</button>
+            <button type="button" class="control-btn" data-direction="down" aria-label="Bas">↓</button>
+            <button type="button" class="control-btn" data-direction="right" aria-label="Droite">→</button>
+        </div>
+    </div>
+
+<script>
+    const baseDirections = [
+        { text:'TOUT DROIT', arrow:'↑', key:'up' },
+        { text:'À GAUCHE',   arrow:'←', key:'left' },
+        { text:'À DROITE',   arrow:'→', key:'right' },
+        { text:'DEMI-TOUR',  arrow:'↓', key:'down' }
+    ];
+
+    const BEST_KEY = 'bestDirectionsScore';
+    const MODE_KEY = 'proactif_directions_mode_v1';
+
+    let score = 0;
+    let bestScore = Number(localStorage.getItem(BEST_KEY) || localStorage.getItem('bestScore') || 0);
+    let level = 1;
+    let currentDirection = null;
+    let gameActive = false;
+
+    let speed = 1;
+    let paused = false;
+    let timerRaf = null;
+    let roundTotalMs = 0;
+    let roundDeadline = 0;
+    let remainingMs = 0;
+
+    let promptAt = 0;
+    let reactionLastMs = 0;
+    let reactionBestMs = Infinity;
+    let reactionSumMs = 0;
+    let reactionCount = 0;
+    let mode = 'challenge';
+
+    const scoreEl = document.getElementById('score');
+    const bestScoreEl = document.getElementById('best-score');
+    const levelEl = document.getElementById('level');
+    const reactionEl = document.getElementById('reaction');
+    const directionTextEl = document.getElementById('direction-text');
+    const timerFillEl = document.getElementById('timer-fill');
+    const arrowEl = document.getElementById('arrow');
+    const pauseBtn = document.getElementById('pause-btn');
+    const finalScoreEl = document.getElementById('final-score');
+    const finalDetailsEl = document.getElementById('final-details');
+    const backBtn = document.getElementById('back');
+    const modeEl = document.getElementById('mode');
+    const keyHintEl = document.getElementById('key-hint');
+    const soundToggle = document.getElementById('sound-toggle');
+    const appEl = document.getElementById('game-app');
+    const ui = window.ProactifGameUI || null;
+
+    bestScoreEl.textContent = String(bestScore);
+    if (!localStorage.getItem(BEST_KEY) && localStorage.getItem('bestScore')) {
+        try { localStorage.setItem(BEST_KEY, String(bestScore)); } catch (e) {}
+    }
+
+    function showScreen(id){
+        const screens = ['start-screen','game-screen','game-over-screen'];
+        screens.forEach(x => {
+            const el = document.getElementById(x);
+            if (!el) return;
+            el.classList.toggle('is-active', x === id);
+        });
+    }
+
+    function isTypingTarget(target){
+        const tag = (target && target.tagName) ? String(target.tagName).toLowerCase() : '';
+        return tag === 'input' || tag === 'textarea' || tag === 'select' || (target && target.isContentEditable);
+    }
+
+    function vibrate(pattern){
+        try { if (navigator.vibrate) navigator.vibrate(pattern); } catch (e) {}
+    }
+
+    function nowMs(){
+        try { return (performance && typeof performance.now === 'function') ? performance.now() : Date.now(); } catch (e) { return Date.now(); }
+    }
+
+    function uiToast(message, type){
+        if (ui && appEl) ui.toast(appEl, message, type || 'info');
+    }
+
+    function stopTimer(){
+        if (timerRaf) cancelAnimationFrame(timerRaf);
+        timerRaf = null;
+    }
+
+    function startTimer(totalMs){
+        stopTimer();
+        roundTotalMs = totalMs;
+        remainingMs = totalMs;
+        roundDeadline = nowMs() + remainingMs;
+        timerFillEl.style.width = '100%';
+
+        function tick(){
+            if (!gameActive || paused) return;
+            const t = nowMs();
+            const msLeft = roundDeadline - t;
+            remainingMs = Math.max(0, msLeft);
+            const pct = roundTotalMs > 0 ? (remainingMs / roundTotalMs) * 100 : 0;
+            timerFillEl.style.width = Math.max(0, Math.min(100, pct)).toFixed(2) + '%';
+            if (remainingMs <= 0) {
+                gameOver();
+                return;
+            }
+            timerRaf = requestAnimationFrame(tick);
+        }
+        timerRaf = requestAnimationFrame(tick);
+    }
+
+    function updatePauseButton(){
+        pauseBtn.disabled = !gameActive;
+        pauseBtn.setAttribute('aria-pressed', paused ? 'true' : 'false');
+        pauseBtn.textContent = paused ? '▶ Reprendre' : '⏸ Pause';
+        pauseBtn.setAttribute('aria-label', paused ? 'Reprendre' : 'Mettre en pause');
+    }
+
+    function togglePause(){
+        if (!gameActive) return;
+        paused = !paused;
+        updatePauseButton();
+        if (paused) {
+            stopTimer();
+            directionTextEl.textContent = 'PAUSE';
+            arrowEl.hidden = true;
+            uiToast('Pause', 'info');
+        } else {
+            directionTextEl.textContent = currentDirection ? currentDirection.text : '';
+            arrowEl.hidden = !shouldShowArrow();
+            roundDeadline = nowMs() + remainingMs;
+            timerRaf = requestAnimationFrame(function tick(){
+                if (!gameActive || paused) return;
+                const t = nowMs();
+                const msLeft = roundDeadline - t;
+                remainingMs = Math.max(0, msLeft);
+                const pct = roundTotalMs > 0 ? (remainingMs / roundTotalMs) * 100 : 0;
+                timerFillEl.style.width = Math.max(0, Math.min(100, pct)).toFixed(2) + '%';
+                if (remainingMs <= 0) {
+                    gameOver();
+                    return;
+                }
+                timerRaf = requestAnimationFrame(tick);
+            });
+        }
+    }
+
+    function flashControl(directionKey, ok){
+        const btn = document.querySelector(`.control-btn[data-direction="${directionKey}"]`);
+        if (!btn) return;
+        btn.classList.remove('correct','wrong');
+        btn.classList.add(ok ? 'correct' : 'wrong');
+        setTimeout(() => btn.classList.remove('correct','wrong'), 450);
+    }
+
+    function mapKeyToDirection(key){
+        switch(key){
+            case 'ArrowUp': return 'up';
+            case 'ArrowDown': return 'down';
+            case 'ArrowLeft': return 'left';
+            case 'ArrowRight': return 'right';
+            case 'w': case 'W': case 'z': case 'Z': return 'up';
+            case 's': case 'S': return 'down';
+            case 'a': case 'A': case 'q': case 'Q': return 'left';
+            case 'd': case 'D': return 'right';
+            default: return null;
+        }
+    }
+
+    document.addEventListener('keydown', e => {
+        if (!gameActive) return;
+        if (isTypingTarget(e.target)) return;
+        if (e.ctrlKey || e.metaKey || e.altKey) return;
+
+        const key = String(e.key || '');
+        if (key === 'Escape' || key === 'p' || key === 'P') {
+            togglePause();
+            return;
+        }
+        if (paused) return;
+
+        const dir = mapKeyToDirection(key);
+        if (!dir) return;
+        e.preventDefault();
+        checkAnswer(dir);
+    });
+
+    function shouldShowArrow(){
+        if (mode === 'training') return true;
+        return level === 1;
+    }
+
+    function animatePrompt(){
+        directionTextEl.classList.remove('is-pulse');
+        // restart animation reliably
+        void directionTextEl.offsetWidth;
+        directionTextEl.classList.add('is-pulse');
+        try {
+            arrowEl.animate(
+                [{ transform: 'translateY(0) scale(0.95)' }, { transform: 'translateY(-2px) scale(1.06)' }, { transform: 'translateY(0) scale(1)' }],
+                { duration: 420, easing: 'cubic-bezier(0.2, 0.8, 0.2, 1)' }
+            );
+        } catch (e) {}
+    }
+
+    function startGame() {
+        score = 0;
+        level = 1;
+        speed = 1;
+        paused = false;
+        gameActive = true;
+
+        reactionLastMs = 0;
+        reactionBestMs = Infinity;
+        reactionSumMs = 0;
+        reactionCount = 0;
+        reactionEl.textContent = '—';
+
+        scoreEl.textContent = '0';
+        levelEl.textContent = '1';
+        updatePauseButton();
+        showScreen('game-screen');
+        nextDirection();
+    }
+
+    function nextDirection() {
+        if (!gameActive) return;
+        paused = false;
+        updatePauseButton();
+
+        let direction = baseDirections[Math.floor(Math.random()*baseDirections.length)];
+        let displayText = direction.text;
+        let expectedKey = direction.key;
+
+        // Niveau 2 et 3 : consignes inversées aléatoires
+        let inverseChance = (level === 2 ? 0.10 : level === 3 ? 0.20 : 0);
+        if (Math.random() < inverseChance) {
+            expectedKey = getOpposite(expectedKey);
+            displayText += " (INVERSE)";
+        }
+
+        currentDirection = { text:displayText, key:expectedKey, arrow: direction.arrow };
+        directionTextEl.textContent = displayText;
+        promptAt = nowMs();
+
+        arrowEl.textContent = direction.arrow;
+        arrowEl.hidden = !shouldShowArrow();
+        animatePrompt();
+
+        const totalMs = Math.max(900, Math.round(4000 / speed));
+        startTimer(totalMs);
+    }
+
+    function getOpposite(key) {
+        switch(key){
+            case 'up': return 'down';
+            case 'down': return 'up';
+            case 'left': return 'right';
+            case 'right': return 'left';
+        }
+    }
+
+    function checkAnswer(key) {
+        reactionLastMs = Math.max(0, Math.round(nowMs() - promptAt));
+        reactionSumMs += reactionLastMs;
+        reactionCount += 1;
+        reactionBestMs = Math.min(reactionBestMs, reactionLastMs);
+        reactionEl.textContent = reactionLastMs + ' ms';
+
+        if (key === currentDirection.key) {
+            flashControl(key, true);
+            vibrate(20);
+            if (ui) ui.playTone('ok');
+            score++;
+            scoreEl.textContent = String(score);
+
+            if (score === 10) { level = 2; levelEl.textContent = '2'; speed = 1.3; uiToast('Niveau 2 : attention aux inversions', 'info'); if (ui) ui.playTone('level'); }
+            if (score === 25) { level = 3; levelEl.textContent = '3'; speed = 1.6; uiToast('Niveau 3 : encore plus vite !', 'info'); if (ui) ui.playTone('level'); }
+
+            nextDirection();
+        } else {
+            flashControl(key, false);
+            vibrate([40, 30, 40]);
+            if (ui) ui.playTone('bad');
+            gameOver();
+        }
+    }
+
+    function gameOver() {
+        gameActive = false;
+        paused = false;
+        stopTimer();
+        updatePauseButton();
+
+        var isNewBest = score > bestScore;
+        if (isNewBest) {
+            bestScore = score;
+            localStorage.setItem(BEST_KEY, String(bestScore));
+            bestScoreEl.textContent = String(bestScore);
+            uiToast('Nouveau record !', 'ok');
+            if (ui && appEl) ui.confettiBurst(appEl, directionTextEl);
+        }
+
+        showScreen('game-over-screen');
+        finalScoreEl.textContent = "Score : " + score;
+        const avg = reactionCount ? Math.round(reactionSumMs / reactionCount) : 0;
+        const bestReactTxt = Number.isFinite(reactionBestMs) ? (reactionBestMs + ' ms') : '—';
+        finalDetailsEl.textContent = "Réaction moyenne : " + (avg ? (avg + " ms") : "—") + " · Meilleure : " + bestReactTxt;
+
+        if (window.proactifMarkExerciseDone) {
+            try { window.proactifMarkExerciseDone(); } catch (e) { }
+        }
+    }
+
+    // UI
+    document.getElementById('start-btn').addEventListener('click', startGame);
+    document.getElementById('restart-btn').addEventListener('click', startGame);
+    pauseBtn.addEventListener('click', togglePause);
+    backBtn.addEventListener('click', () => { window.location.href = "../../index.html"; });
+    document.querySelectorAll('.control-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            if (!gameActive || paused) return;
+            checkAnswer(btn.dataset.direction);
+        });
+    });
+
+    if (ui && soundToggle) ui.bindSoundToggle(soundToggle);
+
+    try {
+        const savedMode = localStorage.getItem(MODE_KEY);
+        if (savedMode === 'training' || savedMode === 'challenge') mode = savedMode;
+    } catch (e) {}
+    if (modeEl) {
+        modeEl.value = mode;
+        modeEl.addEventListener('change', () => {
+            mode = modeEl.value === 'training' ? 'training' : 'challenge';
+            try { localStorage.setItem(MODE_KEY, mode); } catch (e) {}
+            uiToast("Mode : " + (mode === 'training' ? 'Entraînement' : 'Challenge'), 'info');
+            if (gameActive && !paused) arrowEl.hidden = !shouldShowArrow();
+        });
+    }
+
+    if (keyHintEl) {
+        keyHintEl.innerHTML = "Clavier : <span class=\"kbd\">Flèches</span> ou <span class=\"kbd\">WASD/ZQSD</span> · Pause : <span class=\"kbd\">P</span> ou <span class=\"kbd\">Esc</span>.";
+    }
+
+    updatePauseButton();
+    showScreen('start-screen');
+</script>
+
+  </main>
+</div>
+
+</body>
+</html>

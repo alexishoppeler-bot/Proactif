@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>Débats – Proactif Premium</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+:root{
+  --main:#004c97;
+  --bg:#eef2f6;
+  --card-bg:rgba(255,255,255,.45);
+  --text:#000;
+  --glass-border:rgba(255,255,255,.35);
+}
+body.dark{
+  --bg:#0f172a;
+  --card-bg:rgba(255,255,255,.1);
+  --text:#fff;
+  --glass-border:rgba(255,255,255,.15);
+}
+body{
+  margin:0;padding:20px;
+  font-family:Arial,sans-serif;
+  background:var(--bg);color:var(--text);
+}
+.topBar{max-width:750px;margin:auto;text-align:center;position:relative}
+h1{color:var(--main)}
+#darkToggle{position:absolute;right:0;top:0;cursor:pointer;font-size:22px}
+#compteur{font-weight:bold;margin-top:5px}
+.progressContainer{width:100%;height:10px;border-radius:10px;background:rgba(0,0,0,.1);overflow:hidden;margin:10px 0 25px}
+.progressBar{height:100%;width:0%;background:var(--main)}
+.btn{
+  display:block;margin:0 auto 20px;
+  padding:12px 20px;font-size:17px;
+  border:none;border-radius:12px;
+  cursor:pointer;font-weight:bold;
+  max-width:300px;color:#fff
+}
+#btnRandom{background:var(--main)}
+#btnDone{background:#2e7d32}
+#btnReset{background:#c62828;display:none}
+#box{
+  display:none;max-width:750px;margin:20px auto;
+  padding:25px 30px;border-radius:18px;
+  background:var(--card-bg);
+  backdrop-filter:blur(12px);
+  border:1px solid var(--glass-border);
+}
+.titre{font-size:23px;font-weight:bold;color:var(--main)}
+.sectionTitle{font-weight:bold;font-size:17px;color:var(--main);margin-top:20px}
+.doneMsg{text-align:center;font-size:24px;margin-top:30px;color:var(--main);display:none}
+</style>
+  <link rel="stylesheet" href="../../../exercise-layout.css">
+  <script defer src="../../../exercise-layout.js"></script>
+</head>
+
+<body>
+
+<div class="back-home" style="max-width:1100px;margin:10px auto 0;padding:0 20px;">
+  <a class="back-home__link" href="../../../index.html" style="display:inline-flex;align-items:center;gap:6px;text-decoration:none;color:#004c6d;font-weight:700;border:1px solid #cfdff0;padding:6px 14px;border-radius:999px;background:#fff;box-shadow:0 2px 4px rgba(0,0,0,0.08);">← Retour à l’index</a>
+</div>
+<script src="../../shared/proactif-exercise.js"></script>
+<div class="exercise-shell">
+  <main class="exercise-card">
+
+
+
+<div class="topBar">
+  <h1>🎭 Débats – Proactif Premium</h1>
+  <div id="darkToggle">🌙</div>
+  <div id="compteur">Débats faits : 0 / 100</div>
+  <div class="progressContainer"><div class="progressBar" id="progressBar"></div></div>
+</div>
+
+<button id="btnRandom" class="btn" onclick="newDebat()">🎲 Nouveau débat aléatoire</button>
+<button id="btnReset" class="btn" onclick="resetAll()">🔄 Réinitialiser tout</button>
+
+<div id="box">
+  <div class="titre" id="titre"></div>
+  <div class="sectionTitle">❓ Question</div>
+  <div id="question"></div>
+  <div class="sectionTitle">🧩 Aides pour commencer</div>
+  <ul id="aides"></ul>
+  <div class="sectionTitle">💬 Relances</div>
+  <ul id="relances"></ul>
+  <button id="btnDone" class="btn" onclick="markDone()">✔ Marquer comme fait</button>
+</div>
+
+<div class="doneMsg" id="doneMsg">🎉 Tous les débats sont faits !</div>
+
+<script>
+const STORAGE_PREFIX = "proactif_debats_v1:";
+const STORAGE_DONE_KEY = STORAGE_PREFIX + "done";
+const STORAGE_DARK_KEY = STORAGE_PREFIX + "dark";
+const LEGACY_DONE_KEY = "debatsDone";
+const LEGACY_DARK_KEY = "darkMode";
+const COMPLETE_AT = 10; // Marque l'exercice "Terminé" après 10 débats
+let proactifDoneOnce = false;
+
+function migrateLegacyIfAny(){
+  try {
+    if (!localStorage.getItem(STORAGE_DONE_KEY) && localStorage.getItem(LEGACY_DONE_KEY)) {
+      localStorage.setItem(STORAGE_DONE_KEY, localStorage.getItem(LEGACY_DONE_KEY));
+      localStorage.removeItem(LEGACY_DONE_KEY);
+    }
+    // Pour le mode sombre, on lit l'ancien sans l'effacer (peut être utilisé ailleurs)
+    if (!localStorage.getItem(STORAGE_DARK_KEY) && localStorage.getItem(LEGACY_DARK_KEY)) {
+      localStorage.setItem(STORAGE_DARK_KEY, localStorage.getItem(LEGACY_DARK_KEY));
+    }
+  } catch (e) { }
+}
+
+migrateLegacyIfAny();
+
+darkToggle.onclick=()=>{
+  document.body.classList.toggle("dark");
+  try { localStorage.setItem(STORAGE_DARK_KEY, document.body.classList.contains("dark")); } catch (e) { }
+};
+if(localStorage.getItem(STORAGE_DARK_KEY)==="true"){document.body.classList.add("dark");}
+
+const debats=[
+{id:"d1",titre:"Ville ou campagne ?",question:"Où préférez-vous vivre ?",aides:["La ville parce que…","La campagne parce que…","Ça dépend…"],relances:["Où avez-vous grandi ?","Où vous sentez-vous mieux ?"]},
+{id:"d2",titre:"Sortir ou rester chez soi ?",question:"Que préférez-vous ?",aides:["Sortir parce que…","Rester à la maison parce que…"],relances:["Vous sortez souvent ?"]},
+{id:"d3",titre:"Travail rapide ou calme ?",question:"Quel rythme préférez-vous ?",aides:["Rapide parce que…","Calme parce que…"],relances:["Qu’est-ce qui vous fatigue ?"]},
+{id:"d4",titre:"Téléphoner ou écrire ?",question:"Comment communiquez-vous ?",aides:["Téléphoner parce que…","Écrire parce que…"],relances:["Dans quelles situations ?"]},
+{id:"d5",titre:"Temps libre",question:"Sortir ou rester tranquille ?",aides:["Sortir parce que…","Rester tranquille parce que…"],relances:["Qu’est-ce qui vous détend ?"]},
+{id:"d6",titre:"Travail proche ou mieux payé ?",question:"Que choisissez-vous ?",aides:["Proche parce que…","Mieux payé parce que…"],relances:["Le salaire est-il important ?"]},
+{id:"d7",titre:"Manger sain ou vite ?",question:"Qu’est-ce qui est plus important ?",aides:["Sain parce que…","Rapide parce que…"],relances:["Cuisinez-vous souvent ?"]},
+{id:"d8",titre:"Apprendre seul ou en groupe ?",question:"Comment apprenez-vous ?",aides:["Seul parce que…","En groupe parce que…"],relances:["Aimez-vous travailler avec les autres ?"]},
+{id:"d9",titre:"Sport ou repos ?",question:"Quand vous êtes fatigué ?",aides:["Sport parce que…","Repos parce que…"],relances:["Qu’est-ce qui vous aide ?"]},
+{id:"d10",titre:"Téléphone cher ou simple ?",question:"Que préférez-vous ?",aides:["Cher parce que…","Simple parce que…"],relances:["Pourquoi ?"]},
+{id:"d11",titre:"Matin ou après-midi ?",question:"Quand travaillez-vous mieux ?",aides:["Le matin parce que…","L’après-midi parce que…"],relances:["Quand êtes-vous en forme ?"]},
+{id:"d12",titre:"Rester ou changer ?",question:"Au travail ?",aides:["Rester parce que…","Changer parce que…"],relances:["Aimez-vous la routine ?"]},
+{id:"d13",titre:"Neuf ou occasion ?",question:"Que préférez-vous ?",aides:["Neuf parce que…","Occasion parce que…"],relances:["Pourquoi ?"]},
+{id:"d14",titre:"Télévision ou téléphone ?",question:"Que regardez-vous le plus ?",aides:["Télévision parce que…","Téléphone parce que…"],relances:["Quand ?"]},
+{id:"d15",titre:"Courses",question:"Une fois par semaine ou tous les jours ?",aides:["Une fois par semaine parce que…","Tous les jours parce que…"],relances:["Vous planifiez ?"]},
+{id:"d16",titre:"Travail physique ou calme ?",question:"Que préférez-vous ?",aides:["Physique parce que…","Calme parce que…"],relances:["Pourquoi ?"]},
+{id:"d17",titre:"Vidéos ou lecture ?",question:"Pour apprendre ?",aides:["Vidéos parce que…","Lecture parce que…"],relances:["Qu’est-ce qui aide le plus ?"]},
+{id:"d18",titre:"Dormir tôt ou tard ?",question:"Que préférez-vous ?",aides:["Tôt parce que…","Tard parce que…"],relances:["À quelle heure ?"]},
+{id:"d19",titre:"Maison ou restaurant ?",question:"Pour manger ?",aides:["Maison parce que…","Restaurant parce que…"],relances:["Pourquoi ?"]},
+{id:"d20",titre:"Salaire ou plaisir ?",question:"Qu’est-ce qui compte ?",aides:["Aimer le métier parce que…","Salaire parce que…"],relances:["Pourquoi ?"]},
+{id:"d21",titre:"Transports publics",question:"Faciles ou compliqués ?",aides:["Faciles parce que…","Compliqués parce que…"],relances:["Vous les utilisez ?"]},
+{id:"d22",titre:"Avec animal ou sans ?",question:"Que préférez-vous ?",aides:["Avec parce que…","Sans parce que…"],relances:["Pourquoi ?"]},
+{id:"d23",titre:"Vite ou tranquille ?",question:"Comment faites-vous ?",aides:["Vite parce que…","Tranquille parce que…"],relances:["Pourquoi ?"]},
+{id:"d24",titre:"Commencer tôt ou finir tôt ?",question:"Que préférez-vous ?",aides:["Commencer tôt parce que…","Finir tôt parce que…"],relances:["Pourquoi ?"]},
+{id:"d25",titre:"Pratique ou observation ?",question:"Comment apprenez-vous ?",aides:["En faisant parce que…","En regardant parce que…"],relances:["Pourquoi ?"]},
+{id:"d26",titre:"Petit déjeuner ?",question:"Le matin ?",aides:["Oui parce que…","Non parce que…","Ça dépend…"],relances:["Pourquoi ?"]},
+{id:"d27",titre:"Musique forte ou douce ?",question:"Qu’est-ce qui vous relaxe ?",aides:["Forte parce que…","Douce parce que…"],relances:["Quand ?"]},
+{id:"d28",titre:"Lit dur ou mou ?",question:"Comment dormez-vous ?",aides:["Dur parce que…","Mou parce que…"],relances:["Pourquoi ?"]},
+{id:"d29",titre:"WhatsApp ou appel ?",question:"Que préférez-vous ?",aides:["WhatsApp parce que…","Appel parce que…"],relances:["Pourquoi ?"]},
+{id:"d30",titre:"Photos ?",question:"Vous en prenez ?",aides:["Oui parce que…","Non parce que…"],relances:["Pourquoi ?"]},
+{id:"d31",titre:"Vocal ou écrit ?",question:"Messages ?",aides:["Vocal parce que…","Écrit parce que…"],relances:["Pourquoi ?"]},
+{id:"d32",titre:"Vidéos ou appli ?",question:"Pour apprendre ?",aides:["Vidéos parce que…","Application parce que…"],relances:["Pourquoi ?"]},
+{id:"d33",titre:"Musique avec paroles ?",question:"Pour se concentrer ?",aides:["Avec paroles parce que…","Sans paroles parce que…"],relances:["Pourquoi ?"]},
+{id:"d34",titre:"Seul ou avec des gens ?",question:"Temps libre ?",aides:["Seul parce que…","Avec des gens parce que…"],relances:["Pourquoi ?"]},
+{id:"d35",titre:"Recevoir des visites ?",question:"Chez vous ?",aides:["Oui parce que…","Non parce que…"],relances:["Pourquoi ?"]},
+{id:"d36",titre:"Organiser ou improviser ?",question:"Vos journées ?",aides:["Organiser parce que…","Improviser parce que…"],relances:["Pourquoi ?"]},
+{id:"d37",titre:"Nouveautés ou habitudes ?",question:"Que préférez-vous ?",aides:["Nouveautés parce que…","Habitudes parce que…"],relances:["Pourquoi ?"]},
+{id:"d38",titre:"Loyer cher ou économiser ?",question:"Que choisissez-vous ?",aides:["Cher parce que…","Économiser parce que…"],relances:["Pourquoi ?"]},
+{id:"d39",titre:"Produits locaux ou moins chers ?",question:"Que préférez-vous ?",aides:["Locaux parce que…","Moins chers parce que…"],relances:["Pourquoi ?"]},
+{id:"d40",titre:"Économiser ou plaisir ?",question:"Qu’est-ce qui est plus important ?",aides:["Économiser parce que…","Plaisir parce que…"],relances:["Pourquoi ?"]},
+{id:"d41",titre:"Promotions ?",question:"Acheter ?",aides:["Oui parce que…","Non parce que…"],relances:["Pourquoi ?"]},
+{id:"d42",titre:"Uniforme ?",question:"Au travail ?",aides:["Avec parce que…","Sans parce que…"],relances:["Pourquoi ?"]},
+{id:"d43",titre:"Pause seul ou ensemble ?",question:"Que préférez-vous ?",aides:["Seul parce que…","Ensemble parce que…"],relances:["Pourquoi ?"]},
+{id:"d44",titre:"Planning fixe ?",question:"Ou changeant ?",aides:["Fixe parce que…","Changeant parce que…"],relances:["Pourquoi ?"]},
+{id:"d45",titre:"Tâches faciles ou difficiles ?",question:"En premier ?",aides:["Faciles parce que…","Difficiles parce que…"],relances:["Pourquoi ?"]},
+{id:"d46",titre:"Lumière le matin ?",question:"Rideaux ?",aides:["Ouvrir parce que…","Fermer parce que…"],relances:["Pourquoi ?"]},
+{id:"d47",titre:"Séries ou films ?",question:"Que regardez-vous ?",aides:["Séries parce que…","Films parce que…"],relances:["Pourquoi ?"]},
+{id:"d48",titre:"Mer ou montagne ?",question:"Vacances ?",aides:["Mer parce que…","Montagne parce que…"],relances:["Pourquoi ?"]},
+{id:"d49",titre:"Petit ou grand magasin ?",question:"Pour travailler ?",aides:["Petit parce que…","Grand parce que…"],relances:["Pourquoi ?"]},
+{id:"d50",titre:"Four ou poêle ?",question:"Pour cuisiner ?",aides:["Four parce que…","Poêle parce que…"],relances:["Pourquoi ?"]}
+];
+
+let done=JSON.parse(localStorage.getItem(STORAGE_DONE_KEY)||"[]");
+let current=null;
+
+function updateProgress(){
+  const total = Array.isArray(debats) ? debats.length : 0;
+  compteur.innerText=`Débats faits : ${done.length} / ${total || 0}`;
+  progressBar.style.width = total ? ((done.length / total) * 100).toFixed(0) + "%" : "0%";
+
+  if (!proactifDoneOnce && done.length >= Math.min(COMPLETE_AT, total || COMPLETE_AT)) {
+    proactifDoneOnce = true;
+    try { window.proactifMarkExerciseDone && window.proactifMarkExerciseDone(); } catch (e) { }
+  }
+}
+function newDebat(){
+  const r=debats.filter(d=>!done.includes(d.id));
+  if(!r.length){box.style.display="none";doneMsg.style.display="block";return;}
+  current=r[Math.floor(Math.random()*r.length)];
+  titre.innerText=current.titre;
+  question.innerText=current.question;
+  aides.innerHTML=current.aides.map(x=>`<li>${x}</li>`).join("");
+  relances.innerHTML=current.relances.map(x=>`<li>${x}</li>`).join("");
+  box.style.display="block";
+}
+function markDone(){
+  if(current&&!done.includes(current.id)){
+    done.push(current.id);
+    localStorage.setItem(STORAGE_DONE_KEY,JSON.stringify(done));
+  }
+  updateProgress();newDebat();btnReset.style.display="block";
+}
+function resetAll(){
+  if(!confirm("Réinitialiser tous les débats ?"))return;
+  done=[];localStorage.removeItem(STORAGE_DONE_KEY);
+  proactifDoneOnce = false;
+  updateProgress();box.style.display="none";doneMsg.style.display="none";
+}
+updateProgress();
+</script>
+
+  </main>
+</div>
+
+</body>
+</html>
